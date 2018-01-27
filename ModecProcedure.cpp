@@ -1459,7 +1459,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 							for (int i = 1; i <= subtime; ++i)
 							{
-								TransMatrix = (TtaMatrixCrossSection + TtaMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24) + TtaMatrixDecay;
+								TransMatrix = TtaMatrixDecay + (TtaMatrixCrossSection + TtaMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
 
 								Solver.TtaSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 
@@ -1476,6 +1476,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 							int size_matrix(TtaMatrixDecay.spmat_dimen_);
 							TtaMatrixDecay.Resize(size_matrix + 1);
 							TtaMatrixCrossSection.Resize(size_matrix + 1);
+							TtaMatrixFissionYields.Resize(size_matrix + 1);
 
 							int size_nucl(constant_feeding_nuclide_id_vector_.size());
 							double tot_feeding_rate(0.0);
