@@ -105,7 +105,7 @@ readfile:
 		}
 		if (tag == "TTA_cutoff")
 		{
-			record >> Solver.cutoff_;
+			record >> Solver.cutoff_std_;
 		}
 		if (tag == "Solver_feed")
 		{

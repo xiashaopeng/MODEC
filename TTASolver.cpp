@@ -678,182 +678,17 @@ void SolveTrans::CalOneTree(const int &n0_index, const long double &time)
 	
 	chain_nuclide_id.push_back(n0_index);
 	//----------------------------------------------------------------------------------//
-
-	//--------------------循环方法实现树的搜索 ----------------------- //
-
-	//int stack_depth(1); // 栈的深度初始化为1
-	//int stack_upper;
-	//vector<int> stack_next_to_upper;
-	//vector<vector<int> > stack_next_to_upper_list;
-	//vector<vector<long double> > stack_chain_gamma;
-	//vector<vector<vector<long double> > > chain_gamma_list;
-	//chain_gamma_list.push_back(chain_gamma_);
-	//vector<int> stack_chain_b;
-	//vector< vector<int> > chain_b_list;
-	//chain_b_list.push_back(chain_b_);
-	//int stack_chain_a;
-	//vector< int > chain_a_list;
-	//chain_a_list.push_back(chain_a_);
-	//do 
-	//{
-	//	stack_upper = chain_nuclide_id.back();
-	//	stack_next_to_upper = matrix_col_index_[stack_upper]; // 找到与栈顶元素相邻的元素集
-	//	stack_chain_gamma = chain_gamma_list.back();
-	//	stack_chain_b = chain_b_list.back();
-	//	stack_chain_a = chain_a_list.back();
-	//	if (stack_next_to_upper[0] == -1) // 不存在相邻元素
-	//	{
-	//		// stack_upper出栈
-	//		chain_a_ = node_a_.top();
-	//		chain_b_ = node_b_.top();
-	//		chain_gamma_ = node_gamma_.top();
-	//		int size = chain_lamda_list_.size();
-	//		for (int j = chain_a_; j < size; ++j)
-	//		{
-	//			chain_lamda_list_.pop_back();
-	//			chain_nuclide_id.pop_back();
-	//		}
-	//	}
-	//	else
-	//	{
-	//		//node_visited_list_[stack_upper] += 1;
-	//		for (int i = 0; i < stack_next_to_upper.size(); ++i)
-	//		{
-	//			int next_daughter_index(stack_next_to_upper[i]);
-	//			if (node_visited_list_[next_daughter_index] == 1) //已经访问过该子节点
-	//			{
-	//				continue;
-	//			}
-	//			else // 第一次访问该子节点
-	//			{
-	//				node_visited_list_[next_daughter_index] += 1;
-	//				long double lamda_ii(-matrix_diagonal_val_[stack_upper]); // 母核的lamda
-	//				long double lamda_jj(-matrix_diagonal_val_[next_daughter_index]); // 待求子核素的lamda
-	//				long double lamda_ij(matrix_col_val_[stack_upper][i]); // 母核到子核的产生率系数
-	//				long double n0_i1(initial_n_vector_[next_daughter_index]); // n0_i1为待求子核素的初始浓度，如果访问过则为0
-	//				if (node_visited_list_[next_daughter_index] == 1)
-	//				{
-	//					n0_i1 = initial_n_vector_[next_daughter_index];
-	//				}
-	//				else
-	//				{
-	//					n0_i1 = 0;
-	//				}
-	//				int visited_number(0);
-	//				for (int ii = 0; ii < chain_nuclide_id.size(); ++ii)
-	//				{
-	//					if (next_daughter_index == chain_nuclide_id[ii]) // 这里的lamda系数的处理可能存在问题
-	//					{
-	//						visited_number++;
-	//					}
-	//				}
-	//				if (visited_number > 0 || chain_nuclide_id.size() >= 5)
-	//				{
-	//					long double judge_cutoff(CalCutoffFlag(next_daughter_index, lamda_ii, time));
-	//					//n0_i1 = 0;
-	//					if (abs(judge_cutoff) <= cutoff_ )
-	//					{
-	//						continue;
-	//					}
-	//				}
-	//				long double temp_n(0.0); // 待求子核的核素浓度
-	//				long double temp_gamma_j0(0.0);
-	//				int equal_j(-1);
-	//				for (int j = 0; j < stack_chain_a; ++j)
-	//				{
-	//					if (lamda_jj == chain_lamda_list_[j])
-	//					{
-	//						equal_j = j;
-	//					}
-	//					else
-	//					{
-	//						for (int k = stack_chain_b[j]; k >= 0; --k)
-	//						{
-	//							if (k == stack_chain_b[j])
-	//							{
-	//								stack_chain_gamma[j][k] = stack_chain_gamma[j][k] * lamda_ij / (lamda_jj - chain_lamda_list_[j]);
-	//							}
-	//							else
-	//							{
-	//								stack_chain_gamma[j][k] = (stack_chain_gamma[j][k] * lamda_ij - (k + 1)*stack_chain_gamma[j][k + 1])
-	//									/ (lamda_jj - chain_lamda_list_[j]);
-	//							}
-	//							if (k == 0)
-	//							{
-	//								temp_gamma_j0 += stack_chain_gamma[j][k];
-	//							}
-	//							temp_n += stack_chain_gamma[j][k] * pow(time, k)*exp(-chain_lamda_list_[j] * time);
-	//						}
-	//					}
-	//				}
-	//				if (equal_j == -1)
-	//				{
-	//					stack_chain_a += 1;
-	//					stack_chain_b.push_back(0);
-	//					stack_chain_gamma.push_back({ n0_i1 - temp_gamma_j0 });
-	//					chain_lamda_list_.push_back(lamda_jj);
-	//					chain_nuclide_id.push_back(next_daughter_index);
-	//					temp_n += stack_chain_gamma[stack_chain_a - 1][0] * exp(-lamda_jj * time);
-	//					//temp_nn_vec.push_back((n0_i1 - temp_test2) * exp(-lamda_jj * time));
-	//				}
-	//				else
-	//				{
-	//					vector<long double> chain_gamma(stack_chain_gamma[equal_j]);
-	//					stack_chain_b[equal_j] += 1;
-	//					for (int k = 0; k <= stack_chain_b[equal_j]; ++k)
-	//					{
-	//						if (k == stack_chain_b[equal_j])
-	//						{
-	//							stack_chain_gamma[equal_j].push_back(lamda_ij*chain_gamma[k - 1] / k);
-	//							temp_n += stack_chain_gamma[equal_j].back() * pow(time, k)*exp(-chain_lamda_list_[equal_j] * time);
-	//							//temp_nn_vec.push_back(chain_gamma_[equal_j][k] * pow(time, long double(k))*exp(-chain_lamda_list_[equal_j] * time));
-	//						}
-	//						else if (k > 0 && k < stack_chain_b[equal_j])
-	//						{
-	//							stack_chain_gamma[equal_j][k] = lamda_ij*chain_gamma[k - 1] / k;
-	//							temp_n += stack_chain_gamma[equal_j][k] * pow(time, k)*exp(-chain_lamda_list_[equal_j] * time);
-	//							//temp_nn_vec.push_back(chain_gamma_[equal_j][k] * pow(time, long double(k))*exp(-chain_lamda_list_[equal_j] * time));
-	//						}
-	//						else
-	//						{
-	//							stack_chain_gamma[equal_j][k] = n0_i1 - temp_gamma_j0;
-	//							temp_n += stack_chain_gamma[equal_j][k] * pow(time, k)*exp(-chain_lamda_list_[equal_j] * time);
-	//							//temp_nn_vec.push_back(chain_gamma_[equal_j][k] * pow(time, long double(k))*exp(-chain_lamda_list_[equal_j] * time));
-	//						}
-	//					}
-	//				}
-	//				if (temp_n > 0)
-	//				{
-	//					end_n_[next_daughter_index] += temp_n;
-	//				}
-	//				chain_a_list.push_back(stack_chain_a);
-	//				chain_b_list.push_back(stack_chain_b);
-	//				chain_gamma_list.push_back(stack_chain_gamma);
-	//				chain_nuclide_id.push_back(next_daughter_index); // 将该子节点的核素ID压入堆栈中
-	//				chain_lamda_list_.push_back(lamda_ii);
-	//				break; // 跳出循环
-	//			}
-	//		}
-	//	}
-	//} while (stack_depth == 0); // 栈的长度小于0时，意味着完成计算
-	//stack<int> stack_node_nuclide; // 分叉点的核素存储栈
-	//stack<int> stack_point_nuclide; // 燃耗子链上的核素存储栈
 	//--------------------------------------------------------------//
 
-	// ----------------- 递归方法实现树的搜索 ------------------ //
+	// ----------------- search one chain depletion using recursion method  ------------------ //
 	SearchOneChainForDepletion(n0_index, time); //
 
 	//------------------------------- 完成一条燃耗树的计算，清理相关向量 ------------------------------//
 
-	//node_matirx_index_list_.clear(); // 存储节点核素在矩阵中的列号
-	//node_chain_index_list_.clear();  // 存储节点在链中的序号
-	//node_daughter_number_list_.clear(); // 存储节点的子核个数
-	//node_beff_list_.clear(); // beff(0) = 1 ; beff(k+1) = beff(k)*lamdaji
-	//node_alpha_list_.clear(); // alpha(0) = exp(-lamda_0*t) ; alpha(k+1,i)=alpha(k,i)*1/(lamda_k+1 - lamda_i), alpha(k+1,k+1)
 	chain_lamda_list_.clear();
-	//chain_beff_list_.clear();
-	//chain_alpha_list_.clear();
+
 	chain_nuclide_id.clear();
+
 	//--------------------------------------------------------------------------//
 	chain_b_.clear();
 	chain_gamma_.clear();
@@ -891,6 +726,41 @@ vector<double> SolveTrans::TtaSolver(const SparseMatrixMCS &matrix,const double 
 	}
 		
 	return end_out;
+}
+
+void SolveTrans::TtaSolver(const SparseMatrixMCS &matrix, vector<double> &initial_n_vector, const double &time)
+{
+	long double initial_tot = 0.0;
+        for (int i = 0; i < initial_n_vector.size() ; ++i)
+        {
+                initial_tot += initial_n_vector[i];
+        }
+        cutoff_ = cutoff_std_ * initial_tot;
+	
+	initial_n_vector_.resize(initial_n_vector.size());
+	initial_n_vector_ = initial_n_vector;	
+
+	matrix_col_index_ = matrix.col_index_;
+	matrix_col_val_ = matrix.col_val_;
+	matrix_diagonal_val_ = matrix.diagonal_val_;
+
+	for (int i = 0; i < initial_n_vector_.size(); ++i)
+	{
+		if ( initial_n_vector_[i] != 0.0 )
+		{
+			initial_n_ = initial_n_vector_[i];
+			CalOneTree(i, time);
+		}
+	}
+
+	for (vector<int>::size_type ix = 0; ix != node_visited_list_.size(); ++ix)
+		node_visited_list_[ix] = 0;
+
+	for (vector<int>::size_type ix = 0; ix != end_n_.size();++ix)
+	{
+		initial_n_vector[ix] = end_n_[ix];
+		end_n_[ix] = 0.0;
+	}
 }
 
 vector<double> SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, const double &time)
@@ -937,3 +807,58 @@ vector<double> SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, co
 
 	return end_out;
 }
+
+void SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, vector<double> &initial_n_vector, const double &time)
+{
+        // for (vector<int>::size_type ix = 0; ix != end_n_.size(); ++ix)
+        // end_n_[ix] = 0.0;
+	
+	//node_visited_list_.resize(initial_n_vector.size());
+	//end_n_.resize(initial_n_vector.size());
+
+	long double initial_tot = 0.0;
+	for (int i = 0; i < initial_n_vector.size() ; ++i)
+	{
+		initial_tot += initial_n_vector[i];
+	}
+	cutoff_ = cutoff_std_ * initial_tot;
+	
+	initial_n_vector_ = initial_n_vector;
+
+        matrix_col_index_ = matrix.col_index_;
+        matrix_col_val_ = matrix.col_val_;
+        matrix_diagonal_val_ = matrix.diagonal_val_;
+
+        matrix_diagonal_val_.back() = - epsilon_ / time;
+
+        long double dummy_initial_nuclide(tot_feeding_rate_ * time / epsilon_);
+        initial_n_vector_.back() = dummy_initial_nuclide; // 伪核素的初始值
+
+
+        for (unsigned int i = 0; i < feed_rate_.size(); ++i)
+        {
+                //int nuclide_id = feed_nuclide_id_[i];
+                matrix_col_index_.back().push_back(feed_nuclide_id_[i]);
+                matrix_col_val_.back().push_back(feed_rate_[i] / dummy_initial_nuclide);
+        }
+
+        int size = initial_n_vector_.size();
+        for (int i = 0; i < size ; ++i)
+        {
+          	if (initial_n_vector_[i] != 0.0)
+                {
+                        initial_n_ = initial_n_vector_[i];
+                        CalOneTree(i, time);
+                }
+        }
+        for (vector<int>::size_type ix = 0; ix != node_visited_list_.size(); ++ix)
+                node_visited_list_[ix] = 0;
+
+  
+        for (vector<int>::size_type ix = 0; ix != end_n_.size(); ++ix)
+        {
+                initial_n_vector[ix] = end_n_[ix];
+                end_n_[ix] = 0.0;
+        }
+}
+

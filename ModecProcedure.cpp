@@ -932,16 +932,18 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 					else if (solver_selection_ == 0)
 					{
 						if (if_constant_online_feeding_ == false) {
-							Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0]);
+							//Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0]);
+							Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0].size());
 							SparseMatrixMCS TransMatrix(TtaMatrixDecay);
 							ModecNuclideLibrary.CalculateFlux(mode);
 
-							double re_time = 0;
+							//double re_time = 0;
+
 							for (int i = 1; i <= subtime; ++i)
 							{
-								re_time += time;
+								//re_time += time;
 								TransMatrix = TtaMatrixDecay + (TtaMatrixCrossSection + TtaMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
-								ModecNuclideLibrary.nuclide_library_vector_[0] = Solver.TtaSolver(TransMatrix, re_time);
+								Solver.TtaSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 
 								n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 								ModecNuclideLibrary.CalculateFlux(mode);
