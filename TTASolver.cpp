@@ -458,7 +458,6 @@ void SolveTrans::SearchOneChainForDepletion(const int & n0_index, const long dou
 		if (visited_number > 0 || chain_nuclide_id.size()>=5)
 		{
 			long double judge_cutoff(CalCutoffFlag(next_daughter_index, lamda_ii, time));
-			n0_i1 = 0;
 			if (abs(judge_cutoff) <= cutoff_ && next_index_list.size() > 1)
 			{
 				node_a_.pop();
