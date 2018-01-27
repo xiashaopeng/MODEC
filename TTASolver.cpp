@@ -739,16 +739,43 @@ void SolveTrans::TtaSolver(const SparseMatrixMCS &matrix, vector<double> &initia
 	initial_n_vector_.resize(initial_n_vector.size());
 	initial_n_vector_ = initial_n_vector;	
 
+	// ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
+	vector<int> sort_vector;
+	sort_vector.resize(initial_n_vector.size());
+	for (vector<int>::size_type ix = 0; ix != sort_vector.size(); ++ix)
+		sort_vector[ix] = ix;
+	
+
 	matrix_col_index_ = matrix.col_index_;
 	matrix_col_val_ = matrix.col_val_;
 	matrix_diagonal_val_ = matrix.diagonal_val_;
 
+	// ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿sort_vector¿
+	double key;
+	int i, key_s;
+	for(int j = 1; j < initial_n_vector.size(); ++j)
+	{
+		key = initial_n_vector[j];
+		key_s = sort_vector[j];
+		i = j - 1;
+		while( i > -1 && initial_n_vector[i] < key)
+		{
+			initial_n_vector[i + 1] = initial_n_vector[i];
+			sort_vector[i + 1] = sort_vector[i];
+			i -= 1;
+		}
+		initial_n_vector[i + 1] = key;
+		sort_vector[i + 1] = key_s;
+	}
+
+	int index; 
 	for (int i = 0; i < initial_n_vector_.size(); ++i)
 	{
-		if ( initial_n_vector_[i] != 0.0 )
+		index = sort_vector[i];
+		if ( initial_n_vector_[index] != 0.0 )
 		{
-			initial_n_ = initial_n_vector_[i];
-			CalOneTree(i, time);
+			initial_n_ = initial_n_vector_[index];
+			CalOneTree(index, time);
 		}
 	}
 
@@ -816,7 +843,7 @@ void SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, vector<doubl
 	//end_n_.resize(initial_n_vector.size());
 
 	long double initial_tot = 0.0;
-	for (int i = 0; i < initial_n_vector.size() ; ++i)
+	for (int i = 0; i < initial_n_vector.size() - 1 ; ++i)
 	{
 		initial_tot += initial_n_vector[i];
 	}
@@ -833,6 +860,29 @@ void SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, vector<doubl
         long double dummy_initial_nuclide(tot_feeding_rate_ * time / epsilon_);
         initial_n_vector_.back() = dummy_initial_nuclide; // Î±ºËËØµÄ³õÊ¼Öµ
 
+	// ¿¿¿¿¿¿¿
+	vector<int> sort_vector;
+	sort_vector.resize(initial_n_vector.size());
+	for (vector<int>::size_type ix = 0; ix != sort_vector.size(); ++ix)
+		sort_vector[ix] = ix;
+
+	// ¿¿¿¿¿¿¿¿¿initial_n_vector¿¿¿¿¿¿¿¿¿¿¿sort_n_vector¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
+	double key;
+	int i, key_s;
+	for(int j = 1; j < initial_n_vector.size() - 1; ++j)
+	{
+		key = initial_n_vector[j];
+		key_s = sort_vector[j];
+		i = j - 1;
+		while ( i > -1 && initial_n_vector[i] < key )
+		{
+			initial_n_vector[i + 1] = initial_n_vector[i];
+			sort_vector[i + 1] = sort_vector [i];
+			i -= 1;
+		}
+		initial_n_vector[i + 1] = key;
+		sort_vector[i + 1] = key_s;
+	}
 
         for (unsigned int i = 0; i < feed_rate_.size(); ++i)
         {
@@ -841,13 +891,14 @@ void SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, vector<doubl
                 matrix_col_val_.back().push_back(feed_rate_[i] / dummy_initial_nuclide);
         }
 
-        int size = initial_n_vector_.size();
-        for (int i = 0; i < size ; ++i)
+        int index;
+        for (int i = 0; i < initial_n_vector_.size() ; ++i)
         {
-          	if (initial_n_vector_[i] != 0.0)
+		index = sort_vector[i];
+          	if (initial_n_vector_[index] != 0.0)
                 {
-                        initial_n_ = initial_n_vector_[i];
-                        CalOneTree(i, time);
+                        initial_n_ = initial_n_vector_[index];
+                        CalOneTree(index, time);
                 }
         }
         for (vector<int>::size_type ix = 0; ix != node_visited_list_.size(); ++ix)

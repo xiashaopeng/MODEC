@@ -982,16 +982,14 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 							vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
 							F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 0.0);
 
-							Solver.TtaInitialize(F_mol);
+							Solver.TtaInitialize(F_mol.size());
 							SparseMatrixMCS TransMatrix(TtaMatrixDecay);
 							ModecNuclideLibrary.CalculateFlux(mode);
 
-							double re_time = 0;
 							for (int i = 1; i <= subtime; ++i)
 							{
-								re_time += time;
 								TransMatrix = TtaMatrixDecay + (TtaMatrixCrossSection + TtaMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
-								F_mol = Solver.TtaSolverForFeeding(TransMatrix, re_time);
+								Solver.TtaSolverForFeeding(TransMatrix, F_mol, time);
 
 								for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j)
 								{
@@ -1003,7 +1001,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 								flux_vector_.push_back(ModecNuclideLibrary.flux_);
 								power_vector_.push_back(ModecNuclideLibrary.specified_power_);
 
-								ConstructFissionYieldsSpMatForTta(); // 每个燃耗步调整裂变产物份额
+								ConstructFissionYieldsSpMatForTta(); // modify fission-yields at the end of each substep 
 							}
 						}
 					}
@@ -1196,16 +1194,14 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 					else if (solver_selection_ == 0)
 					{
 						if (if_constant_online_feeding_ == false) {
-							Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0]);
+							Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0].size());
 							SparseMatrixMCS TransMatrix(TtaMatrixDecay);
 							ModecNuclideLibrary.CalculateFlux(mode);
 							TransMatrix = TtaMatrixDecay + TtaMatrixCrossSection*(ModecNuclideLibrary.flux_ * 1.0e-24);
 
-							double re_time = 0;
 							for (int i = 1; i <= subtime; ++i)
 							{
-								re_time += time;
-								ModecNuclideLibrary.nuclide_library_vector_[0] = Solver.TtaSolver(TransMatrix, re_time);
+								Solver.TtaSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 
 								n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 								ModecNuclideLibrary.CalculateFlux(mode);
@@ -1224,25 +1220,25 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 							for (int i = 0; i < size_nucl; ++i)
 							{
 								int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-								TtaMatrixDecay.AddElementCCS(index, size_matrix, constant_feeding_rate_[i]);
-								tot_feeding_rate += constant_feeding_rate_[i];
+								//TtaMatrixDecay.AddElementCCS(index, size_matrix, constant_feeding_rate_[i]);
+								Solver.feed_nuclide_id_.push_back(index);
+								Solver.feed_rate_.push_back(constant_feeding_rate_[i]);	
+								tot_feeding_rate += abs(constant_feeding_rate_[i]);
 							}
-							TtaMatrixDecay.AddElementCCS(size_matrix, size_matrix, -tot_feeding_rate);
+							//TtaMatrixDecay.AddElementCCS(size_matrix, size_matrix, -tot_feeding_rate);
 							Solver.tot_feeding_rate_ = tot_feeding_rate;
 
 							vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
 							F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 0.0);
 
-							Solver.TtaInitialize(F_mol);
+							Solver.TtaInitialize(F_mol.size());
 							SparseMatrixMCS TransMatrix(TtaMatrixDecay);
 							ModecNuclideLibrary.CalculateFlux(mode);
 							TransMatrix = TtaMatrixDecay + TtaMatrixCrossSection*(ModecNuclideLibrary.flux_ * 1.0e-24);
 
-							double re_time = 0;
 							for (int i = 1; i <= subtime; ++i)
 							{
-								re_time += time;
-								F_mol = Solver.TtaSolver(TransMatrix, re_time);
+								Solver.TtaSolver(TransMatrix, F_mol, time);
 
 								for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j)
 								{
@@ -1457,17 +1453,15 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 					else if (solver_selection_ == 0)
 					{
 						if (if_constant_online_feeding_ == false) {
-							Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0]);
+							Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0].size());
 							SparseMatrixMCS TransMatrix;
 							ModecNuclideLibrary.CalculateFlux(mode);
 
-							double re_time = 0;
 							for (int i = 1; i <= subtime; ++i)
 							{
-								re_time += time;
 								TransMatrix = (TtaMatrixCrossSection + TtaMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24) + TtaMatrixDecay;
 
-								ModecNuclideLibrary.nuclide_library_vector_[0] = Solver.TtaSolver(TransMatrix, re_time);
+								Solver.TtaSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 
 								n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 
@@ -1488,26 +1482,27 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 							for (int i = 0; i < size_nucl; ++i)
 							{
 								int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-								TtaMatrixDecay.AddElementCCS(index, size_matrix, constant_feeding_rate_[i]);
-								tot_feeding_rate += constant_feeding_rate_[i];
+								//TtaMatrixDecay.AddElementCCS(index, size_matrix, constant_feeding_rate_[i]);
+								Solver.feed_nuclide_id_.push_back(index);
+								Solver.feed_rate_.push_back(constant_feeding_rate_[i]);
+
+								tot_feeding_rate += abs(constant_feeding_rate_[i]);
 							}
-							TtaMatrixDecay.AddElementCCS(size_matrix, size_matrix, -tot_feeding_rate);
+							//TtaMatrixDecay.AddElementCCS(size_matrix, size_matrix, -tot_feeding_rate);
 							Solver.tot_feeding_rate_ = tot_feeding_rate;
 
 							vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
 							F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 0.0);
 
-							Solver.TtaInitialize(F_mol);
-							SparseMatrixMCS TransMatrix(size_matrix + 1);
+							Solver.TtaInitialize(F_mol.size());
+							SparseMatrixMCS TransMatrix(TtaMatrixDecay);
 							ModecNuclideLibrary.CalculateFlux(mode);
 
-							double re_time = 0;
 							for (int i = 1; i <= subtime; ++i)
 							{
-								re_time += time;
 								TransMatrix = (TtaMatrixCrossSection + TtaMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24) + TtaMatrixDecay;
 
-								F_mol = Solver.TtaSolver(TransMatrix, re_time);
+								Solver.TtaSolverForFeeding(TransMatrix, F_mol, time);
 
 								for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j)
 								{
@@ -1761,18 +1756,14 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 					else if (solver_selection_ == 0)
 					{
 						if (if_constant_online_feeding_ == false) {
-							Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0]);
+							Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0].size());
 							SparseMatrixMCS TransMatrix(TtaMatrixDecay);
 							ModecNuclideLibrary.CalculateFlux(mode);
 
-
-							double re_time = 0;
 							for (int i = 1; i <= subtime; ++i)
 							{
-								re_time += time;
-
 								TransMatrix = TtaMatrixDecay + TtaMatrixCrossSection*(ModecNuclideLibrary.flux_ * 1.0e-24);
-								ModecNuclideLibrary.nuclide_library_vector_[0] = Solver.TtaSolver(TransMatrix, re_time);
+								Solver.TtaSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 
 								n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 								ModecNuclideLibrary.CalculateFlux(mode);
@@ -1791,26 +1782,24 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 							for (int i = 0; i < size_nucl; ++i)
 							{
 								int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-								TtaMatrixDecay.AddElementCCS(index, size_matrix, constant_feeding_rate_[i]);
-								tot_feeding_rate += constant_feeding_rate_[i];
+								//TtaMatrixDecay.AddElementCCS(index, size_matrix, constant_feeding_rate_[i]);
+								Solver.feed_nuclide_id_.push_back(index);
+								Solver.feed_rate_.push_back(constant_feeding_rate_[i]);
+								tot_feeding_rate += abs(constant_feeding_rate_[i]);
 							}
-							TtaMatrixDecay.AddElementCCS(size_matrix, size_matrix, -tot_feeding_rate);
 							Solver.tot_feeding_rate_ = tot_feeding_rate;
 
 							vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
 							F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 0.0);
 
-							Solver.TtaInitialize(F_mol);
+							Solver.TtaInitialize(F_mol.size());
 							SparseMatrixMCS TransMatrix(TtaMatrixDecay);
 							ModecNuclideLibrary.CalculateFlux(mode);
 
-							double re_time = 0;
 							for (int i = 1; i <= subtime; ++i)
 							{
-								re_time += time;
-
 								TransMatrix = TtaMatrixDecay + TtaMatrixCrossSection*(ModecNuclideLibrary.flux_ * 1.0e-24);
-								F_mol = Solver.TtaSolver(TransMatrix, re_time);
+								Solver.TtaSolverForFeeding(TransMatrix, F_mol, time);
 
 								for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j)
 								{
