@@ -739,7 +739,7 @@ void SolveTrans::TtaSolver(const SparseMatrixMCS &matrix, vector<double> &initia
 	initial_n_vector_.resize(initial_n_vector.size());
 	initial_n_vector_ = initial_n_vector;	
 
-	// ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
+	// initialize the sort vector
 	vector<int> sort_vector;
 	sort_vector.resize(initial_n_vector.size());
 	for (vector<int>::size_type ix = 0; ix != sort_vector.size(); ++ix)
@@ -750,7 +750,7 @@ void SolveTrans::TtaSolver(const SparseMatrixMCS &matrix, vector<double> &initia
 	matrix_col_val_ = matrix.col_val_;
 	matrix_diagonal_val_ = matrix.diagonal_val_;
 
-	// ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿sort_vector¿
+	// employ sort algrothim to sort the nuclide concentrations and store the sorting in sort_vector
 	double key;
 	int i, key_s;
 	for(int j = 1; j < initial_n_vector.size(); ++j)
@@ -860,13 +860,14 @@ void SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, vector<doubl
         long double dummy_initial_nuclide(tot_feeding_rate_ * time / epsilon_);
         initial_n_vector_.back() = dummy_initial_nuclide; // Î±ºËËØµÄ³õÊ¼Öµ
 
-	// ¿¿¿¿¿¿¿
+
+	// initialize the sort vector
 	vector<int> sort_vector;
 	sort_vector.resize(initial_n_vector.size());
 	for (vector<int>::size_type ix = 0; ix != sort_vector.size(); ++ix)
 		sort_vector[ix] = ix;
 
-	// ¿¿¿¿¿¿¿¿¿initial_n_vector¿¿¿¿¿¿¿¿¿¿¿sort_n_vector¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
+	// employ the sort algrothim to sort nuclide concentrations and store the sorting ing the sort_vector
 	double key;
 	int i, key_s;
 	for(int j = 1; j < initial_n_vector.size() - 1; ++j)
