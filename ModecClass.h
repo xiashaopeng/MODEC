@@ -1,131 +1,167 @@
+/**                                                                         
+*  @file     ModecClass.h                                                    
+*  @brief    MODECç¨‹åºæµç¨‹æ‰§è¡Œæ§åˆ¶æ¨¡å—                                       
+*  @author   å¤å°‘é¹                                                         
+*  @email    xiashaopeng@sinap.ac.cn                                       
+*  @version  1.0.0                                                        
+*  @date     01/30/2018                                                      
+*/
+
 #ifndef _RUN_MODEC_H
 #define _RUN_MODEC_H
-//#include <iostream>
-//#include <fstream>
 #include "SolveTrans.h"
-//#include "SparseMatrix.h"
-//#include "NuclList.h"
 #include "IntegralMethods.h"
+
+/**
+ * @brief MODECçš„åŸºç¡€ç±»
+ * åŒ…å«äº†ç¨‹åºæ‰§è¡Œéœ€è¦çš„æ‰€æœ‰å‚æ•°çš„ç”³æ˜å’Œå®šä¹‰ 
+*/
 class ModecClass
 {
 public: 
-	string info_message_; // ´æ´¢¾¯¸æ»òÕß´íÎóĞÅÏ¢
+	/**
+        * @name MODECè®¡ç®—åŸºæœ¬å‚æ•°
+        * @{
+        */
+	string info_message_; 							///< å­˜å‚¨è­¦å‘Šä¿¡æ¯æˆ–è€…é”™è¯¯ä¿¡æ¯
 
-	ifstream modec_inp_;							// ¶ÁÈ¡BURNÊäÈë¿¨
-	ofstream modec_out_;							// BURNÊä³öÁ÷
+	ifstream modec_inp_;							///< MODECè¾“å…¥æ–‡ä»¶æµ
+	ofstream modec_out_;							///< MODECè¾“å‡ºæ–‡ä»¶æµ
 
-	string work_direc_;//¹¤×÷ÎÄ¼ş¼Ğ
-	string input_filename_ = "modec.input";
-	string input_file_;			// È±Ê¡µÄBURNÊäÈë¿¨Ãû³Æ
+	string work_direc_;							///< å·¥ä½œæ–‡ä»¶å¤¹
+	string input_filename_ = "modec.input";					///< ç¼ºçœçš„è¾“å…¥å¡æ–‡ä»¶å
+	string input_file_;							///< ç¼ºçœçš„åŒ…å«å·¥ä½œæ–‡ä»¶å¤¹åœ°å€çš„è¾“å…¥å¡æ–‡ä»¶å
 
-	string output_filename_;  // Êä³öÎÄ¼şÃû£¬ÎªÊäÈë¿¨ÎÄ¼şÃû¼ÓÉÏÏàÓ¦ºó×º
-	string output_file_;		// È±Ê¡µÄBURNÊäÈë¿¨Ãû³Æ
-	string dens_unit_ = "mol";					// ºËËØÅ¨¶Èµ¥Î» mol ÎªÈ±Ê¡Öµ
-	vector<string> time_unit_; 					// Ê±¼äµ¥Î» d ÎªÈ±Ê¡Öµ
+	string output_filename_;  						///< è¾“å‡ºæ–‡ä»¶åã€‚å‘½ä»¤è§„åˆ™ä¸ºè¾“å…¥å¡æ–‡ä»¶ååŠ ä¸Šç›¸åº”åç¼€
+	string output_file_;							///< åŒ…å«å·¥ä½œæ–‡ä»¶å¤¹åœ°å€çš„è¾“å‡ºæ–‡ä»¶å
+	string dens_unit_ = "mol";						///< æ ¸ç´ æµ“åº¦å•ä½: mol ä¸ºç¼ºçœå€¼
+	vector<string> time_unit_; 						///< æ—¶é—´å•ä½
 
-
-	vector<double>  burnup_time_;				// Ã¿¸ö×Ó²½µÄÈ¼ºÄÊ±¼ä
-	vector<int> substep_;						// ×Ó²½¸öÊı
+	vector<double>  burnup_time_;						///< æ¯ä¸ªå­æ­¥çš„ç‡ƒè€—æ—¶é—´
+	vector<int> substep_;							///< å­æ­¥æ€»ä¸ªæ•°
 	
-	vector<int> evolution_mode_;					  // È¼ºÄÄ£Ê½£¬ 0£ºË¥±äÑİ»¯    1£º¶¨Í¨Á¿Ñİ»¯     2£º¶¨¹¦ÂÊÑİ»¯     3£º×Ô¶¨ÒåÁ÷³Ì
-	vector<double> evolution_value_;                  // ¶ÔÓ¦È¼ºÄÄ£Ê½£¬0.0´ú±í´¿Ë¥±ä£¬ÆäÓà¶ÔÓ¦Í¨Á¿(10)»òÕß¹¦ÂÊ(2)
+	vector<int> evolution_mode_;					  	///< ç‡ƒè€—æ¨¡å¼: 0ï¼šè¡°å˜æ¼”åŒ–  1ï¼šå®šé€šé‡æ¼”åŒ–  2ï¼šå®šåŠŸç‡æ¼”åŒ–  3ï¼šè‡ªå®šä¹‰æµç¨‹
+	vector<double> evolution_value_;                  			///< å¯¹åº”ç‡ƒè€—æ¨¡å¼ï¼Œå­˜å‚¨å¯¹åº”é€šé‡æˆ–è€…åŠŸç‡æ•°å€¼
 
-	int solver_selection_ = 1;						// 0: TTA·½·¨   1£ºCRAM·½·¨£¨È±Ê¡Öµ£©
-	int print_mode_ = 0;							// 0£ºÖ»Êä³ö×îºóÒ»²½µÄ½á¹û£¨È±Ê¡Öµ£©   1£ºÊä³öÃ¿¸ö×Ó²½µÄ½á¹û
-	string decay_library_name_, fission_yields_library_name_;
-	string depth_library_name_, couple_library_name_;					// Ë¥±äÊı¾İ¿âºÍÁÑ±ä²úÎïÊı¾İ¿âÃû³Æ
-	int lib_tag_; // Êı¾İ¿â±êÖ¾ lib_tag_ = 0´¿Ë¥±äÇÒ²ÉÓÃdecay_library_name_
-				  //           lib_tag_ = 1²ÉÓÃdepth_library_name_
-				  //           lib_tag_ = 2²ÉÓÃcouple_library_name_	
+	int solver_selection_ = 1;						///< ç‡ƒè€—æ±‚è§£å™¨ã€‚0: TTAæ–¹æ³•   1ï¼šCRAMæ–¹æ³•ï¼ˆç¼ºçœå€¼ï¼‰
+	/** @} */
 
-	vector<vector<double > >   n_vector_;  // ±£´æÃ¿¸öÈ¼ºÄ×Ó²½µÄ¼ÆËã½á¹û£¬ÓÃÓÚÊä³ö£»
-	vector<double >    power_vector_;  // ±£´æÃ¿¸öÈ¼ºÄ×Ó²½µÄ¹¦ÂÊ½á¹û£¬ÓÃÓÚÊä³ö£»
-	vector<double >    flux_vector_;  // ±£´æÃ¿¸öÈ¼ºÄ×Ó²½µÄÍ¨Á¿½á¹û£¬ÓÃÓÚÊä³ö£»
-
-
-	//  Èı¸öbool±äÁ¿£¬·Ö±ğÓÃÓÚÅĞ¶ÏÊÇ·ñ¼ÆËãkinf,ÁÑ±ä·´Ó¦ÂÊºÍÖĞ×ÓÎüÊÕÂÊ
-	int if_print_kinf_ = 0;
-	int if_print_fission_rate_ = 0;
-	int if_print_absorption_rate_ = 0;
-
-	vector<double> kinf_vector_;  // ±£´æÃ¿¸ö×Ó²½ÓÃ·´Ó¦ÂÊ¼ÆËãµÄkinf
-	vector<double> fission_rate_vector_;  // ±£´æÃ¿¸ö×Ó²½ÓÃ·´Ó¦ÂÊ¼ÆËãµÄÁÑ±ä·´Ó¦ÂÊ
-	vector<double> absorption_rate_vector_; // ±£´æÃ¿²½µÄ×ÜµÄÖĞ×ÓÎüÊÕÂÊ
-
-	/// ÅĞ¶ÏinputÊÇ·ñ¶ÁÈë³É¹¦ ///
-	int if_read_density_tag_ = 0;
-	int if_read_time_tag_ = 0;
-	int if_read_mode_tag_ = 0;
-
-	bool if_calculate_equilibrium_ = false;
-
-	bool if_print_activity_ = false;
-	bool if_print_decayenergy_ = false;
-	bool if_print_ampc_ = false;
-	bool if_print_wmpc_ = false;
-	bool if_print_toxicity_ = false; // Ôö¼ÓSv¶¾ĞÔÊä³öĞÅÏ¢
-
-	bool if_print_stockage_activity_ = false;
-	bool if_print_stockage_decayenergy_ = false;
-	bool if_print_stockage_ampc_ = false;
-	bool if_print_stockage_wmpc_ = false;
-	bool if_print_stockage_toxicity_ = false; // Ôö¼ÓSv¶¾ĞÔÊä³öĞÅÏ¢
-
-	//////////////////////////////   ºó´¦ÀíÏà¹Ø±äÁ¿²ÎÊı  /////////////////////////////////
-
-	bool if_continously_remove_ = false;				// ÊÇ·ñÓĞÁ¬Ğøºó´¦Àí£¬Èç¹ûÓĞÔòÎªÕæ£¬È±Ê¡ÖµÎªfalse
-
-	bool if_variable_feeding_ = false;					// ÊÇ·ñÓĞ·Ç¶¨³£ÌíÁÏÂÊ£¨ÌíÁÏÂÊËæÈ¼ÁÏĞÔÖÊ¶ø±ä£©ÔÚÏßÌíÁÏ£¬Èç¹ûÓĞÔòÎªÕæ£¬È±Ê¡ÖµÎªfalse
-
-	bool if_constant_online_feeding_ = false;			// ÊÇ·ñÓĞ¹Ì¶¨ÌíÁÏÂÊµÄÔÚÏßÌíÁÏ£¬Èç¹ûÓĞÔòÎªÕæ£¬È±Ê¡ÖµÎªfalse
-
-	bool if_keeping_eutectic_stable_ = false;		// ÊÇ·ñ±£³ÖÈÛÑÎ¹²ÈÛµãÎÈ¶¨£¬Èç¹û±£Ö¤ÔòÎªÕæ£¬È±Ê¡ÖµÎªfalse
-
-	bool if_tracking_stockage = false;			// ÊÇ·ñ×·×Ù¶ÑÍâÌáÈ¡ÁÑ±ä²úÎïºÍPa233µÄÑİ»¯£¬Èç¹û×·×ÙÔòÎªÕæ£¬È±Ê¡ÖµÎªfalse
-
-	int remove_group_number_;						// ºó´¦ÀíÔªËØ·Ö×é
-	vector<int> remove_group_vector_;					// ¸÷×éµÄºó´¦ÀíÔªËØ¸öÊı
-	vector<double> remove_rate_vector_;					// ¸÷×éºó´¦ÀíÔªËØµÄºó´¦ÀíËÙÂÊ
-	vector<vector<int> > remove_element_vector_;		// ¸÷×éºó´¦ÀíÔªËØµÄÔ­×ÓĞòÊı Z
-
-	//         ·Ç¶¨³£ÌíÁÏÂÊÏà¹Ø±äÁ¿ -- ¸ÃÄ£¿éÒÑÆúÓÃ       //
-	int variable_feeding_group_num_;						// Á¬ĞøÌíÁÏºËËØ·Ö×é
-	vector<int> variable_feeding_group_vector_;					// ¸÷×éµÄÌíÁÏºËËØ¸öÊı
-	double variable_feeding_ratio_;						// ¸÷×éÌíÁÏºËËØµÄ±ÈÀı·İ¶î
-	vector<vector<int> > variable_feeding_nuclide_id_vector_;		// ¸÷×éµÄÌíÁÏºËËØµÄID
-	vector<vector<double> > variable_feeding_nuclide_ratio_vector_;		// ¸÷×éµÄÌíÁÏºËËØµÄÅ¨¶È·İ¶î
+	/**
+        * @name ç‡ƒè€—æ•°æ®åº“å‚æ•°è®¾ç½®
+        * @{
+        */
+	int lib_tag_; 								///< æ•°æ®åº“æ ‡å¿—ï¼š 0:çº¯è¡°å˜ä¸”é‡‡ç”¨decay_library_name_; 1:é‡‡ç”¨depth_library_name_; 2:é‡‡ç”¨couple_library_name_	
+	string decay_library_name_, fission_yields_library_name_;		///< è¡°å˜æ•°æ®åº“åç§°å’Œè£‚å˜äº§ç‰©åº“åç§°
+	string depth_library_name_, couple_library_name_;			///< DEPTHæ•°æ®åº“åç§°å’ŒORIGEN-Sæ•°æ®åº“åç§°
+	/** @} */
 	
+	/**
+        * @name ç‡ƒè€—è®¡ç®—å­˜å‚¨æ•°ç»„
+        * @{
+        */
+	vector<vector<double > >   n_vector_;  					///< ä¿å­˜æ¯ä¸ªç‡ƒè€—å­æ­¥çš„è®¡ç®—ç»“æœï¼Œç”¨äºè¾“å‡ºï¼›
+	vector<double >    power_vector_; 					///< ä¿å­˜æ¯ä¸ªç‡ƒè€—å­æ­¥çš„åŠŸç‡ç»“æœï¼Œç”¨äºè¾“å‡ºï¼›
+	vector<double >    flux_vector_;  					///< ä¿å­˜æ¯ä¸ªç‡ƒè€—å­æ­¥çš„é€šé‡ç»“æœï¼Œç”¨äºè¾“å‡ºï¼›
 
-//////////////////// ¹Ì¶¨ÌíÁÏÂÊÏà¹Ø±äÁ¿ ////////////////////////////
-	int constant_feeding_calculation_methods_ = 2; // ÌíÁÏÂÊ³£ÊıµÄ¼ÆËã·½·¨£¬=1±íÊ¾²ÉÓÃÊıÖµ»ı·Ö·½·¨£»=2±íÊ¾²ÉÓÃÔö¹ã¾ØÕó·½·¨Çó½â
-	int constant_feeding_nuclide_num_;
-	vector<int> constant_feeding_nuclide_id_vector_;
-	vector<double> constant_feeding_rate_; // µ¥Î»Îªmol/s
+	vector<double> kinf_vector_; 	 					///< ä¿å­˜æ¯ä¸ªå­æ­¥è®¡ç®—çš„kinf
+	vector<double> fission_rate_vector_;  					///< ä¿å­˜æ¯ä¸ªå­æ­¥è®¡ç®—çš„ä¸­å­äº§ç”Ÿç‡
+	vector<double> absorption_rate_vector_; 				///< ä¿å­˜æ¯ä¸ªå­æ­¥çš„æ€»çš„ä¸­å­å¸æ”¶ç‡
+	/** @} */
 
-	vector<double > constant_feeding_vector_;
-	vector<double> gauss_legendre_weight_;		//¸ßË¹-ÀÕÈÃµÂÇó»ıÈ¨ÖØ
-	vector<double> gauss_legendre_abscissa_;		//¸ßË¹-ÀÕÈÃµÂÇó»ıµã
-	//vector<double> GL_weight_eql;		//¸ßË¹-ÀÕÈÃµÂÇó»ıÈ¨ÖØ
-	//vector<double> GL_abscissa_eql;	//¸ßË¹-ÀÕÈÃµÂÇó»ıµã
+	/**
+        * @name è¾“å‡ºæ ¼å¼å‚æ•°
+        * @{
+        */
+	int print_mode_ = 0;							///< è¾“å‡ºæ ¼å¼: 0ï¼šåªè¾“å‡ºæœ€åä¸€æ­¥çš„ç»“æœï¼ˆç¼ºçœå€¼ï¼‰   1ï¼šè¾“å‡ºæ¯ä¸ªå­æ­¥çš„ç»“æœ
 
+	int if_print_kinf_ = 0;							///< åˆ¤æ–­æ˜¯å¦è®¡ç®—kinfã€‚0: ä¸è®¡ç®—; 1: è®¡ç®—
+	int if_print_fission_rate_ = 0;						///< åˆ¤æ–­æ˜¯å¦è®¡ç®—ä¸­å­äº§ç”Ÿç‡ã€‚0: ä¸è®¡ç®—; 1:è®¡ç®—æ€»ä½“çš„ä¸­å­äº§ç”Ÿç‡å¹¶è¾“å‡ºåœ¨æµ“åº¦æ–‡ä»¶ä¸­; 2:è®¡ç®—æ¯ä¸ªæ ¸ç´ çš„ä¸­å­äº§ç”Ÿç‡å¹¶ä»¥å•ç‹¬æ–‡ä»¶è¾“å‡º
+	int if_print_absorption_rate_ = 0;					///< åˆ¤æ–­æ˜¯å¦è®¡ç®—ä¸­å­å¸æ”¶ç‡ã€‚0: ä¸è®¡ç®—; 1:è®¡ç®—æ€»ä½“çš„ä¸­å­å¸æ”¶ç‡å¹¶è¾“å‡ºåœ¨æµ“åº¦æ–‡ä»¶ä¸­; 2:è®¡ç®—æ¯ä¸ªæ ¸ç´ çš„ä¸­å­å¸æ”¶ç‡å¹¶ä»¥å•ç‹¬æ–‡ä»¶è¾“å‡º
+	int if_read_density_tag_ = 0;						///< åˆ¤æ–­æ˜¯å¦æˆåŠŸè¯»å…¥æ ¸ç´ å¯†åº¦
+	int if_read_time_tag_ = 0;						///< åˆ¤æ–­æ˜¯å¦æˆåŠŸè¯»å…¥ç‡ƒè€—æ—¶é—´
+	int if_read_mode_tag_ = 0;						///< åˆ¤æ–­æ˜¯å¦è¯»å…¥ç‡ƒè€—æ¨¡å¼
 
-	// ÖØ½ğÊôºËËØµÄ×ÜµÄÏûÊ§ÂÊ£¬°üÀ¨ÁÑ±äÏûÊ§ºÍºó´¦ÀíÒÆ³ıÏûÊ§£¬ÓÃÓÚÔÚÏßÌíÁÏÂÊµÄ¼ÆËã
-	double heavy_nuclide_loss_rate_ = 0; 
+	bool if_calculate_equilibrium_ = false;					///< åˆ¤æ–­æ˜¯å¦è®¡ç®—å¹³è¡¡æ€
 
-	// ÁÑ±ä²úÎïµÄ×ÜµÄ²úÉúÂÊ£¬ÓÃÁÑ±ä²úÉúÂÊ¼õÈ¥ºó´¦ÀíÒÆ³ıËÙÂÊ£¬ÓÃÓÚ±£Ö¤¹²ÈÛµãµÄ¼ÆËã£¬ÔÚLiÑÎÌåÏµÏÂ£¬±£Ö¤Li¼ÓÉÏÁÑ±ä²úÎïmolÅ¨¶È²»±ä
-	double fission_products_production_rate_ = 0; 
+	bool if_print_activity_ = false;					///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºæ”¾å°„æ€§æ´»åº¦ç»“æœ
+	bool if_print_decayenergy_ = false;					///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºè¡°å˜çƒ­ç»“æœ
+	bool if_print_ampc_ = false;						///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºAMPCæ¯’æ€§ç»“æœ
+	bool if_print_wmpc_ = false;						///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºWMPCæ¯’æ€§ç»“æœ
+	bool if_print_toxicity_ = false;					///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºSvæ¯’æ€§ç»“æœ
 
-	////////////  ĞŞÕıÁÑ±ä·İ¶îÏà¹Ø²ÎÊı  ////////////
+	bool if_print_stockage_activity_ = false;				///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºå †å¤–å­˜å‚¨åŒºæ ¸ç´ æ”¾å°„æ€§æ´»åº¦
+	bool if_print_stockage_decayenergy_ = false;				///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºå †å¤–å­˜å‚¨åŒºæ ¸ç´ è¡°å˜çƒ­
+	bool if_print_stockage_ampc_ = false;					///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºå †å¤–å­˜å‚¨åŒºæ ¸ç´ AMPCæ¯’æ€§
+	bool if_print_stockage_wmpc_ = false;					///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºå †å¤–å­˜å‚¨åŒºæ ¸ç´ WMPCæ¯’æ€§
+	bool if_print_stockage_toxicity_ = false;				///< åˆ¤æ–­æ˜¯å¦è¾“å‡ºå †å¤–å­˜å‚¨åŒºæ ¸ç´ Svæ¯’æ€§
+	/** @} */
+
+	/**
+	* @name åœ¨çº¿åå¤„ç†å‚æ•°è®¾ç½®
+	* @{
+	*/
+	bool if_continously_remove_ = false;					///< åˆ¤æ–­æ˜¯å¦æœ‰è¿ç»­åå¤„ç†ï¼Œå¦‚æœæœ‰åˆ™ä¸ºçœŸï¼Œç¼ºçœå€¼ä¸ºfalse
+	bool if_constant_online_feeding_ = false;				///< åˆ¤æ–­æ˜¯å¦æœ‰å›ºå®šæ·»æ–™ç‡çš„åœ¨çº¿æ·»æ–™ï¼Œå¦‚æœæœ‰åˆ™ä¸ºçœŸï¼Œç¼ºçœå€¼ä¸ºfalse
+
+	bool if_tracking_stockage = false;					///< åˆ¤æ–­æ˜¯å¦è¿½è¸ªå †å¤–å­˜å‚¨åŒºæ ¸ç´ çš„æ¼”åŒ–ï¼Œå¦‚æœè¿½è¸ªåˆ™ä¸ºçœŸï¼Œç¼ºçœå€¼ä¸ºfalse
+
+	int remove_group_number_;						///< åå¤„ç†å…ƒç´ ç»„æ•°
+	vector<int> remove_group_vector_;					///< å„ç»„çš„åå¤„ç†å…ƒç´ ä¸ªæ•°
+	vector<double> remove_rate_vector_;					///< å„ç»„åå¤„ç†å…ƒç´ çš„åå¤„ç†é€Ÿç‡
+	vector<vector<int> > remove_element_vector_;				///< å„ç»„åå¤„ç†å…ƒç´ çš„åŸå­åºæ•°Z
+	/** @} */
+
+	/**
+	* @name éå®šå¸¸åœ¨çº¿åå¤„ç†å‚æ•°è®¾ç½®(å·²å¼ƒç”¨)
+	* @{
+	*/
+	bool if_variable_feeding_ = false;					///< (å¼ƒç”¨)åˆ¤æ–­æ˜¯å¦æœ‰éå®šå¸¸æ·»æ–™ç‡ï¼ˆæ·»æ–™ç‡éšç‡ƒæ–™æ€§è´¨è€Œå˜ï¼‰åœ¨çº¿æ·»æ–™ï¼Œå¦‚æœæœ‰åˆ™ä¸ºçœŸï¼Œç¼ºçœå€¼ä¸ºfalse
+	bool if_keeping_eutectic_stable_ = false;				///< (å¼ƒç”¨)åˆ¤æ–­æ˜¯å¦ä¿æŒç†”ç›å…±ç†”ç‚¹ç¨³å®šï¼Œå¦‚æœä¿è¯åˆ™ä¸ºçœŸï¼Œç¼ºçœå€¼ä¸ºfalse
+	int variable_feeding_group_num_;					///< (å¼ƒç”¨)è¿ç»­æ·»æ–™æ ¸ç´ åˆ†ç»„
+	vector<int> variable_feeding_group_vector_;				///< (å¼ƒç”¨)å„ç»„çš„æ·»æ–™æ ¸ç´ ä¸ªæ•°
+	double variable_feeding_ratio_;						///< (å¼ƒç”¨)å„ç»„æ·»æ–™æ ¸ç´ çš„æ¯”ä¾‹ä»½é¢
+	vector<vector<int> > variable_feeding_nuclide_id_vector_;		///< (å¼ƒç”¨)å„ç»„çš„æ·»æ–™æ ¸ç´ çš„ID
+	vector<vector<double> > variable_feeding_nuclide_ratio_vector_;		///< (å¼ƒç”¨)å„ç»„çš„æ·»æ–™æ ¸ç´ çš„æµ“åº¦ä»½é¢
+	/** @} */
+
+	/**
+	* @name è¿ç»­æ·»æ–™å‚æ•°è®¾ç½®
+	* @{
+	*/
+	int constant_feeding_calculation_methods_ = 2; 				///< æ·»æ–™ç‡å¸¸æ•°çš„è®¡ç®—æ–¹æ³•: =1è¡¨ç¤ºé‡‡ç”¨æ•°å€¼ç§¯åˆ†æ–¹æ³•ï¼›=2è¡¨ç¤ºé‡‡ç”¨å¢å¹¿çŸ©é˜µæ–¹æ³•æ±‚è§£
+	int constant_feeding_nuclide_num_;					///< æ·»æ–™æ ¸ç´ æ•°é‡ 
+	vector<int> constant_feeding_nuclide_id_vector_;			///< æ·»æ–™æ ¸ç´ IDå‘é‡
+	vector<double> constant_feeding_rate_; 					///< æ·»æ–™ç‡å‘é‡ï¼Œå•ä½ä¸ºmol/s
+
+	vector<double > constant_feeding_vector_;				///< ç”¨äºæ•°å€¼ç§¯åˆ†æ³•çš„æ·»æ–™ç‡å‘é‡
+	vector<double> gauss_legendre_weight_;					///< é«˜æ–¯-å‹’è®©å¾·æ±‚ç§¯æƒé‡
+	vector<double> gauss_legendre_abscissa_;				///< é«˜æ–¯-å‹’è®©å¾·æ±‚ç§¯ç‚¹
+	/** @} */
+
+	/**
+	* @name ä¿®æ­£è£‚å˜äº§é¢å‚æ•°
+	* @{
+	*/
 	int nearest_neighbor_;
 	double yield_factor_;
+	/** @} */
 
+	/// é‡é‡‘å±æ ¸ç´ çš„æ€»çš„æ¶ˆå¤±ç‡ï¼ŒåŒ…æ‹¬è£‚å˜æ¶ˆå¤±å’Œåå¤„ç†ç§»é™¤æ¶ˆå¤±ï¼Œç”¨äºåœ¨çº¿æ·»æ–™ç‡çš„è®¡ç®—
+	double heavy_nuclide_loss_rate_ = 0; 
+
+	/// è£‚å˜äº§ç‰©çš„æ€»çš„äº§ç”Ÿç‡ï¼Œç”¨è£‚å˜äº§ç”Ÿç‡å‡å»åå¤„ç†ç§»é™¤é€Ÿç‡ï¼Œç”¨äºä¿è¯å…±ç†”ç‚¹çš„è®¡ç®—ï¼Œåœ¨Liç›ä½“ç³»ä¸‹ï¼Œä¿è¯LiåŠ ä¸Šè£‚å˜äº§ç‰©molæµ“åº¦ä¸å˜
+	double fission_products_production_rate_ = 0;
+ 
 public:
+	/**
+	* @brief MODECå¤–éƒ¨æ¥å£å‡½æ•° 
+	*/
 	void RunModec(int argc, char *argv[])
 	{
 		ModecInitial(argc,argv);		
 		BuildSpMat();
 
-		////////// ÏÈ¸ø³ö³õÊ¼Ê±¿ÌµÄÍ¨Á¿ºÍ¹¦ÂÊ //////////
+		////////// å…ˆç»™å‡ºåˆå§‹æ—¶åˆ»çš„é€šé‡å’ŒåŠŸç‡ //////////
 		if (evolution_mode_[0] == 1)
 		{
 			ModecNuclideLibrary.flux_ = evolution_value_[0];
@@ -155,30 +191,68 @@ public:
 	};
 
 
-//////////////////////////////////////////////////////   ModecClass Ë½ÓĞ³ÉÔ±º¯Êı¼°Ë½ÓĞ³ÉÔ±±äÁ¿   ////////////////////////////////////////////////////
 private:
-	SpMat TransMatrixDecay, TransMatrixCrossSection, TransMatrixFissionYields; // ºËËØÑİ»¯¼ÆËãÖĞ±ØĞë°üº¬Ë¥±ä£¬ºËËØ½ØÃæÎª¿ÉÑ¡Ïî£¬Èç¹ûÊÇ´¿Ë¥±äÔò²»ĞèÒª
+	/**
+	* @name åŸºäºCRAMæ–¹æ³•çš„ç‡ƒè€—æ–¹ç¨‹ç³»æ•°çŸ©é˜µ
+	* @{
+	*/
+	SpMat TransMatrixDecay;								///< ç”¨äºCRAMæ–¹æ³•çš„è¡°å˜ç³»æ•°å­˜å‚¨çŸ©é˜µ	
+	SpMat TransMatrixCrossSection;							///< ç”¨äºCRAMæ–¹æ³•çš„æˆªé¢æ•°æ®å­˜å‚¨çŸ©é˜µ
+	SpMat TransMatrixFissionYields; 						///< ç”¨äºCRAMæ–¹æ³•çš„è£‚å˜äº§ç‰©å­˜å‚¨çŸ©é˜µï¼ˆåªç”¨äºè¯»å–DepthLibï¼‰
 
-	SpMat TransMatrixReprocess, TransMatrixStockage; // µ±×·×Ù¶ÑÍâºËËØÑİ»¯Ê±£¬ĞèÒªÓÃµ½µÄÁ½¸ö¾ØÕó£¬·Ö±ğ¶ÔÓ¦´ó¾ØÕóµÄ×óÏÂºÍÓÒÏÂµÄ·Ö¿é¾ØÕó
+	SpMat TransMatrixReprocess;							///< ç”¨äºè¿½è¸ªåå¤„ç†çš„å †å¤–æ ¸ç´ æ¼”åŒ–æ—¶ï¼Œå­˜å‚¨å †å†…åˆ°å †å¤–çš„è¿ç§»çŸ©é˜µ
+	SpMat TransMatrixStockage;							///< ç”¨äºè¿½è¸ªåå¤„ç†çš„å †å¤–æ ¸ç´ æ¼”åŒ–æ—¶ï¼Œå­˜å‚¨å †å¤–è¡°å˜çš„è¡°å˜çŸ©é˜µ
+	/** @} */
 
-	SparseMatrixMCS TtaMatrixDecay, TtaMatrixCrossSection, TtaMatrixFissionYields; // ÓÃÓÚTTA·½·¨µÄÏ¡Êè¾ØÕó´æ´¢¸ñÊ½
+	/**
+	* @name åŸºäºTTAæ–¹æ³•çš„ç‡ƒè€—æ–¹ç¨‹ç³»æ•°çŸ©é˜µ
+	* @{
+	*/
+	SparseMatrixMCS TtaMatrixDecay;							///< ç”¨äºTTAæ–¹æ³•çš„è¡°å˜ç³»æ•°é‚»æ¥ç¨€ç–çŸ©é˜µ
+	SparseMatrixMCS TtaMatrixCrossSection;						///< ç”¨äºTTAæ–¹æ³•çš„æˆªé¢æ•°æ®é‚»æ¥ç¨€ç–çŸ©é˜µ
+	SparseMatrixMCS TtaMatrixFissionYields; 					///< ç”¨äºTTAæ–¹æ³•çš„è£‚å˜äº§é¢æ•°æ®é‚»æ¥ç¨€ç–çŸ©é˜µ
+	/** @} */
 
-	SolveTrans Solver; // Ñ¡ÔñÇó½âÆ÷£ºCRAM
+	SolveTrans Solver; 								///< é€‰æ‹©æ±‚è§£å™¨ï¼š0: TTA; 1: CRAM
 
-	NuclLibrary ModecNuclideLibrary; //Êı¾İ¿â½¨Á¢ 
+	NuclLibrary ModecNuclideLibrary; 						///< MODECç‡ƒè€—æ•°æ®åº“ 
+
 private:
+	/**
+	* @brief è¾“å…¥å¡è¯»å…¥æ¨¡å—
+	*/
 	void ModecInitial(int argc, char *argv[]);
+	
+	/**
+	* @brief ç‡ƒè€—è®¡ç®—æ§åˆ¶æ¨¡å—
+	*/
 	void ModecProcedure();
+
+	/**
+	* @brief ç»“æœè¾“å‡ºæ¨¡å—
+	*/
 	void ModecOutput();
 
+	/**
+	* @brief ç‡ƒè€—çŸ©é˜µæ„å»ºæ§åˆ¶æ¨¡å—
+	*/
 	void BuildSpMat();
 
+	/**
+	* @brief å¹³è¡¡æ€è®¡ç®—æ§åˆ¶æ¨¡å—
+	*/
 	void CalEquilibrium(int mode);
-
+	
+	/**
+	* @brief æ•´ä½“æµç¨‹æ§åˆ¶æ¨¡å—
+	*/
 	void Evolution(int mode, double time, int subtime);
 
-
-	void TransitionMatrixOutput(SpMat matrix) // Ö¸¶¨¾ØÕóÔªËØÊä³öµ½ÎÄ¼şÖĞ
+	/**
+	* @brief çŸ©é˜µè¾“å‡ºå‡½æ•°
+	* è¾“å‡ºç‡ƒè€—çŸ©é˜µåˆ°æ–‡ä»¶ä¸­ï¼Œç”¨äºç ”ç©¶ä¹‹ç”¨
+	*/
+	void TransitionMatrixOutput(SpMat matrix) // æŒ‡å®šçŸ©é˜µå…ƒç´ è¾“å‡ºåˆ°æ–‡ä»¶ä¸­
 	{
 		int matrix_dimension = ModecNuclideLibrary.nuclide_number_;
 
@@ -195,27 +269,80 @@ private:
 		exit(0);
 	}
 
-private: // ¾ØÕó¹¹½¨º¯Êı
+private: // çŸ©é˜µæ„å»ºå‡½æ•°
 
-	/////////////////////////////// ¶ÁÈ¡MODEC±¾ÉíÊı¾İ¿â //////////////////////////////////////////////
+	/**
+	* @name è¯»å–MODECè‡ªå¸¦æ•°æ®åº“æ„å»ºçŸ©é˜µ 
+	* @{
+	*/
+	
+	/**
+	* @brief è¯»å–è‡ªå¸¦æ•°æ®åº“æ„å»ºCRAMç”¨è¡°å˜çŸ©é˜µ
+	*/
 	void DecayToSpMat();
+	/**
+	* @brief è¯»å–è‡ªå¸¦æ•°æ®åº“æ„å»ºTTAç”¨è¡°å˜çŸ©é˜µ
+	*/
 	void DecayToSpMatForTta();
+	/**
+	* @brief è¯»å–TRITONè¾“å‡ºæ–‡ä»¶æ„å»ºCRAMç”¨ç‡ƒè€—çŸ©é˜µ
+	*/
 	void XSfromTriton();
+	/**
+	* @brief è¯»å–è‡ªå¸¦è£‚å˜ä»½é¢æ•°æ®åº“
+	*/
 	void CalculateEffectiveFissionYields();
 	
-	///////////////////////////////  ¶ÁÈ¡Depth³ÌĞòÊı¾İ¿â£ºORIGEN2/ORIGENS  /////////////////////////////////////
+	/** @} */
+
+	/**
+	* @name è¯»å–DEPTHæ•°æ®åº“æ„å»ºçŸ©é˜µ 
+	* @{
+	*/
+	/**
+	* @brief è¯»å–DEPTHæ•°æ®åº“æ„å»ºCRAMç”¨ç‡ƒè€—çŸ©é˜µ
+	*/
 	void ReadFromDepthLib();
-	void ReadFromDepthLibForTta(); // TTA·½·¨µÄ¾ØÕó¶ÁÈ¡
+	/**
+	* @brief è¯»å–DEPTHæ•°æ®åº“æ„å»ºTTAç”¨ç‡ƒè€—çŸ©é˜µ
+	*/
+	void ReadFromDepthLibForTta(); ///< TTAæ–¹æ³•çš„çŸ©é˜µè¯»å–
+	/**
+	* @brief è¯»å–DEPTHæ•°æ®åº“æ„å»ºCRAMç”¨è£‚å˜ä»½é¢çŸ©é˜µ
+	*/
 	void ConstructFissionYieldsSpMat();
+	/**
+	* @brief è¯»å–è‡ªå¸¦æ•°æ®åº“æ„å»ºTTAç”¨è£‚å˜ä»½é¢çŸ©é˜µ
+	*/
 	void ConstructFissionYieldsSpMatForTta();
+	/** @} */
 
-	///////////////////////////////  ¶ÁÈ¡CoupleÊı¾İ¿â£ºORIGENS  ///////////////////////////////////////////////
+	/**
+	* @name è¯»å–COUPLEåŠ å·¥çš„ORIGENSæ ¼å¼æ•°æ®åº“æ„å»ºçŸ©é˜µ 
+	* @{
+	*/
+	/**
+	* @brief è¯»å–COUPLEæ•°æ®åº“æ„å»ºCRAMç”¨ç‡ƒè€—çŸ©é˜µ
+	*/
 	void ReadFromCouple();
+	/**
+	* @brief è¯»å–COUPLEæ•°æ®åº“æ„å»ºTTAç”¨ç‡ƒè€—çŸ©é˜µ
+	*/
 	void ReadFromCoupleForTta();
+	/** @} */
 
-	//////////////////////////////////ÔÚÏßºó´¦ÀíºÍÁ¬ĞøÌíÁÏµÄ´¦ÀíÄ£¿é////////////////////////////////////////////////
+	/**
+	* @name åœ¨çº¿åå¤„ç†ä»¥åŠè¿ç»­æ·»æ–™å¤„ç†æ¨¡å— 
+	* @{
+	*/
+	/**
+	* @brief å¤„ç†åœ¨çº¿åå¤„ç†ç³»æ•°
+	*/
 	void AddOnlineReprocessingCoeffi();
+	/**
+	* @brief å¤„ç†è¿ç»­æ·»æ–™æ¨¡å—(å¼ƒç”¨)
+	*/
 	void ContinuouslyFeeding();
-
+	/** @} */
 };
 #endif
