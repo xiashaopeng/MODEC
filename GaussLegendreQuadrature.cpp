@@ -1,7 +1,7 @@
 #include"IntegralMethods.h"
 
-////////////////// 初始化静态成员变量，gauss_legendre_weight_和gauss_legendre_abscissa_ //////////////////////////////////
-int GaussLegendreQuadrature::GL_order = 10; // 默认值为10
+////////////////// 鍒濆鍖栭潤鎬佹垚鍛樺彉閲忥紝gauss_legendre_weight_鍜実auss_legendre_abscissa_ //////////////////////////////////
+int GaussLegendreQuadrature::GL_order = 10; // 榛樿鍊间负10
 
 vector<vector<double> > GaussLegendreQuadrature::Value_GL_weight()
 {

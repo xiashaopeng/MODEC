@@ -77,8 +77,8 @@ vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrix
 
 	int dim = N.size();
 
-	// ÅĞ¶ÏdimÊÇ·ñÎªÆæÊı£¬ÈôÎªÆæÊı£¬ÒâÎ¶×Å²ÉÓÃÁËÀûÓÃÔö¹ã¾ØÕó·½·¨Çó½â³£ÌíÁÏÂÊµÄ·½·¨
-	// ÈôÎªÅ¼Êı£¬Ôò²ÉÓÃÊıÖµ»ı·Ö·½·¨Çó½â³£ÌíÁÏÂÊÈ¼ºÄ·½³Ì
+	// åˆ¤æ–­dimæ˜¯å¦ä¸ºå¥‡æ•°ï¼Œè‹¥ä¸ºå¥‡æ•°ï¼Œæ„å‘³ç€é‡‡ç”¨äº†åˆ©ç”¨å¢å¹¿çŸ©é˜µæ–¹æ³•æ±‚è§£å¸¸æ·»æ–™ç‡çš„æ–¹æ³•
+	// è‹¥ä¸ºå¶æ•°ï¼Œåˆ™é‡‡ç”¨æ•°å€¼ç§¯åˆ†æ–¹æ³•æ±‚è§£å¸¸æ·»æ–™ç‡ç‡ƒè€—æ–¹ç¨‹
 	if (dim % 2 == 0)
 	{
 		vector<Complex > N_core(dim / 2);
@@ -127,7 +127,7 @@ vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrix
 	}
 	else
 	{
-		vector<Complex > N_core((dim + 1)/2); // ¶ÑĞ¾ºËËØÅ¨¶ÈÏòÁ¿¶àÒ»¸ö±íÊ¾ÌíÁÏÂÊµÄÎ±ºËËØ£¬ÆäÊıÖµµÈÓÚ1
+		vector<Complex > N_core((dim + 1)/2); // å †èŠ¯æ ¸ç´ æµ“åº¦å‘é‡å¤šä¸€ä¸ªè¡¨ç¤ºæ·»æ–™ç‡çš„ä¼ªæ ¸ç´ ï¼Œå…¶æ•°å€¼ç­‰äº1
 		//vector <Complex > N_temp(dim / 2);
 		vector <Complex > N_stockage((dim - 1) / 2);
 		vector <Complex > N_eol;
@@ -254,8 +254,8 @@ vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const 
 
 	int dim = N.size();
 
-	// ÅĞ¶ÏdimÊÇ·ñÎªÆæÊı£¬ÈôÎªÆæÊı£¬ÒâÎ¶×Å²ÉÓÃÁËÀûÓÃÔö¹ã¾ØÕó·½·¨Çó½â³£ÌíÁÏÂÊµÄ·½·¨
-	// ÈôÎªÅ¼Êı£¬Ôò²ÉÓÃÊıÖµ»ı·Ö·½·¨Çó½â³£ÌíÁÏÂÊÈ¼ºÄ·½³Ì
+	// åˆ¤æ–­dimæ˜¯å¦ä¸ºå¥‡æ•°ï¼Œè‹¥ä¸ºå¥‡æ•°ï¼Œæ„å‘³ç€é‡‡ç”¨äº†åˆ©ç”¨å¢å¹¿çŸ©é˜µæ–¹æ³•æ±‚è§£å¸¸æ·»æ–™ç‡çš„æ–¹æ³•
+	// è‹¥ä¸ºå¶æ•°ï¼Œåˆ™é‡‡ç”¨æ•°å€¼ç§¯åˆ†æ–¹æ³•æ±‚è§£å¸¸æ·»æ–™ç‡ç‡ƒè€—æ–¹ç¨‹
 	if (dim % 2 == 0)
 	{
 		vector<Complex > N_core(dim / 2);
@@ -305,7 +305,7 @@ vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const 
 	}
 	else
 	{
-		vector< Complex > N_core((dim + 1) / 2); // ¶ÑĞ¾ºËËØÅ¨¶ÈÏòÁ¿¶àÒ»¸ö±íÊ¾ÌíÁÏÂÊµÄÎ±ºËËØ£¬ÆäÊıÖµµÈÓÚ1
+		vector< Complex > N_core((dim + 1) / 2); // å †èŠ¯æ ¸ç´ æµ“åº¦å‘é‡å¤šä¸€ä¸ªè¡¨ç¤ºæ·»æ–™ç‡çš„ä¼ªæ ¸ç´ ï¼Œå…¶æ•°å€¼ç­‰äº1
 														//vector <Complex > N_temp(dim / 2);
 		vector < Complex > N_stockage((dim - 1) / 2);
 		vector < Complex > N_eol;

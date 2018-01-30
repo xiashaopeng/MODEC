@@ -2,8 +2,8 @@
 #include "NuclList.h"
 using namespace std;
 
-const double Electron_Coulomb = 1.6021766208E-19;//1.6021766208E-19; // µç×ÓµçÁ¿        Source: 2014 CODATA  
-const double Avogadro_Constant = 6.022140857E+23; // °¢·ü¼ÓµÂÂŞ³£Êı   Source: 2014 CODATA  
+const double Electron_Coulomb = 1.6021766208E-19;//1.6021766208E-19; // ç”µå­ç”µé‡        Source: 2014 CODATA  
+const double Avogadro_Constant = 6.022140857E+23; // é˜¿ä¼åŠ å¾·ç½—å¸¸æ•°   Source: 2014 CODATA  
 
 void NuclLibrary::CalculateFlux(int mode)
 {
@@ -18,7 +18,7 @@ void NuclLibrary::CalculateFlux(int mode)
 	if (mode == 1)
 	{
 		double flux = CalculatePowerKernel();
-		specified_power_ = flux_ * Electron_Coulomb * flux / 1.0e24 ; // ¼ÆËãÃ¿Ò»²½µÄ¹¦ÂÊ
+		specified_power_ = flux_ * Electron_Coulomb * flux / 1.0e24 ; // è®¡ç®—æ¯ä¸€æ­¥çš„åŠŸç‡
 	}
 	////////////////////////////////////////////////////
 
@@ -26,7 +26,7 @@ void NuclLibrary::CalculateFlux(int mode)
 	if (mode == 2)
 	{
 		double flux = CalculatePowerKernel();
-		flux_ = 1.0 / Electron_Coulomb * specified_power_/ flux*1.0e24; // ´Ë´¦×îºó*1.0e24µÄÔ­ÒòÊÇTRITON¸ø³öµÄ½ØÃæµ¥Î»Îªbarn
+		flux_ = 1.0 / Electron_Coulomb * specified_power_/ flux*1.0e24; // æ­¤å¤„æœ€å*1.0e24çš„åŸå› æ˜¯TRITONç»™å‡ºçš„æˆªé¢å•ä½ä¸ºbarn
 	}
 	////////////////////////////////////////////////////
 }
@@ -34,7 +34,7 @@ void NuclLibrary::CalculateFlux(int mode)
 double NuclLibrary::CalculatePowerKernel()
 {
 	double flux = 0.0;
-	for (unsigned int i = 0; i < nuclide_number_; ++i)// ´Ë´¦Ä¬ÈÏÎª²ÉÓÃmol×÷ÎªºËËØÅ¨¶Èµ¥Î»
+	for (unsigned int i = 0; i < nuclide_number_; ++i)// æ­¤å¤„é»˜è®¤ä¸ºé‡‡ç”¨molä½œä¸ºæ ¸ç´ æµ“åº¦å•ä½
 	{
 		if (nuclide_list_[i] == 902300)
 		{

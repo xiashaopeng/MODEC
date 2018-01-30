@@ -1,9 +1,9 @@
 #include "ModecClass.h"
 
-const double Avogadro_Constant = 6.022140857E+23; // °¢·ü¼ÓµÂÂŞ³£Êı   Source: 2014 CODATA  
-const double Electron_Coulomb = 1.6021766208E-19;//1.6021766208E-19; // µç×ÓµçÁ¿        Source: 2014 CODATA  
+const double Avogadro_Constant = 6.022140857E+23; // é˜¿ä¼åŠ å¾·ç½—å¸¸æ•°   Source: 2014 CODATA  
+const double Electron_Coulomb = 1.6021766208E-19;//1.6021766208E-19; // ç”µå­ç”µé‡        Source: 2014 CODATA  
 
-const double cutoff = 1e-50; // Å¨¶ÈµÄ½Ø¶ÏÎó²î
+const double cutoff = 1e-50; // æµ“åº¦çš„æˆªæ–­è¯¯å·®
 
 void ModecClass::ModecOutput()
 {
@@ -494,7 +494,7 @@ void ModecClass::ModecOutput()
 					}
 					else
 					{
-						modec_out_ << n_vector_[size_tot][i]*Avogadro_Constant*lamda[i] / (3.7e10); // µ¥Î»ÎªCi
+						modec_out_ << n_vector_[size_tot][i]*Avogadro_Constant*lamda[i] / (3.7e10); // å•ä½ä¸ºCi
 					}
 
 					modec_out_ << '\n';
@@ -512,7 +512,7 @@ void ModecClass::ModecOutput()
 						}
 						else
 						{
-							modec_out_ << n_vector_[j][i]*Avogadro_Constant*lamda[i] / (3.7e10); // µ¥Î»ÎªCi
+							modec_out_ << n_vector_[j][i]*Avogadro_Constant*lamda[i] / (3.7e10); // å•ä½ä¸ºCi
 						}
 					}
 					modec_out_ << '\n';
@@ -621,7 +621,7 @@ void ModecClass::ModecOutput()
 					}
 					else
 					{
-						modec_out_ << n_vector_[size_tot][i]*Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // ×ª»»³Éµ¥Î» W
+						modec_out_ << n_vector_[size_tot][i]*Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // è½¬æ¢æˆå•ä½ W
 					}
 
 					modec_out_ << '\n';
@@ -1141,7 +1141,7 @@ void ModecClass::ModecOutput()
 						}
 						else
 						{
-							modec_out_ << n_vector_[j][i]*Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24* flux_vector_[j]; // µ¥Î»ÎªCi
+							modec_out_ << n_vector_[j][i]*Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24* flux_vector_[j]; // å•ä½ä¸ºCi
 						}
 					}
 					modec_out_ << '\n';
@@ -1156,7 +1156,7 @@ void ModecClass::ModecOutput()
 			{
 				modec_out_.width(18);
 
-				modec_out_ << prod_neu[j]; // µ¥Î»ÎªCi
+				modec_out_ << prod_neu[j]; // å•ä½ä¸ºCi
 
 			}
 			modec_out_ << '\n';
@@ -1290,7 +1290,7 @@ void ModecClass::ModecOutput()
 			{
 				modec_out_.width(18);
 
-				modec_out_ << absorption_neu[j]; // µ¥Î»ÎªCi
+				modec_out_ << absorption_neu[j]; // å•ä½ä¸ºCi
 
 			}
 			modec_out_ << '\n';
@@ -1649,7 +1649,7 @@ void ModecClass::ModecOutput()
 						}
 						else
 						{
-							modec_out_ << n_vector_[size_tot][i + Nucl_size]*Avogadro_Constant*lamda[i] / (3.7e10); // µ¥Î»ÎªCi
+							modec_out_ << n_vector_[size_tot][i + Nucl_size]*Avogadro_Constant*lamda[i] / (3.7e10); // å•ä½ä¸ºCi
 						}
 
 						modec_out_ << '\n';
@@ -1667,7 +1667,7 @@ void ModecClass::ModecOutput()
 							}
 							else
 							{
-								modec_out_ << n_vector_[j][i + Nucl_size]*Avogadro_Constant*lamda[i] / (3.7e10); // µ¥Î»ÎªCi
+								modec_out_ << n_vector_[j][i + Nucl_size]*Avogadro_Constant*lamda[i] / (3.7e10); // å•ä½ä¸ºCi
 							}
 						}
 						modec_out_ << '\n';
@@ -1775,7 +1775,7 @@ void ModecClass::ModecOutput()
 						}
 						else
 						{
-							modec_out_ << n_vector_[size_tot][i + Nucl_size]*Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // ×ª»»³Éµ¥Î» W
+							modec_out_ << n_vector_[size_tot][i + Nucl_size]*Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // è½¬æ¢æˆå•ä½ W
 						}
 
 						modec_out_ << '\n';
@@ -2353,7 +2353,7 @@ void ModecClass::ModecOutput()
 					}
 					else
 					{
-						modec_out_ << n_vector_[1][i]*Avogadro_Constant*lamda[i] / (3.7e10); // µ¥Î»ÎªCi
+						modec_out_ << n_vector_[1][i]*Avogadro_Constant*lamda[i] / (3.7e10); // å•ä½ä¸ºCi
 					}
 
 					modec_out_ << '\n';
@@ -2423,7 +2423,7 @@ void ModecClass::ModecOutput()
 					}
 					else
 					{
-						modec_out_ << n_vector_[1][i]*Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // ×ª»»³Éµ¥Î» W
+						modec_out_ << n_vector_[1][i]*Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // è½¬æ¢æˆå•ä½ W
 					}
 
 					modec_out_ << '\n';

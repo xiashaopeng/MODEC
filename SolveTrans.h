@@ -8,11 +8,11 @@
 
 using namespace std;
 
-class SolveTrans /*È¼ºÄ·½³ÌµÄÇó½â·½·¨¡£¸÷ÖÖ·½·¨µÄÊµÏÖÔÚ¸ÃÀàÖĞÍê³É*/
+class SolveTrans /*ç‡ƒè€—æ–¹ç¨‹çš„æ±‚è§£æ–¹æ³•ã€‚å„ç§æ–¹æ³•çš„å®ç°åœ¨è¯¥ç±»ä¸­å®Œæˆ*/
 {
 public:
-	/* CRAM·½·¨Çó½âÈ¼ºÄ·½³Ì */
-	/* PFD ¡ª¡ª partial fraction decomposition ÊÇCRAM·½·¨µÄ×îÁ÷ĞĞµÄÊıÖµÊµÏÖËã·¨*/
+	/* CRAMæ–¹æ³•æ±‚è§£ç‡ƒè€—æ–¹ç¨‹ */
+	/* PFD â€”â€” partial fraction decomposition æ˜¯CRAMæ–¹æ³•çš„æœ€æµè¡Œçš„æ•°å€¼å®ç°ç®—æ³•*/
 	int pfd_cram_order = 16; ///< The order of the PFD scheme of CRAM
 
 	/**
@@ -34,26 +34,26 @@ public:
         */	
 	vector<double>PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, const vector < double > &N, const double &time);
 	
-	/* IPF ¡ª¡ª incomplete partial fractions ÊÇCRAM·½·¨ÊıÖµÊµÏÖµÄÒ»ÀàËã·¨*/
-	int ipf_cram_order = 16; // IPFµÄCRAM·½·¨µÄ½×Êı£¬Ä¬ÈÏ16½×
+	/* IPF â€”â€” incomplete partial fractions æ˜¯CRAMæ–¹æ³•æ•°å€¼å®ç°çš„ä¸€ç±»ç®—æ³•*/
+	int ipf_cram_order = 16; // IPFçš„CRAMæ–¹æ³•çš„é˜¶æ•°ï¼Œé»˜è®¤16é˜¶
 	vector<double>IpfCramSolver(const int &order, SpMat &matrix, const vector <double> &N, const double &time);
 	vector<double>IpfCramSolver(const int &order, SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, const vector < double > &N, const double &time);
 
 	//--------------------------------------------------------------------------------------//
 
 
-	/* -----------------------  TTA ¡ª¡ª ÏßĞÔ×ÓÁ´·¨µÄ×î»ù±¾·½·¨£¬¼´Bateman·½·¨ ---------------------------- */
+	/* -----------------------  TTA â€”â€” çº¿æ€§å­é“¾æ³•çš„æœ€åŸºæœ¬æ–¹æ³•ï¼Œå³Batemanæ–¹æ³• ---------------------------- */
 
 	long double cutoff_std_ = 1.0e-20; ///> The standard cutoff of TTA method
 	long double cutoff_ ; ///> cutoff_ = cutoff_std * (sum of initial nuclide concentrations)
-	long double initial_n_; // ºËËØ³õÊ¼Å¨¶È
-	vector< double >initial_n_vector_; //ºËËØ³õÊ¼Å¨¶È
-	vector< long double > end_n_; // ºËËØ½áÊøÅ¨¶È
+	long double initial_n_; // æ ¸ç´ åˆå§‹æµ“åº¦
+	vector< double >initial_n_vector_; //æ ¸ç´ åˆå§‹æµ“åº¦
+	vector< long double > end_n_; // æ ¸ç´ ç»“æŸæµ“åº¦
 
-	// ----------------- ±ê×¼TTA·½·¨£¨ÒÑÒÅÆú£©------------------- //
-	//vector<int> node_matirx_index_list_; // ´æ´¢½ÚµãºËËØÔÚ¾ØÕóÖĞµÄÁĞºÅ
-	//vector<int> node_chain_index_list_;  // ´æ´¢½ÚµãÔÚÁ´ÖĞµÄĞòºÅ
-	//vector<int> node_daughter_number_list_; // ´æ´¢½ÚµãµÄ×ÓºË¸öÊı
+	// ----------------- æ ‡å‡†TTAæ–¹æ³•ï¼ˆå·²é—å¼ƒï¼‰------------------- //
+	//vector<int> node_matirx_index_list_; // å­˜å‚¨èŠ‚ç‚¹æ ¸ç´ åœ¨çŸ©é˜µä¸­çš„åˆ—å·
+	//vector<int> node_chain_index_list_;  // å­˜å‚¨èŠ‚ç‚¹åœ¨é“¾ä¸­çš„åºå·
+	//vector<int> node_daughter_number_list_; // å­˜å‚¨èŠ‚ç‚¹çš„å­æ ¸ä¸ªæ•°
 	//vector<long double> node_beff_list_; // beff(0) ; beff(k+1) = beff(k)*lamdaji
 	//vector<vector<long double> > node_alpha_list_; // alpha(0) = exp(-lamda_0*t) ; alpha(k+1,i)=alpha(k,i)*1/(lamda_k+1 - lamda_i), alpha(k+1,k+1)
 	
@@ -61,8 +61,8 @@ public:
 	//vector<long double> chain_beff_list_;
 	//vector<vector<long double> > chain_alpha_list_;
 	
-	//----------- ²ÉÓÃÏÂÊöÎÄÕÂÖĞµÄĞÂµÄTTA·½·¨µÄµİÍÆ¹«Ê½ -----------//
-	//-- ¡°Improvements to the Transmutation Trajectory Analysis of depletion evaluation¡± ---//
+	//----------- é‡‡ç”¨ä¸‹è¿°æ–‡ç« ä¸­çš„æ–°çš„TTAæ–¹æ³•çš„é€’æ¨å…¬å¼ -----------//
+	//-- â€œImprovements to the Transmutation Trajectory Analysis of depletion evaluationâ€ ---//
 	stack<int> node_a_;
 	stack<vector<int> > node_b_;
 	stack<vector<vector<long double> > > node_gamma_;
@@ -74,12 +74,12 @@ public:
 	vector<long double> chain_lamda_list_;
 	//--------------------------------------------------------//
 
-	vector<int> node_visited_list_; // È¼ºÄÁ´ÉÏµÄºËËØ·ÃÎÊ´ÎÊı£¬Èç¹û·ÃÎÊÒ»´Î£¬Ôò¶ÔÓ¦Î»ÖÃµÄÔªËØ¼ÓÒ»¡£
+	vector<int> node_visited_list_; // ç‡ƒè€—é“¾ä¸Šçš„æ ¸ç´ è®¿é—®æ¬¡æ•°ï¼Œå¦‚æœè®¿é—®ä¸€æ¬¡ï¼Œåˆ™å¯¹åº”ä½ç½®çš„å…ƒç´ åŠ ä¸€ã€‚
 
-	//---------- Á¬ĞøÌíÁÏÏà¹Ø²ÎÊıÓëº¯Êı ------------------//
-	long double tot_feeding_rate_; // ×ÜÌíÁÏÂÊ£¬ÓÃÓÚÈ·¶¨¼ÙºËËØµÄ³õÊ¼ºËËØÅ¨¶È
-	long double epsilon_ = 1.0e-10; // ÓÃÓÚÌíÁÏÂÊ¼ÆËãÅ¨¶È¼«Ğ¡Á¿
-	vector< long double > feed_rate_; // ¸÷¸öºËËØÌíÁÏÂÊ
+	//---------- è¿ç»­æ·»æ–™ç›¸å…³å‚æ•°ä¸å‡½æ•° ------------------//
+	long double tot_feeding_rate_; // æ€»æ·»æ–™ç‡ï¼Œç”¨äºç¡®å®šå‡æ ¸ç´ çš„åˆå§‹æ ¸ç´ æµ“åº¦
+	long double epsilon_ = 1.0e-10; // ç”¨äºæ·»æ–™ç‡è®¡ç®—æµ“åº¦æå°é‡
+	vector< long double > feed_rate_; // å„ä¸ªæ ¸ç´ æ·»æ–™ç‡
 	vector<int> feed_nuclide_id_;
 
 	//SparseMatrixMCS matrix_;
@@ -136,7 +136,7 @@ public:
 		end_n_.resize(N.size());
 		initial_n_vector_ = N;
 
-		// ----------- ¼ÆËã½Ø¶ÏÅĞ¶Ï×¼Ôò ----------- //
+		// ----------- è®¡ç®—æˆªæ–­åˆ¤æ–­å‡†åˆ™ ----------- //
 		long double intial_tot = 0.0;
 		for (int i = 0; i < N.size(); ++i)
 		{

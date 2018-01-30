@@ -49,7 +49,7 @@ omit:
 			cunit[i] = line[8 + i];
 		}
 		units = atoi(cunit);
-		if (units == 6) // ÎÈ¶¨ºËËØ£¬Ã»ÓĞË¥±ä·´Ó¦
+		if (units == 6) // ç¨³å®šæ ¸ç´ ï¼Œæ²¡æœ‰è¡°å˜ååº”
 		{
 			modec_lib.getline(line2, 100, '\n');
 			modec_lib.getline(line3, 100, '\n');
@@ -102,9 +102,9 @@ omit:
 			chalfl[i] = line[14 + i];
 		}
 		halfl = atof(chalfl);
-		lamda = coeff / halfl; // Ë¥±ä³£Êılamda
+		lamda = coeff / halfl; // è¡°å˜å¸¸æ•°lamda
 		TransMatrixDecay.AddElement(_row, _row, -lamda);
-		ModecNuclideLibrary.nuclide_library_vector_[1][_row] = lamda; // ½«ºËËØµÄË¥±ä³£Êı´æ´¢µ½NuciLibÖĞ
+		ModecNuclideLibrary.nuclide_library_vector_[1][_row] = lamda; // å°†æ ¸ç´ çš„è¡°å˜å¸¸æ•°å­˜å‚¨åˆ°NuciLibä¸­
 
 		for (int i = 0; i < 13; ++i)
 		{
@@ -149,10 +149,10 @@ omit:
 		fa = atof(cdata);
 		if (fa != 0.0)
 		{
-			_col = ModecNuclideLibrary.GetNuclIndex((nuclid - 20040) / 10 * 10); // °¢¶û·¨Ë¥±äµÄ×ÓºËÎª»ùÌ¬
+			_col = ModecNuclideLibrary.GetNuclIndex((nuclid - 20040) / 10 * 10); // é˜¿å°”æ³•è¡°å˜çš„å­æ ¸ä¸ºåŸºæ€
 			double _val = lamda*fa;
 			TransMatrixDecay.AddElement(_col, _row, _val);
-			TransMatrixDecay.AddElement(alphaID, _row, _val); // °¢¶û·¨Ë¥±ä²úÉúµÄHe-4ÔªËØ
+			TransMatrixDecay.AddElement(alphaID, _row, _val); // é˜¿å°”æ³•è¡°å˜äº§ç”Ÿçš„He-4å…ƒç´ 
 		}
 
 		for (int i = 0; i < 13; ++i)
@@ -166,14 +166,14 @@ omit:
 			double _val = lamda*ft;
 			TransMatrixDecay.AddElement(_col, _row, _val);
 		}
-		/* µÚ2ÅÅË¥±äÊı¾İ */
+		/* ç¬¬2æ’è¡°å˜æ•°æ® */
 		modec_lib.getline(line2, 100, '\n');
 		for (int i = 0; i < 13; ++i)
 		{
 			cdata[i] = line2[14 + i];
 		}
 		fsf = atof(cdata);
-		ModecNuclideLibrary.nuclide_library_vector_[2][_row] = fsf; // ½«ºËËØµÄ×Ô·¢ÁÑ±ä·İ¶î´æ´¢µ½NuciLibÖĞ
+		ModecNuclideLibrary.nuclide_library_vector_[2][_row] = fsf; // å°†æ ¸ç´ çš„è‡ªå‘è£‚å˜ä»½é¢å­˜å‚¨åˆ°NuciLibä¸­
 
 		for (int i = 0; i < 13; ++i)
 		{
@@ -192,22 +192,22 @@ omit:
 			cdata[i] = line2[40 + i];
 		}
 		q = atof(cdata);
-		ModecNuclideLibrary.nuclide_library_vector_[3][_row] = q; // ½«ºËËØµÄË¥±äÈÈÏµÊı´æ´¢µ½NuciLibÖĞ
+		ModecNuclideLibrary.nuclide_library_vector_[3][_row] = q; // å°†æ ¸ç´ çš„è¡°å˜çƒ­ç³»æ•°å­˜å‚¨åˆ°NuciLibä¸­
 
 		for (int i = 0; i < 13; ++i)
 		{
 			cdata[i] = line2[66 + i];
 		}
 		ampc = atof(cdata);
-		ModecNuclideLibrary.nuclide_library_vector_[4][_row] = ampc; // ½«ºËËØµÄË¥±äÈÈÏµÊı´æ´¢µ½NuciLibÖĞ
+		ModecNuclideLibrary.nuclide_library_vector_[4][_row] = ampc; // å°†æ ¸ç´ çš„è¡°å˜çƒ­ç³»æ•°å­˜å‚¨åˆ°NuciLibä¸­
 
 		for (int i = 0; i < 13; ++i)
 		{
 			cdata[i] = line2[79 + i];
 		}
 		wmpc = atof(cdata);
-		ModecNuclideLibrary.nuclide_library_vector_[5][_row] = wmpc; // ½«ºËËØµÄË¥±äÈÈÏµÊı´æ´¢µ½NuciLibÖĞ
-												  /* µÚ3ÅÅË¥±äÊı¾İ */
+		ModecNuclideLibrary.nuclide_library_vector_[5][_row] = wmpc; // å°†æ ¸ç´ çš„è¡°å˜çƒ­ç³»æ•°å­˜å‚¨åˆ°NuciLibä¸­
+												  /* ç¬¬3æ’è¡°å˜æ•°æ® */
 		modec_lib.getline(line3, 100, '\n');
 		for (int i = 0; i < 13; ++i)
 		{
@@ -255,7 +255,7 @@ omit:
 			_col = ModecNuclideLibrary.GetNuclIndex((nuclid - 10040) / 10 * 10);
 			double _val = lamda*fba;
 			TransMatrixDecay.AddElement(_col, _row, _val);
-			TransMatrixDecay.AddElement(alphaID, _row, _val); // °¢¶û·¨Ë¥±ä²úÉúµÄHe-4ÔªËØ
+			TransMatrixDecay.AddElement(alphaID, _row, _val); // é˜¿å°”æ³•è¡°å˜äº§ç”Ÿçš„He-4å…ƒç´ 
 		}
 
 	}
@@ -316,7 +316,7 @@ omit:
 			cunit[i] = line[8 + i];
 		}
 		units = atoi(cunit);
-		if (units == 6) // ÎÈ¶¨ºËËØ£¬Ã»ÓĞË¥±ä·´Ó¦
+		if (units == 6) // ç¨³å®šæ ¸ç´ ï¼Œæ²¡æœ‰è¡°å˜ååº”
 		{
 			modec_lib.getline(line2, 100, '\n');
 			modec_lib.getline(line3, 100, '\n');
@@ -369,9 +369,9 @@ omit:
 			chalfl[i] = line[14 + i];
 		}
 		halfl = atof(chalfl);
-		lamda = coeff / halfl; // Ë¥±ä³£Êılamda
+		lamda = coeff / halfl; // è¡°å˜å¸¸æ•°lamda
 		TtaMatrixDecay.AddElementCCS(_row, _row, -lamda);
-		ModecNuclideLibrary.nuclide_library_vector_[1][_row] = lamda; // ½«ºËËØµÄË¥±ä³£Êı´æ´¢µ½NuciLibÖĞ
+		ModecNuclideLibrary.nuclide_library_vector_[1][_row] = lamda; // å°†æ ¸ç´ çš„è¡°å˜å¸¸æ•°å­˜å‚¨åˆ°NuciLibä¸­
 
 		for (int i = 0; i < 13; ++i)
 		{
@@ -416,10 +416,10 @@ omit:
 		fa = atof(cdata);
 		if (fa != 0.0)
 		{
-			_col = ModecNuclideLibrary.GetNuclIndex((nuclid - 20040) / 10 * 10); // °¢¶û·¨Ë¥±äµÄ×ÓºËÎª»ùÌ¬
+			_col = ModecNuclideLibrary.GetNuclIndex((nuclid - 20040) / 10 * 10); // é˜¿å°”æ³•è¡°å˜çš„å­æ ¸ä¸ºåŸºæ€
 			double _val = lamda*fa;
 			TtaMatrixDecay.AddElementCCS(_col, _row, _val);
-			TtaMatrixDecay.AddElementCCS(alphaID, _row, _val); // °¢¶û·¨Ë¥±ä²úÉúµÄHe-4ÔªËØ
+			TtaMatrixDecay.AddElementCCS(alphaID, _row, _val); // é˜¿å°”æ³•è¡°å˜äº§ç”Ÿçš„He-4å…ƒç´ 
 		}
 
 		for (int i = 0; i < 13; ++i)
@@ -433,14 +433,14 @@ omit:
 			double _val = lamda*ft;
 			TtaMatrixDecay.AddElementCCS(_col, _row, _val);
 		}
-		/* µÚ2ÅÅË¥±äÊı¾İ */
+		/* ç¬¬2æ’è¡°å˜æ•°æ® */
 		modec_lib.getline(line2, 100, '\n');
 		for (int i = 0; i < 13; ++i)
 		{
 			cdata[i] = line2[14 + i];
 		}
 		fsf = atof(cdata);
-		ModecNuclideLibrary.nuclide_library_vector_[2][_row] = fsf; // ½«ºËËØµÄ×Ô·¢ÁÑ±ä·İ¶î´æ´¢µ½NuciLibÖĞ
+		ModecNuclideLibrary.nuclide_library_vector_[2][_row] = fsf; // å°†æ ¸ç´ çš„è‡ªå‘è£‚å˜ä»½é¢å­˜å‚¨åˆ°NuciLibä¸­
 
 		for (int i = 0; i < 13; ++i)
 		{
@@ -459,22 +459,22 @@ omit:
 			cdata[i] = line2[40 + i];
 		}
 		q = atof(cdata);
-		ModecNuclideLibrary.nuclide_library_vector_[3][_row] = q; // ½«ºËËØµÄË¥±äÈÈÏµÊı´æ´¢µ½NuciLibÖĞ
+		ModecNuclideLibrary.nuclide_library_vector_[3][_row] = q; // å°†æ ¸ç´ çš„è¡°å˜çƒ­ç³»æ•°å­˜å‚¨åˆ°NuciLibä¸­
 
 		for (int i = 0; i < 13; ++i)
 		{
 			cdata[i] = line2[66 + i];
 		}
 		ampc = atof(cdata);
-		ModecNuclideLibrary.nuclide_library_vector_[4][_row] = ampc; // ½«ºËËØµÄË¥±äÈÈÏµÊı´æ´¢µ½NuciLibÖĞ
+		ModecNuclideLibrary.nuclide_library_vector_[4][_row] = ampc; // å°†æ ¸ç´ çš„è¡°å˜çƒ­ç³»æ•°å­˜å‚¨åˆ°NuciLibä¸­
 
 		for (int i = 0; i < 13; ++i)
 		{
 			cdata[i] = line2[79 + i];
 		}
 		wmpc = atof(cdata);
-		ModecNuclideLibrary.nuclide_library_vector_[5][_row] = wmpc; // ½«ºËËØµÄË¥±äÈÈÏµÊı´æ´¢µ½NuciLibÖĞ
-																	 /* µÚ3ÅÅË¥±äÊı¾İ */
+		ModecNuclideLibrary.nuclide_library_vector_[5][_row] = wmpc; // å°†æ ¸ç´ çš„è¡°å˜çƒ­ç³»æ•°å­˜å‚¨åˆ°NuciLibä¸­
+																	 /* ç¬¬3æ’è¡°å˜æ•°æ® */
 		modec_lib.getline(line3, 100, '\n');
 		for (int i = 0; i < 13; ++i)
 		{
@@ -522,7 +522,7 @@ omit:
 			_col = ModecNuclideLibrary.GetNuclIndex((nuclid - 10040) / 10 * 10);
 			double _val = lamda*fba;
 			TtaMatrixDecay.AddElementCCS(_col, _row, _val);
-			TtaMatrixDecay.AddElementCCS(alphaID, _row, _val); // °¢¶û·¨Ë¥±ä²úÉúµÄHe-4ÔªËØ
+			TtaMatrixDecay.AddElementCCS(alphaID, _row, _val); // é˜¿å°”æ³•è¡°å˜äº§ç”Ÿçš„He-4å…ƒç´ 
 		}
 
 	}
@@ -534,7 +534,7 @@ void ModecClass::XSfromTriton()
 {
 	int _row, _col;
 	double _val;
-	double ave_E; // Æ½¾ùÁÑ±äÄÜÁ¿
+	double ave_E; // å¹³å‡è£‚å˜èƒ½é‡
 	ifstream triton;
 	triton.open("TRITON.out");
 	if (!triton)
@@ -545,7 +545,7 @@ void ModecClass::XSfromTriton()
 	{
 		char buffer[256];
 		triton.getline(buffer, 256, '\n');
-		/********************* ¶ÁÈë¾ßÓĞÁÑ±ä·İ¶îµÄºËËØµÄÆ½¾ùÁÑ±äÄÜÁ¿£¬ÓÃÓÚÓĞĞ§ÁÑ±ä·İ¶îµÄ¼ÆËã *********************/
+		/********************* è¯»å…¥å…·æœ‰è£‚å˜ä»½é¢çš„æ ¸ç´ çš„å¹³å‡è£‚å˜èƒ½é‡ï¼Œç”¨äºæœ‰æ•ˆè£‚å˜ä»½é¢çš„è®¡ç®— *********************/
 		if ((buffer[10] == '*') && (buffer[12] == 'A'))
 		{
 			for (int i = 0; i < 30; ++i)
@@ -670,11 +670,11 @@ void ModecClass::CalculateEffectiveFissionYields()
 	fp_id.resize(num_fp);
 
 
-	////////// ÎªÓĞĞ§ÁÑ±ä·İ¶îvector¶¨Òå´æ´¢¿Õ¼ä ////////// 
+	////////// ä¸ºæœ‰æ•ˆè£‚å˜ä»½é¢vectorå®šä¹‰å­˜å‚¨ç©ºé—´ ////////// 
 	//ModecNuclideLibrary.effective_fission_yields_vector_.resize(num_nucl);
 	for (unsigned int i = 0; i < ModecNuclideLibrary.effective_fission_yields_vector_.size(); ++i)
 	{
-		ModecNuclideLibrary.effective_fission_yields_vector_[i].resize(num_fp + 1); // Áô³öµÚÒ»¸öÎ»ÖÃÓÃÀ´´æ´¢ÁÑ±äÄÜÁ¿
+		ModecNuclideLibrary.effective_fission_yields_vector_[i].resize(num_fp + 1); // ç•™å‡ºç¬¬ä¸€ä¸ªä½ç½®ç”¨æ¥å­˜å‚¨è£‚å˜èƒ½é‡
 	}
 	////////////////////////////////////////////////
 
@@ -727,7 +727,7 @@ void ModecClass::CalculateEffectiveFissionYields()
 		fissionyield.resize(num);
 		for (int i = 0; i < num; ++i)
 		{
-			fissionyield[i].resize(num_fp + 1); // fissionyield[i][0] ÓÃÀ´´æ´¢ÁÑ±äÄÜÁ¿
+			fissionyield[i].resize(num_fp + 1); // fissionyield[i][0] ç”¨æ¥å­˜å‚¨è£‚å˜èƒ½é‡
 		}
 
 		fissionyield[0][0] = energy;
@@ -933,11 +933,11 @@ void ModecClass::CalculateEffectiveFissionYields()
 	FYLib.close();
 
 	/////////////////////////////////////////////////////////////////////////////////
-	////////////  ½«ÁÑ±ä²úÎï·İ¶î¶ÔÓ¦µÄÁÑ±ä²úÎï²úÉúÏîÌîÈëÁÑ±ä¾ØÕóÖĞ		/////////////////
+	////////////  å°†è£‚å˜äº§ç‰©ä»½é¢å¯¹åº”çš„è£‚å˜äº§ç‰©äº§ç”Ÿé¡¹å¡«å…¥è£‚å˜çŸ©é˜µä¸­		/////////////////
 	for (unsigned int i = 0; i < ModecNuclideLibrary.effective_fission_yields_vector_.size(); ++i)
 	{
 		int _col = nucl_id[i];
-		double fissionXs = ModecNuclideLibrary.nuclide_library_vector_[7][i]; // Ä¸ºËÁÑ±ä½ØÃæ
+		double fissionXs = ModecNuclideLibrary.nuclide_library_vector_[7][i]; // æ¯æ ¸è£‚å˜æˆªé¢
 		for (unsigned int j = 0; j < fp_id.size(); ++j)
 		{
 			int _row = fp_id[j];

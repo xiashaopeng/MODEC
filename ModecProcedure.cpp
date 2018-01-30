@@ -32,7 +32,7 @@ void ModecClass::ModecProcedure()
 //
 //	double error_max;
 //
-//	if (mode == 0) // ´¿Ë¥±äÇé¿ö
+//	if (mode == 0) // çº¯è¡°å˜æƒ…å†µ
 //	{
 //		TransMatrixDecay.SymbolLUElimination();
 //		flux_vector_.push_back(0.0);
@@ -68,7 +68,7 @@ void ModecClass::ModecProcedure()
 //
 //				for (int F_i = 0; F_i < size_F; ++F_i)
 //				{
-//					ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+//					ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 //				}
 //			}
 //
@@ -95,9 +95,9 @@ void ModecClass::ModecProcedure()
 //		power_vector_.push_back(0.0);
 //	}
 //
-//	if (mode == 1) // ¶¨Í¨Á¿Çé¿ö
+//	if (mode == 1) // å®šé€šé‡æƒ…å†µ
 //	{
-//		if (lib_tag_ == 1) //lib_tag_ = 1ÒâÎ¶×Å¶ÁÈ¡depth_library_name_
+//		if (lib_tag_ == 1) //lib_tag_ = 1æ„å‘³ç€è¯»å–depth_library_name_
 //		{
 //			SpMat TransMatrix(TransMatrixDecay);
 //			ModecNuclideLibrary.CalculateFlux(mode);
@@ -140,7 +140,7 @@ void ModecClass::ModecProcedure()
 //
 //						for (int F_i = 0; F_i < size_F; ++F_i)
 //						{
-//							ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+//							ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 //						}
 //
 //					}
@@ -164,7 +164,7 @@ void ModecClass::ModecProcedure()
 //						n_vector_[1] = ModecNuclideLibrary.nuclide_library_vector_[0];
 //					}
 //
-//				ConstructFissionYieldsSpMat(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+//				ConstructFissionYieldsSpMat(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 //
 //				ModecNuclideLibrary.CalculateFlux(mode);
 //			}
@@ -172,7 +172,7 @@ void ModecClass::ModecProcedure()
 //			flux_vector_.push_back(ModecNuclideLibrary.flux_);
 //			power_vector_.push_back(ModecNuclideLibrary.specified_power_);
 //		}
-//		else // ÔÚ¶ÁÈ¡coupleÎÄ¼ş½¨Á¢È¼ºÄ¾ØÕóÊ±£¬²»ĞèÒª½øĞĞÁÑ±ä²úÎï·İ¶îµÄĞŞÕı£¬Ò²²»ĞèÒªTransMatrixFissionYields£¬ÆäÒÑ¾­°üº¬ÔÚxsÖĞ
+//		else // åœ¨è¯»å–coupleæ–‡ä»¶å»ºç«‹ç‡ƒè€—çŸ©é˜µæ—¶ï¼Œä¸éœ€è¦è¿›è¡Œè£‚å˜äº§ç‰©ä»½é¢çš„ä¿®æ­£ï¼Œä¹Ÿä¸éœ€è¦TransMatrixFissionYieldsï¼Œå…¶å·²ç»åŒ…å«åœ¨xsä¸­
 //		{
 //			SpMat TransMatrix;
 //			TransMatrix = TransMatrixDecay + TransMatrixCrossSection*(ModecNuclideLibrary.flux_ * 1.0e-24);
@@ -215,7 +215,7 @@ void ModecClass::ModecProcedure()
 //
 //						for (int F_i = 0; F_i < size_F; ++F_i)
 //						{
-//							ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+//							ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 //						}
 //
 //					}
@@ -246,9 +246,9 @@ void ModecClass::ModecProcedure()
 //		}
 //	}
 //
-//	if (mode == 2) //¶¨¹¦ÂÊÇé¿ö
+//	if (mode == 2) //å®šåŠŸç‡æƒ…å†µ
 //	{
-//		if (lib_tag_ == 1) //lib_tag_ = 1ÒâÎ¶×Å¶ÁÈ¡depth_library_name_
+//		if (lib_tag_ == 1) //lib_tag_ = 1æ„å‘³ç€è¯»å–depth_library_name_
 //		{
 //			SpMat TransMatrix(TransMatrixDecay);
 //			ModecNuclideLibrary.CalculateFlux(mode);
@@ -291,7 +291,7 @@ void ModecClass::ModecProcedure()
 //
 //					for (int F_i = 0; F_i < size_F; ++F_i)
 //					{
-//						ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+//						ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 //					}
 //
 //				}
@@ -315,7 +315,7 @@ void ModecClass::ModecProcedure()
 //					n_vector_[1] = ModecNuclideLibrary.nuclide_library_vector_[0];
 //				}
 //
-//				ConstructFissionYieldsSpMat(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+//				ConstructFissionYieldsSpMat(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 //
 //				ModecNuclideLibrary.CalculateFlux(1);
 //			}
@@ -323,7 +323,7 @@ void ModecClass::ModecProcedure()
 //			flux_vector_.push_back(ModecNuclideLibrary.flux_);
 //			power_vector_.push_back(ModecNuclideLibrary.specified_power_);
 //		}
-//		else // ÔÚ¶ÁÈ¡coupleÎÄ¼ş½¨Á¢È¼ºÄ¾ØÕóÊ±£¬²»ĞèÒª½øĞĞÁÑ±ä²úÎï·İ¶îµÄĞŞÕı£¬Ò²²»ĞèÒªTransMatrixFissionYields£¬ÆäÒÑ¾­°üº¬ÔÚxsÖĞ
+//		else // åœ¨è¯»å–coupleæ–‡ä»¶å»ºç«‹ç‡ƒè€—çŸ©é˜µæ—¶ï¼Œä¸éœ€è¦è¿›è¡Œè£‚å˜äº§ç‰©ä»½é¢çš„ä¿®æ­£ï¼Œä¹Ÿä¸éœ€è¦TransMatrixFissionYieldsï¼Œå…¶å·²ç»åŒ…å«åœ¨xsä¸­
 //		{
 //			SpMat TransMatrix;
 //			ModecNuclideLibrary.CalculateFlux(mode);
@@ -368,7 +368,7 @@ void ModecClass::ModecProcedure()
 //
 //					for (int F_i = 0; F_i < size_F; ++F_i)
 //					{
-//						ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+//						ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 //					}
 //
 //				}
@@ -414,9 +414,9 @@ void ModecClass::CalEquilibrium(int mode)
 	SpMat TransMatrix;
 	ModecNuclideLibrary.CalculateFlux(mode);
 	flux_vector_.push_back(ModecNuclideLibrary.flux_);
-	power_vector_.push_back(ModecNuclideLibrary.specified_power_); // ³õÊ¼Ê±¿ÌµÄÍ¨Á¿ºÍ¹¦ÂÊÍ³¼Æ
+	power_vector_.push_back(ModecNuclideLibrary.specified_power_); // åˆå§‹æ—¶åˆ»çš„é€šé‡å’ŒåŠŸç‡ç»Ÿè®¡
 
-	if (lib_tag_ == 1) //lib_tag_ = 1ÒâÎ¶×Å¶ÁÈ¡depth_library_name_
+	if (lib_tag_ == 1) //lib_tag_ = 1æ„å‘³ç€è¯»å–depth_library_name_
 	{
 		TransMatrix = TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
 	}
@@ -465,7 +465,7 @@ void ModecClass::CalEquilibrium(int mode)
 			error_max = 0;
 			for (int F_i = 0; F_i < size_F; ++F_i)
 			{
-				error_[F_i] = abs(F_mol[F_i] / n_vector_[1][F_i]); // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+				error_[F_i] = abs(F_mol[F_i] / n_vector_[1][F_i]); // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 				if (error_[F_i] > error_max)
 				{
 					error_max = error_[F_i];
@@ -480,7 +480,7 @@ void ModecClass::CalEquilibrium(int mode)
 			{
 				for (int F_i = 0; F_i < size_F; ++F_i)
 				{
-					n_vector_[1][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+					n_vector_[1][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 				}
 			}
 		}
@@ -488,7 +488,7 @@ void ModecClass::CalEquilibrium(int mode)
 		{
 			for (int F_i = 0; F_i < size_F; ++F_i)
 			{
-				n_vector_[1][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+				n_vector_[1][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 			}
 		}
 		
@@ -503,7 +503,7 @@ void ModecClass::CalEquilibrium(int mode)
 	
 	ModecNuclideLibrary.CalculateFlux(mode);
 	flux_vector_.push_back(ModecNuclideLibrary.flux_);
-	power_vector_.push_back(ModecNuclideLibrary.specified_power_);// Æ½ºâÌ¬µÄÍ¨Á¿ºÍ¹¦ÂÊÍ³¼Æ
+	power_vector_.push_back(ModecNuclideLibrary.specified_power_);// å¹³è¡¡æ€çš„é€šé‡å’ŒåŠŸç‡ç»Ÿè®¡
 }
 
 void ModecClass::Evolution(int mode, double time, int subtime)
@@ -515,7 +515,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 	switch (mode)
 	{
-		case 0:	// ´¿Ë¥±äÇé¿ö
+		case 0:	// çº¯è¡°å˜æƒ…å†µ
 		{
 			{
 				if (solver_selection_ == 1)
@@ -523,7 +523,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 					if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2)
 					{
 						int size_matrix = TransMatrixDecay.spmat_dimen_;
-						TransMatrixDecay.Resize(size_matrix + 1); // ¾ØÕóÔö¹ã
+						TransMatrixDecay.Resize(size_matrix + 1); // çŸ©é˜µå¢å¹¿
 						int size_nucl = constant_feeding_nuclide_id_vector_.size();
 						for (int i = 0; i < size_nucl; ++i)
 						{
@@ -628,7 +628,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 									for (int F_i = 0; F_i < size_F; ++F_i)
 									{
-										ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+										ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 									}
 
 								}
@@ -666,7 +666,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 									for (int F_i = 0; F_i < size_F; ++F_i)
 									{
-										ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+										ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 									}
 
 								}
@@ -694,8 +694,8 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 					}
 					else
 					{
-						// TTA·½·¨µÄÔÚÏßÌíÁÏÊµÏÖ 
-						// Ôö¼ÓÒ»¸öºËËØ£¬²¢¸øÈ¼ºÄÁÚ½Ó¾ØÕóÔö¼ÓÒ»Î¬
+						// TTAæ–¹æ³•çš„åœ¨çº¿æ·»æ–™å®ç° 
+						// å¢åŠ ä¸€ä¸ªæ ¸ç´ ï¼Œå¹¶ç»™ç‡ƒè€—é‚»æ¥çŸ©é˜µå¢åŠ ä¸€ç»´
 						int size_matrix(TtaMatrixDecay.spmat_dimen_);
 						TtaMatrixDecay.Resize(size_matrix + 1);
 
@@ -734,10 +734,10 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 			break;
 		}
 
-		case 1:	// ¶¨Í¨Á¿Çé¿ö
+		case 1:	// å®šé€šé‡æƒ…å†µ
 		{
 			{
-				if (lib_tag_ == 1) //lib_tag_ = 1ÒâÎ¶×Å¶ÁÈ¡DepthLib
+				if (lib_tag_ == 1) //lib_tag_ = 1æ„å‘³ç€è¯»å–DepthLib
 				{
 					if(solver_selection_ == 1)
 					{
@@ -782,7 +782,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 									flux_vector_.push_back(ModecNuclideLibrary.flux_);
 									power_vector_.push_back(ModecNuclideLibrary.specified_power_);
 
-									ConstructFissionYieldsSpMat(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+									ConstructFissionYieldsSpMat(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 								}
 							}
 							else
@@ -827,7 +827,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 									ModecNuclideLibrary.CalculateFlux(mode);
 									flux_vector_.push_back(ModecNuclideLibrary.flux_);
 									power_vector_.push_back(ModecNuclideLibrary.specified_power_);
-									ConstructFissionYieldsSpMat(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+									ConstructFissionYieldsSpMat(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 								}
 							}
 
@@ -875,7 +875,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 										for (int F_i = 0; F_i < size_F; ++F_i)
 										{
-											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 										}
 
 									}
@@ -912,7 +912,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 										for (int F_i = 0; F_i < size_F; ++F_i)
 										{
-											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 										}
 
 									}
@@ -924,7 +924,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 								flux_vector_.push_back(ModecNuclideLibrary.flux_);
 								power_vector_.push_back(ModecNuclideLibrary.specified_power_);
 
-								ConstructFissionYieldsSpMat(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+								ConstructFissionYieldsSpMat(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 							}
 
 						}
@@ -950,13 +950,13 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 								flux_vector_.push_back(ModecNuclideLibrary.flux_);
 								power_vector_.push_back(ModecNuclideLibrary.specified_power_);
 
-								ConstructFissionYieldsSpMatForTta(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+								ConstructFissionYieldsSpMatForTta(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 							}
 						}
 						else
 						{
-							// TTA·½·¨µÄÔÚÏßÌíÁÏÊµÏÖ 
-							// Ôö¼ÓÒ»¸öºËËØ£¬²¢¸øÈ¼ºÄÁÚ½Ó¾ØÕóÔö¼ÓÒ»Î¬
+							// TTAæ–¹æ³•çš„åœ¨çº¿æ·»æ–™å®ç° 
+							// å¢åŠ ä¸€ä¸ªæ ¸ç´ ï¼Œå¹¶ç»™ç‡ƒè€—é‚»æ¥çŸ©é˜µå¢åŠ ä¸€ç»´
 							int size_matrix(TtaMatrixDecay.spmat_dimen_);
 							TtaMatrixDecay.Resize(size_matrix + 1);
 							TtaMatrixCrossSection.Resize(size_matrix + 1);
@@ -1007,7 +1007,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 					}
 
 				}
-				else // ÔÚ¶ÁÈ¡coupleÎÄ¼ş½¨Á¢È¼ºÄ¾ØÕóÊ±£¬²»ĞèÒª½øĞĞÁÑ±ä²úÎï·İ¶îµÄĞŞÕı£¬Ò²²»ĞèÒªTransMatrixFissionYields£¬ÆäÒÑ¾­°üº¬ÔÚxsÖĞ
+				else // åœ¨è¯»å–coupleæ–‡ä»¶å»ºç«‹ç‡ƒè€—çŸ©é˜µæ—¶ï¼Œä¸éœ€è¦è¿›è¡Œè£‚å˜äº§ç‰©ä»½é¢çš„ä¿®æ­£ï¼Œä¹Ÿä¸éœ€è¦TransMatrixFissionYieldsï¼Œå…¶å·²ç»åŒ…å«åœ¨xsä¸­
 				{
 					if (solver_selection_ == 1)
 					{
@@ -1100,7 +1100,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 						{
 							SpMat TransMatrix;
 							TransMatrix = TransMatrixDecay + TransMatrixCrossSection*(ModecNuclideLibrary.flux_ * 1.0e-24);
-							//TransitionMatrixOutput(TransMatrixDecay*time); // Êä³ö¾ØÕóµÄ¸÷¸öÔªËØµ½ÎÄ¼şÖĞ
+							//TransitionMatrixOutput(TransMatrixDecay*time); // è¾“å‡ºçŸ©é˜µçš„å„ä¸ªå…ƒç´ åˆ°æ–‡ä»¶ä¸­
 
 							TransMatrix.SymbolLUElimination();
 							ModecNuclideLibrary.CalculateFlux(mode);
@@ -1140,7 +1140,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 										for (int F_i = 0; F_i < size_F; ++F_i)
 										{
-											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 										}
 
 									}
@@ -1177,7 +1177,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 										for (int F_i = 0; F_i < size_F; ++F_i)
 										{
-											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 										}
 
 									}
@@ -1257,7 +1257,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 			break;
 		}
 	
-		case 2:	//¶¨¹¦ÂÊÇé¿ö
+		case 2:	//å®šåŠŸç‡æƒ…å†µ
 		{		
 			{
 				if (lib_tag_ == 1)
@@ -1304,7 +1304,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 									ModecNuclideLibrary.CalculateFlux(mode);
 									flux_vector_.push_back(ModecNuclideLibrary.flux_);
 									power_vector_.push_back(ModecNuclideLibrary.specified_power_);
-									ConstructFissionYieldsSpMat(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+									ConstructFissionYieldsSpMat(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 								}
 							}
 							else
@@ -1351,7 +1351,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 									ModecNuclideLibrary.CalculateFlux(mode);
 									flux_vector_.push_back(ModecNuclideLibrary.flux_);
 									power_vector_.push_back(ModecNuclideLibrary.specified_power_);
-									ConstructFissionYieldsSpMat(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+									ConstructFissionYieldsSpMat(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 								}
 							}
 
@@ -1398,7 +1398,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 										for (int F_i = 0; F_i < size_F; ++F_i)
 										{
-											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 										}
 
 									}
@@ -1435,7 +1435,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 										for (int F_i = 0; F_i < size_F; ++F_i)
 										{
-											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 										}
 
 									}
@@ -1445,7 +1445,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 								ModecNuclideLibrary.CalculateFlux(mode);
 								flux_vector_.push_back(ModecNuclideLibrary.flux_);
 								power_vector_.push_back(ModecNuclideLibrary.specified_power_);
-								ConstructFissionYieldsSpMat(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+								ConstructFissionYieldsSpMat(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 							}
 
 						}
@@ -1468,7 +1468,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 								ModecNuclideLibrary.CalculateFlux(mode);
 								flux_vector_.push_back(ModecNuclideLibrary.flux_);
 								power_vector_.push_back(ModecNuclideLibrary.specified_power_);
-								ConstructFissionYieldsSpMatForTta(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+								ConstructFissionYieldsSpMatForTta(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 							}
 						}
 						else
@@ -1515,13 +1515,13 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 								ModecNuclideLibrary.CalculateFlux(mode);
 								flux_vector_.push_back(ModecNuclideLibrary.flux_);
 								power_vector_.push_back(ModecNuclideLibrary.specified_power_);
-								ConstructFissionYieldsSpMatForTta(); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+								ConstructFissionYieldsSpMatForTta(); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 							}
 						}
 					}
 
 				}
-				else// ÔÚ¶ÁÈ¡coupleÎÄ¼ş½¨Á¢È¼ºÄ¾ØÕóÊ±£¬²»ĞèÒª½øĞĞÁÑ±ä²úÎï·İ¶îµÄĞŞÕı£¬Ò²²»ĞèÒªTransMatrixFissionYields£¬ÆäÒÑ¾­°üº¬ÔÚxsÖĞ
+				else// åœ¨è¯»å–coupleæ–‡ä»¶å»ºç«‹ç‡ƒè€—çŸ©é˜µæ—¶ï¼Œä¸éœ€è¦è¿›è¡Œè£‚å˜äº§ç‰©ä»½é¢çš„ä¿®æ­£ï¼Œä¹Ÿä¸éœ€è¦TransMatrixFissionYieldsï¼Œå…¶å·²ç»åŒ…å«åœ¨xsä¸­
 				{
 					if (solver_selection_ == 1)
 					{
@@ -1701,7 +1701,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 										for (int F_i = 0; F_i < size_F; ++F_i)
 										{
-											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 										}
 
 									}
@@ -1738,7 +1738,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 
 										for (int F_i = 0; F_i < size_F; ++F_i)
 										{
-											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // ½«ÌíÁÏÂÊ³£ÊıµÄ¹±Ï×¼ÓÈë×ÜµÄºËËØÅ¨¶ÈÖĞÈ¥
+											ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // å°†æ·»æ–™ç‡å¸¸æ•°çš„è´¡çŒ®åŠ å…¥æ€»çš„æ ¸ç´ æµ“åº¦ä¸­å»
 										}
 
 									}
@@ -1749,7 +1749,7 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 								flux_vector_.push_back(ModecNuclideLibrary.flux_);
 								power_vector_.push_back(ModecNuclideLibrary.specified_power_);
 
-								//ConstructFissionYieldsSpMat(TransMatrixFissionYields, ModecNuclideLibrary); // Ã¿¸öÈ¼ºÄ²½µ÷ÕûÁÑ±ä²úÎï·İ¶î
+								//ConstructFissionYieldsSpMat(TransMatrixFissionYields, ModecNuclideLibrary); // æ¯ä¸ªç‡ƒè€—æ­¥è°ƒæ•´è£‚å˜äº§ç‰©ä»½é¢
 							}
 
 						}

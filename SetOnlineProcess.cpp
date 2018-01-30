@@ -2,7 +2,7 @@
 
 using namespace std;
 
-//////////////////////////////////   ÔÚÏßºó´¦ÀíµÄÏµÊý¼ÓÈë   /////////////////////////////////////////////////
+//////////////////////////////////   åœ¨çº¿åŽå¤„ç†çš„ç³»æ•°åŠ å…¥   /////////////////////////////////////////////////
 void ModecClass::AddOnlineReprocessingCoeffi()
 {
 	if (solver_selection_ == 1)
@@ -29,7 +29,7 @@ void ModecClass::AddOnlineReprocessingCoeffi()
 					}
 					if (if_variable_feeding_ == true && ID >= 90)
 					{
-						int feed_size = variable_feeding_nuclide_id_vector_.size(); // Ó¦¸ÃµÈÓÚ2
+						int feed_size = variable_feeding_nuclide_id_vector_.size(); // åº”è¯¥ç­‰äºŽ2
 						for (int a = 0; a < feed_size; ++a)
 						{
 							double feedratio;
@@ -83,7 +83,7 @@ void ModecClass::AddOnlineReprocessingCoeffi()
 					}
 					if (if_variable_feeding_ == true && ID >= 90)
 					{
-						int feed_size = variable_feeding_nuclide_id_vector_.size(); // Ó¦¸ÃµÈÓÚ2
+						int feed_size = variable_feeding_nuclide_id_vector_.size(); // åº”è¯¥ç­‰äºŽ2
 						for (int a = 0; a < feed_size; ++a)
 						{
 							double feedratio;
@@ -116,10 +116,10 @@ void ModecClass::AddOnlineReprocessingCoeffi()
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////   ÔÚÏßÌíÁÏÏµÊýµÄ¼ÓÈë¿¼ÂÇ   /////////////////////////////////////////////////
+//////////////////////////////////   åœ¨çº¿æ·»æ–™ç³»æ•°çš„åŠ å…¥è€ƒè™‘   /////////////////////////////////////////////////
 
-/* 1. ½«ÌíÁÏÂÊ³£Êý×ª»»³ÉÆä´ÎÏî£¨½áºÏÒºÌ¬ÈÛÑÎ¶ÑÖØ½ðÊôÅ¨¶ÈÊØºãÒÔ¼°ÁÙ½çÔËÐÐµÄÌØµã£©*/
-/*    ÌíÁÏºËËØµÄ×ÜÌíÁÏÂÊµÈÓÚÏµÍ³µÄ×ÜµÄÁÑ±äÂÊ*/
+/* 1. å°†æ·»æ–™çŽ‡å¸¸æ•°è½¬æ¢æˆå…¶æ¬¡é¡¹ï¼ˆç»“åˆæ¶²æ€ç†”ç›å †é‡é‡‘å±žæµ“åº¦å®ˆæ’ä»¥åŠä¸´ç•Œè¿è¡Œçš„ç‰¹ç‚¹ï¼‰*/
+/*    æ·»æ–™æ ¸ç´ çš„æ€»æ·»æ–™çŽ‡ç­‰äºŽç³»ç»Ÿçš„æ€»çš„è£‚å˜çŽ‡*/
 
 void ModecClass::ContinuouslyFeeding()
 {
@@ -136,12 +136,12 @@ void ModecClass::ContinuouslyFeeding()
 		Li7ratio = Li7con / (Li7con + Li6con);
 	}
 
-	int size = ModecNuclideLibrary.nuclide_library_vector_[7].size(); // ÁÑ±ä½ØÃæÏòÁ¿
+	int size = ModecNuclideLibrary.nuclide_library_vector_[7].size(); // è£‚å˜æˆªé¢å‘é‡
 	for (int i = 0; i < size; ++i)
 	{
 		if (ModecNuclideLibrary.nuclide_library_vector_[7][i] > 0.0)
 		{
-			int feed_size = variable_feeding_nuclide_id_vector_.size(); // Ó¦¸ÃµÈÓÚ2
+			int feed_size = variable_feeding_nuclide_id_vector_.size(); // åº”è¯¥ç­‰äºŽ2
 			for (int a = 0; a < feed_size; ++a)
 			{
 				double feedratio;
@@ -164,7 +164,7 @@ void ModecClass::ContinuouslyFeeding()
 
 			if (if_keeping_eutectic_stable_ == true)
 			{
-				TransMatrixCrossSection.AddElement(Li7Index, i, -ModecNuclideLibrary.nuclide_library_vector_[7][i] * 2 * Li7ratio); // ÈÏÎªÁÑ±ä²ú¶îÎª2
+				TransMatrixCrossSection.AddElement(Li7Index, i, -ModecNuclideLibrary.nuclide_library_vector_[7][i] * 2 * Li7ratio); // è®¤ä¸ºè£‚å˜äº§é¢ä¸º2
 				TransMatrixCrossSection.AddElement(Li6Index, i, -ModecNuclideLibrary.nuclide_library_vector_[7][i] * 2 * (1 - Li7ratio));
 			}
 		}

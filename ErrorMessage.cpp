@@ -11,7 +11,7 @@ void InfoMessage::ErrorMessage(string message, int mode)
 {
 	if (mode == 0)
 	{
-		//message = "¾¯¸æ£º" + message;
+		//message = "è­¦å‘Šï¼š" + message;
 		warning_info.push_back(message);
 		return;
 	}
@@ -30,7 +30,7 @@ void InfoMessage::EndInfo()
 	char buffer_d[256];
 	char buffer_t[256];
 
-	///////////////////// »ñÈ¡³ÌĞòÖ´ĞĞÈÕÆÚ ////////////////////////
+	///////////////////// è·å–ç¨‹åºæ‰§è¡Œæ—¥æœŸ ////////////////////////
 #ifdef _WIN32||defined _WIN64
 	time_t local_time = time(nullptr);
 #else
@@ -41,7 +41,7 @@ void InfoMessage::EndInfo()
 	//////////////////////////////////////////////////////////////
 
 
-	///////////////////// »ñÈ¡¹¤×÷Ä¿Â¼ ///////////////////////////
+	///////////////////// è·å–å·¥ä½œç›®å½• ///////////////////////////
 #ifdef _WIN32||defined _WIN64
 	_getcwd(buffer_d, 256);
 #else
@@ -54,7 +54,7 @@ void InfoMessage::EndInfo()
 	int size1 = warning_info.size();
 	//int size2 = error_info.size();
 	LogFile << " ----------------------------------------------------------" << '\n';
-	LogFile << "|   MODEC£ºA MOLTEN-SALT-REACTOR SPECIFIC DEPLETION CODE   |" << '\n';
+	LogFile << "|   MODECï¼šA MOLTEN-SALT-REACTOR SPECIFIC DEPLETION CODE   |" << '\n';
 	LogFile << " ----------------------------------------------------------" << '\n';
 	LogFile << '\n';
 	LogFile << '\n';
@@ -63,7 +63,7 @@ void InfoMessage::EndInfo()
 	LogFile << '\n';
 	LogFile << "Time cost at each period: " << '\n';
 	LogFile << "-------------------------------------------------" << '\n';
-	LogFile << "   Initialization : " << double(ends[0] - start) / CLOCKS_PER_SEC << "s" << '\n'; // clock()µÃµ½µÄ·µ»ØÖµ±ØĞë³ıÒÔCLOCKS_PER_SECÖ®ºó²ÅÄÜµÃµ½ÔËĞĞÊ±¼ä
+	LogFile << "   Initialization : " << double(ends[0] - start) / CLOCKS_PER_SEC << "s" << '\n'; // clock()å¾—åˆ°çš„è¿”å›å€¼å¿…é¡»é™¤ä»¥CLOCKS_PER_SECä¹‹åæ‰èƒ½å¾—åˆ°è¿è¡Œæ—¶é—´
 	LogFile << "   Calculation    : " << double(ends[1] - ends[0]) / CLOCKS_PER_SEC << "s" << '\n';
 	LogFile << "   Saving         : " << double(ends[2] - ends[1]) / CLOCKS_PER_SEC << "s" << '\n';
 	LogFile << "------------------------------" << '\n';
