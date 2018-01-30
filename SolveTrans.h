@@ -21,7 +21,7 @@ using namespace std;
  * @brief MODEC的燃耗方程核心求解类
  * 包含了CRAM算法和TTA算法两大类燃耗算法 
 */
-ciass SolveTrans
+class SolveTrans
 {
 public:
 	/* CRAM方法求解燃耗方程 */
