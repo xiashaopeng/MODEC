@@ -6,51 +6,52 @@
 //#include "SparseMatrix.h"
 //#include "NuclList.h"
 #include "IntegralMethods.h"
+
+/**
+ * @brief MODEC的基础类
+ * 包含了程序执行需要的所有参数的申明和定义 
+*/
 class ModecClass
 {
 public: 
-	string info_message_; // 存储警告或者错误信息
+	string info_message_; 							///>  存储警告信息或者错误信息
 
-	ifstream modec_inp_;							// 读取BURN输入卡
-	ofstream modec_out_;							// BURN输出流
+	ifstream modec_inp_;							///>  MODEC输入文件流
+	ofstream modec_out_;							///>  MODEC输出文件流
 
-	string work_direc_;//工作文件夹
-	string input_filename_ = "modec.input";
-	string input_file_;			// 缺省的BURN输入卡名称
+	string work_direc_;							///>  工作文件夹
+	string input_filename_ = "modec.input";					///>  缺省的输入卡文件名
+	string input_file_;							///>  缺省的包含工作文件夹地址的输入卡文件名
 
-	string output_filename_;  // 输出文件名，为输入卡文件名加上相应后缀
-	string output_file_;		// 缺省的BURN输入卡名称
-	string dens_unit_ = "mol";					// 核素浓度单位 mol 为缺省值
-	vector<string> time_unit_; 					// 时间单位 d 为缺省值
+	string output_filename_;  						///>  输出文件名。命令规则为输入卡文件名加上相应后缀
+	string output_file_;							///>  包含工作文件夹地址的输出文件名
+	string dens_unit_ = "mol";						///>  核素浓度单位。‘mol’ 为缺省值
+	vector<string> time_unit_; 						///>  时间单位
 
-
-	vector<double>  burnup_time_;				// 每个子步的燃耗时间
-	vector<int> substep_;						// 子步个数
+	vector<double>  burnup_time_;						///>  每个子步的燃耗时间
+	vector<int> substep_;							///>  子步总个数
 	
-	vector<int> evolution_mode_;					  // 燃耗模式， 0：衰变演化    1：定通量演化     2：定功率演化     3：自定义流程
-	vector<double> evolution_value_;                  // 对应燃耗模式，0.0代表纯衰变，其余对应通量(10)或者功率(2)
+	vector<int> evolution_mode_;					  	///>  燃耗模: 0：衰变演化  1：定通量演化  2：定功率演化  3：自定义流程
+	vector<double> evolution_value_;                  			///>  对应燃耗模式，存储对应通量或者功率数值
 
-	int solver_selection_ = 1;						// 0: TTA方法   1：CRAM方法（缺省值）
-	int print_mode_ = 0;							// 0：只输出最后一步的结果（缺省值）   1：输出每个子步的结果
-	string decay_library_name_, fission_yields_library_name_;
-	string depth_library_name_, couple_library_name_;					// 衰变数据库和裂变产物数据库名称
-	int lib_tag_; // 数据库标志 lib_tag_ = 0纯衰变且采用decay_library_name_
-				  //           lib_tag_ = 1采用depth_library_name_
-				  //           lib_tag_ = 2采用couple_library_name_	
+	int solver_selection_ = 1;						///>  燃耗求解器。0: TTA方法   1：CRAM方法（缺省值）
+	int print_mode_ = 0;							///>  输出格式。0：只输出最后一步的结果（缺省值）   1：输出每个子步的结果
+	string decay_library_name_, fission_yields_library_name_;		///>  衰变数据库名称和裂变产物库名称
+	string depth_library_name_, couple_library_name_;			///>  DEPTH数据库名称和ORIGEN-S数据库名称
+	int lib_tag_; 								///>  数据库标志： 0:纯衰变且采用decay_library_name_; 1:采用depth_library_name_; 2:采用couple_library_name_	
 
-	vector<vector<double > >   n_vector_;  // 保存每个燃耗子步的计算结果，用于输出；
-	vector<double >    power_vector_;  // 保存每个燃耗子步的功率结果，用于输出；
-	vector<double >    flux_vector_;  // 保存每个燃耗子步的通量结果，用于输出；
+	vector<vector<double > >   n_vector_;  					///>  保存每个燃耗子步的计算结果，用于输出；
+	vector<double >    power_vector_; 					///>  保存每个燃耗子步的功率结果，用于输出；
+	vector<double >    flux_vector_;  					///>  保存每个燃耗子步的通量结果，用于输出；
 
 
-	//  三个bool变量，分别用于判断是否计算kinf,裂变反应率和中子吸收率
-	int if_print_kinf_ = 0;
-	int if_print_fission_rate_ = 0;
-	int if_print_absorption_rate_ = 0;
+	int if_print_kinf_ = 0;							///> 判断是否计算kinf。0: 不计算; 1: 计算
+	int if_print_fission_rate_ = 0;						///> 判断是否计算中子产生率。0: 不计算; 1:计算总体的中子产生率并输出在浓度文件中; 2:计算每个核素的中子产生率并以单独文件输出
+	int if_print_absorption_rate_ = 0;					///> 判断是否计算中子吸收率。0: 不计算; 1:计算总体的中子吸收率并输出在浓度文件中; 2:计算每个核素的中子吸收率并以单独文件输出
 
-	vector<double> kinf_vector_;  // 保存每个子步用反应率计算的kinf
-	vector<double> fission_rate_vector_;  // 保存每个子步用反应率计算的裂变反应率
-	vector<double> absorption_rate_vector_; // 保存每步的总的中子吸收率
+	vector<double> kinf_vector_; 	 					///> 保存每个子步计算的kinf
+	vector<double> fission_rate_vector_;  					///> 保存每个子步计算的中子产生率
+	vector<double> absorption_rate_vector_; 				///> 保存每个子步的总的中子吸收率
 
 	/// 判断input是否读入成功 ///
 	int if_read_density_tag_ = 0;
@@ -157,15 +158,15 @@ public:
 
 //////////////////////////////////////////////////////   ModecClass 私有成员函数及私有成员变量   ////////////////////////////////////////////////////
 private:
-	SpMat TransMatrixDecay, TransMatrixCrossSection, TransMatrixFissionYields; // 核素演化计算中必须包含衰变，核素截面为可选项，如果是纯衰变则不需要
+	SpMat TransMatrixDecay, TransMatrixCrossSection, TransMatrixFissionYields; 	///> 用于CRAM方法的衰变系数存储矩阵，核素截面存储矩阵，以及裂变产物存储矩阵（只用于读取DepthLib）
 
-	SpMat TransMatrixReprocess, TransMatrixStockage; // 当追踪堆外核素演化时，需要用到的两个矩阵，分别对应大矩阵的左下和右下的分块矩阵
+	SpMat TransMatrixReprocess, TransMatrixStockage;				///> 用于追踪后处理的堆外核素演化时，需要额外引入两个矩阵，分别对应大矩阵的左下（堆内到堆外）和右下（堆外衰变）的分块矩阵
 
-	SparseMatrixMCS TtaMatrixDecay, TtaMatrixCrossSection, TtaMatrixFissionYields; // 用于TTA方法的稀疏矩阵存储格式
+	SparseMatrixMCS TtaMatrixDecay, TtaMatrixCrossSection, TtaMatrixFissionYields; 	///> 用于TTA方法的邻接稀疏矩阵
 
-	SolveTrans Solver; // 选择求解器：CRAM
+	SolveTrans Solver; 								///> 选择求解器：0: TTA; 1: CRAM
 
-	NuclLibrary ModecNuclideLibrary; //数据库建立 
+	NuclLibrary ModecNuclideLibrary; 						///> MODEC燃耗数据库 
 private:
 	void ModecInitial(int argc, char *argv[]);
 	void ModecProcedure();
