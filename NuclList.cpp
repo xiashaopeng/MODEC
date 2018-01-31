@@ -14,22 +14,22 @@ NuclLibrary::NuclLibrary() // construct function for initializing vector 'nuclid
 	nuclide_library_vector_.resize(11);
 	for (int i = 0; i < 10; ++i)
 	{
-		nuclide_library_vector_[i].resize(nuclide_number_); // ¿ÉÑ¡ÔñÔÚ´Ë´¦ĞŞ¸ÄĞèÒª´æ´¢µÄºËËØĞÅÏ¢
-									  /* ÔİÊ±Ñ¡Ôñ´æ´¢µÄºËËØĞÅÏ¢ÈçÏÂ£º
-									  0: N       ºËËØÅ¨¶È£¬µ¥Î»ÎŞËùÎ½£¬µ«ÒªÍ³Ò»
-									  1: lamda   Ë¥±ä³£Êı£¬ÓÃÓÚ·ÅÉäĞÔ»î¶È¼ÆËã /s
-									  2: FSF     ×Ô·¢ÁÑ±ä·İ¶î£¬ÓÃÓÚ¼ÆËã×Ô·¢ÁÑ±äÖĞ×Ó³¡
-									  3: Q       Ë¥±äÈÈÏµÊı£¬ÓÃÓÚË¥±äÈÈ¼ÆËã
-									  4: AMPC   ORIGENÊı¾İ¿âÖĞ¶¾ĞÔµ¥Î» m3-air/Bq
-									  5: WMPC   ORIGENÊı¾İ¿âÖĞ¶¾ĞÔµ¥Î» m3-water/Bq
+		nuclide_library_vector_[i].resize(nuclide_number_); // å¯é€‰æ‹©åœ¨æ­¤å¤„ä¿®æ”¹éœ€è¦å­˜å‚¨çš„æ ¸ç´ ä¿¡æ¯
+									  /* æš‚æ—¶é€‰æ‹©å­˜å‚¨çš„æ ¸ç´ ä¿¡æ¯å¦‚ä¸‹ï¼š
+									  0: N       æ ¸ç´ æµ“åº¦ï¼Œå•ä½æ— æ‰€è°“ï¼Œä½†è¦ç»Ÿä¸€
+									  1: lamda   è¡°å˜å¸¸æ•°ï¼Œç”¨äºæ”¾å°„æ€§æ´»åº¦è®¡ç®— /s
+									  2: FSF     è‡ªå‘è£‚å˜ä»½é¢ï¼Œç”¨äºè®¡ç®—è‡ªå‘è£‚å˜ä¸­å­åœº
+									  3: Q       è¡°å˜çƒ­ç³»æ•°ï¼Œç”¨äºè¡°å˜çƒ­è®¡ç®—
+									  4: AMPC   ORIGENæ•°æ®åº“ä¸­æ¯’æ€§å•ä½ m3-air/Bq
+									  5: WMPC   ORIGENæ•°æ®åº“ä¸­æ¯’æ€§å•ä½ m3-water/Bq
 
-									  6: tot-cap ºËËØµÄ×ÜµÄÖĞ×Ó·´Ó¦½ØÃæ£¬ÓÃÓÚ¹¦ÂÊµ½Í¨Á¿µÄ×ª»»¼ÆËã
-									  7: fission ºËËØµÄÁÑ±ä·´Ó¦½ØÃæ£¬ÓÃÓÚ¹¦ÂÊµ½Í¨Á¿µÄ×ª»»¼ÆËã
-									  8: Radiative capture ·øÉä·ı»ñ½ØÃæ£¬ÓÃÓÚ¹¦ÂÊµ½Í¨Á¿µÄ×ª»»¼ÆËã
-									  9: Neutron Product XS ÖĞ×Ó²úÉú½ØÃæ£¬Ã¿´ÎºË·´Ó¦²úÉúµÄÖĞ×Ó¸öÊı£¬ÓÃÓÚÖĞ×ÓµÃÊ§Æ½ºâ¼ÆËã
+									  6: tot-cap æ ¸ç´ çš„æ€»çš„ä¸­å­ååº”æˆªé¢ï¼Œç”¨äºåŠŸç‡åˆ°é€šé‡çš„è½¬æ¢è®¡ç®—
+									  7: fission æ ¸ç´ çš„è£‚å˜ååº”æˆªé¢ï¼Œç”¨äºåŠŸç‡åˆ°é€šé‡çš„è½¬æ¢è®¡ç®—
+									  8: Radiative capture è¾å°„ä¿˜è·æˆªé¢ï¼Œç”¨äºåŠŸç‡åˆ°é€šé‡çš„è½¬æ¢è®¡ç®—
+									  9: Neutron Product XS ä¸­å­äº§ç”Ÿæˆªé¢ï¼Œæ¯æ¬¡æ ¸ååº”äº§ç”Ÿçš„ä¸­å­ä¸ªæ•°ï¼Œç”¨äºä¸­å­å¾—å¤±å¹³è¡¡è®¡ç®—
 									  */
 	}
-	// nuclide_library_vector_[10] ±íÊ¾¶¾ĞÔ²ÎÊı£¬µ¥Î»Sv/Bq
+	// nuclide_library_vector_[10] è¡¨ç¤ºæ¯’æ€§å‚æ•°ï¼Œå•ä½Sv/Bq
 	nuclide_library_vector_[10] = { 0.0, 0.0, 1.8e-11, 0.0,
 		0.0, 0.0, 0.0, 0.0, 0.0,
 		0.0, 0.0, 0.0, 0.0, 2.8e-11,
@@ -1456,9 +1456,9 @@ NuclLibrary::NuclLibrary() // construct function for initializing vector 'nuclid
 	};
 };
 
-vector<int> NuclLibrary::GetEleIndex(int Z) // Ìá¹©Ô­×ÓĞòÊı£¬·µ»ØËùÓĞÍ¬Î»ËØ
+vector<int> NuclLibrary::GetEleIndex(int Z) // æä¾›åŸå­åºæ•°ï¼Œè¿”å›æ‰€æœ‰åŒä½ç´ 
 {
-	int ID = Z * 10000; // ×îĞ¡µÄIDµÄÖÊÁ¿ÊıÓ¦Îª1
+	int ID = Z * 10000; // æœ€å°çš„IDçš„è´¨é‡æ•°åº”ä¸º1
 	vector<int> IDList;
 	int ListEnd;
 

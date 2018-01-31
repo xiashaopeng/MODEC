@@ -5,22 +5,22 @@
 #include <vector>
 
 using namespace std;
-class GaussLegendreQuadrature    //  (-1,1)Çø¼äÊıÖµ»ı·Ö£¬ÓÃÓÚÌíÁÏÂÊ³£ÊıµÄ´¦Àí
+class GaussLegendreQuadrature    //  (-1,1)åŒºé—´æ•°å€¼ç§¯åˆ†ï¼Œç”¨äºæ·»æ–™ç‡å¸¸æ•°çš„å¤„ç†
 {
 public:
 	static int GL_order;
-	static vector<vector<double> > gauss_legendre_weight_;	// ¸ßË¹È¨ÖØ
-	static vector<vector<double> > gauss_legendre_abscissa_; // ¸ßË¹µã
+	static vector<vector<double> > gauss_legendre_weight_;	// é«˜æ–¯æƒé‡
+	static vector<vector<double> > gauss_legendre_abscissa_; // é«˜æ–¯ç‚¹
 	static vector<vector<double> > Value_GL_weight();
 	static vector<vector<double> > Value_GL_abscissa();
 };
 
-class GaussLaguerreQuadrature  // (0,infinite)Çø¼äÊıÖµ»ı·Ö£¬ÓÃÓÚÆ½ºâÌ¬ºËËØÅ¨¶ÈµÄ¼ÆËã
+class GaussLaguerreQuadrature  // (0,infinite)åŒºé—´æ•°å€¼ç§¯åˆ†ï¼Œç”¨äºå¹³è¡¡æ€æ ¸ç´ æµ“åº¦çš„è®¡ç®—
 {
 public:
 	static int GLa_order;
-	static vector<vector<double> > GLa_weight;	// ¸ßË¹È¨ÖØ
-	static vector<vector<double> > GLa_abscissa; // ¸ßË¹µã
+	static vector<vector<double> > GLa_weight;	// é«˜æ–¯æƒé‡
+	static vector<vector<double> > GLa_abscissa; // é«˜æ–¯ç‚¹
 	static vector<vector<double> > Value_GLa_weight();
 	static vector<vector<double> > Value_GLa_abscissa();
 };

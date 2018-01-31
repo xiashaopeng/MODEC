@@ -200,6 +200,7 @@ private:
 	* @{
 	*/
 	SpMat TransMatrixDecay;								///< 用于CRAM方法的衰变系数存储矩阵	
+	SpMat TransMatrixPureDecay;							///< 用于流动计算的纯衰变矩阵
 	SpMat TransMatrixCrossSection;							///< 用于CRAM方法的截面数据存储矩阵
 	SpMat TransMatrixFissionYields; 						///< 用于CRAM方法的裂变产物存储矩阵（只用于读取DepthLib）
 

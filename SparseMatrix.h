@@ -9,18 +9,18 @@
 #include "ErrorMessage.h"
 using namespace std;
 const int cNuclNum = 1693;
-// ²ÉÓÃĞĞÁĞ»ìºÏÄ£Ê½À´´æ´¢ÓÃÓÚCRAMËã·¨µÄÈ¼ºÄÏ¡Êè¾ØÕó£¬²¢²ÉÓÃÖ±½Ó·¨LU·Ö½â½øĞĞÏßĞÔ·½³Ì×éµÄÇó½â¡£
+// é‡‡ç”¨è¡Œåˆ—æ··åˆæ¨¡å¼æ¥å­˜å‚¨ç”¨äºCRAMç®—æ³•çš„ç‡ƒè€—ç¨€ç–çŸ©é˜µï¼Œå¹¶é‡‡ç”¨ç›´æ¥æ³•LUåˆ†è§£è¿›è¡Œçº¿æ€§æ–¹ç¨‹ç»„çš„æ±‚è§£ã€‚
 
-class SparseMatrixMCS // Ë«Á´±í´æ´¢Ï¡Êè¾ØÕó
+class SparseMatrixMCS // åŒé“¾è¡¨å­˜å‚¨ç¨€ç–çŸ©é˜µ
 {
 public:
-	vector< double > diagonal_val_; // ¶Ô½ÇÔªËØ
-	vector<vector< double> > col_val_; // ¾ØÕóÁĞÑ¹ËõµÄÃ¿ÁĞµÄÔªËØÖµ
-	vector<vector<int> > col_index_; // ¾ØÕóÁĞÑ¹ËõµÄÃ¿ÁĞµÄÔªËØµÄÎ»ÖÃ
-	int element_amount_ = 0; // ¾ØÕó·Ç¶Ô½Ç·ÇÁãÔª¸öÊı
+	vector< double > diagonal_val_; // å¯¹è§’å…ƒç´ 
+	vector<vector< double> > col_val_; // çŸ©é˜µåˆ—å‹ç¼©çš„æ¯åˆ—çš„å…ƒç´ å€¼
+	vector<vector<int> > col_index_; // çŸ©é˜µåˆ—å‹ç¼©çš„æ¯åˆ—çš„å…ƒç´ çš„ä½ç½®
+	int element_amount_ = 0; // çŸ©é˜µéå¯¹è§’éé›¶å…ƒä¸ªæ•°
 	int spmat_dimen_;
 public:
-	SparseMatrixMCS(int nuclide_number_) // ÓÃÏ¡Êè¾ØÕóµÄ½×ÊıÀ´³õÊ¼»¯Ï¡Êè¾ØÕóÁ´±í³¤¶È
+	SparseMatrixMCS(int nuclide_number_) // ç”¨ç¨€ç–çŸ©é˜µçš„é˜¶æ•°æ¥åˆå§‹åŒ–ç¨€ç–çŸ©é˜µé“¾è¡¨é•¿åº¦
 	{
 		spmat_dimen_ = nuclide_number_;
 		diagonal_val_.resize(nuclide_number_);
@@ -28,7 +28,7 @@ public:
 		col_index_.resize(nuclide_number_);
 	}
 
-	SparseMatrixMCS() // ÓÃÏ¡Êè¾ØÕóµÄ½×ÊıÀ´³õÊ¼»¯Ï¡Êè¾ØÕóÁ´±í³¤¶È
+	SparseMatrixMCS() // ç”¨ç¨€ç–çŸ©é˜µçš„é˜¶æ•°æ¥åˆå§‹åŒ–ç¨€ç–çŸ©é˜µé“¾è¡¨é•¿åº¦
 	{
 		spmat_dimen_ = cNuclNum;
 		diagonal_val_.resize(cNuclNum);
@@ -55,7 +55,7 @@ public:
 		col_index_.resize(nuclide_number_);
 	}
 
-	void AddElementCCS(const int &_row,const int &_col,const double &_val) // Ï¡Êè¾ØÕóµÄÁĞÑ¹Ëõ´æ´¢
+	void AddElementCCS(const int &_row,const int &_col,const double &_val) // ç¨€ç–çŸ©é˜µçš„åˆ—å‹ç¼©å­˜å‚¨
 	{
 		if (_row == -1 || _col == -1)
 		{
@@ -69,13 +69,13 @@ public:
 		}
 		else
 		{
-			/* Ê×ÏÈÅĞ¶Ï¸ÃÎ»ÖÃÊÇ·ñÒÑ¾­´æÔÚÔªËØ£¬Èç¹û»¹Î´´æÔÚ£¬Ö±½ÓÌí¼Ó£¬Èç¹ûÒÑ¾­´æÔÚ£¬×ö¼Ó·¨´¦Àí */
-			int PL = -1; // ±êÊ¶·û£¬ÓÃÀ´ÅĞ¶ÏÊÇ·ñ´æÔÚÔªËØ
+			/* é¦–å…ˆåˆ¤æ–­è¯¥ä½ç½®æ˜¯å¦å·²ç»å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœè¿˜æœªå­˜åœ¨ï¼Œç›´æ¥æ·»åŠ ï¼Œå¦‚æœå·²ç»å­˜åœ¨ï¼ŒåšåŠ æ³•å¤„ç† */
+			int PL = -1; // æ ‡è¯†ç¬¦ï¼Œç”¨æ¥åˆ¤æ–­æ˜¯å¦å­˜åœ¨å…ƒç´ 
 			for (unsigned int i = 0; i < col_index_[_col].size(); ++i)
 			{
 				if (col_index_[_col][i] == _row)
 				{
-					PL = i; // ±íÊ¾´æÔÚÒÑÓĞºËËØ
+					PL = i; // è¡¨ç¤ºå­˜åœ¨å·²æœ‰æ ¸ç´ 
 					break;
 				}
 			}
@@ -92,11 +92,11 @@ public:
 		}
 	}
 
-	//void RemoveElementCCS(int _row, int _col) // ÁĞÑ¹Ëõ´æ´¢Ï¡Êè¾ØÕóµÄÉ¾³ıÔª²Ù×÷
+	//void RemoveElementCCS(int _row, int _col) // åˆ—å‹ç¼©å­˜å‚¨ç¨€ç–çŸ©é˜µçš„åˆ é™¤å…ƒæ“ä½œ
 	//{
 	//	if (_row == -1 || _col == -1)
 	//	{
-	//		InfoMessage::ErrorMessage("´íÎóµÄ¾ØÕó×ø±ê£º-1", 0);
+	//		InfoMessage::ErrorMessage("é”™è¯¯çš„çŸ©é˜µåæ ‡ï¼š-1", 0);
 	//		return;
 	//	}
 	//	if (_row == _col)
@@ -106,13 +106,13 @@ public:
 	//	}
 	//	else
 	//	{
-	//		/* Ê×ÏÈÅĞ¶Ï¸ÃÎ»ÖÃÊÇ·ñÒÑ¾­´æÔÚÔªËØ£¬Èç¹û»¹Î´´æÔÚ£¬Ö±½ÓÌí¼Ó£¬Èç¹ûÒÑ¾­´æÔÚ£¬×ö¼Ó·¨´¦Àí */
-	//		int PL = -1; // ±êÊ¶·û£¬ÓÃÀ´ÅĞ¶ÏÊÇ·ñ´æÔÚÔªËØ
+	//		/* é¦–å…ˆåˆ¤æ–­è¯¥ä½ç½®æ˜¯å¦å·²ç»å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœè¿˜æœªå­˜åœ¨ï¼Œç›´æ¥æ·»åŠ ï¼Œå¦‚æœå·²ç»å­˜åœ¨ï¼ŒåšåŠ æ³•å¤„ç† */
+	//		int PL = -1; // æ ‡è¯†ç¬¦ï¼Œç”¨æ¥åˆ¤æ–­æ˜¯å¦å­˜åœ¨å…ƒç´ 
 	//		for (unsigned int i = 0; i < col_index_[_col].size(); ++i)
 	//		{
 	//			if (col_index_[_col][i] == _row)
 	//			{
-	//				PL = i; // ±íÊ¾´æÔÚÒÑÓĞºËËØ
+	//				PL = i; // è¡¨ç¤ºå­˜åœ¨å·²æœ‰æ ¸ç´ 
 	//				break;
 	//			}
 	//		}
@@ -175,7 +175,7 @@ public:
 	SparseMatrixMCS operator*(const double & time)
 	{
 		int size = diagonal_val_.size();
-		SparseMatrixMCS matrix(*this); // ¸´ÖÆ¹¹Ôìmatrix
+		SparseMatrixMCS matrix(*this); // å¤åˆ¶æ„é€ matrix
 		for (int i = 0; i < size; ++i)
 		{
 			matrix.diagonal_val_[i] = diagonal_val_[i] * time;
@@ -193,7 +193,7 @@ public:
 
 	SparseMatrixMCS operator+(const SparseMatrixMCS& matrix)
 	{
-		SparseMatrixMCS summatrix(matrix); // ÓÃmatrix¶ø²»ÊÇthis¸³ÖµµÄÔ­ÒòÊÇ¿¼ÂÇµ½ÁÑ±ä¾ØÕóÒª´óÓÚË¥±ä¾ØÕó
+		SparseMatrixMCS summatrix(matrix); // ç”¨matrixè€Œä¸æ˜¯thisèµ‹å€¼çš„åŸå› æ˜¯è€ƒè™‘åˆ°è£‚å˜çŸ©é˜µè¦å¤§äºè¡°å˜çŸ©é˜µ
 		int size = summatrix.diagonal_val_.size();
 
 		for (int i = 0; i < size; ++i)
@@ -224,7 +224,7 @@ public:
 		return summatrix;
 	}
 
-	bool JudgeExist(const int & _row, const int & _col, const double & _val) //ÅĞ¶Ï¾ØÕó¸ÃÎ»ÖÃÊÇ·ñ´æÔÚÔªËØ£¬Èç¹û´æÔÚÔªËØµÄ»°£¬·µ»ØTRUE
+	bool JudgeExist(const int & _row, const int & _col, const double & _val) //åˆ¤æ–­çŸ©é˜µè¯¥ä½ç½®æ˜¯å¦å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœå­˜åœ¨å…ƒç´ çš„è¯ï¼Œè¿”å›TRUE
 	{
 		if (_row == -1 || _col == -1)
 		{
@@ -238,7 +238,7 @@ public:
 				exist_element = true;
 			}
 		}
-		else // ÏÂÈı½ÇÕó
+		else // ä¸‹ä¸‰è§’é˜µ
 		{
 			int size = col_index_[_col].size();
 			int i;
@@ -259,20 +259,20 @@ public:
 	}
 };
 
-class SpMat // ÓÃÓÚCRAMËã·¨µÄÈ¼ºÄ¾ØÕó´æ´¢¸ñÊ½
-	/* ¶Ô½ÇÔªµ¥¶À´æ´¢£¬ÏÂÈı½ÇÔªËØ²ÉÓÃÁĞÑ¹Ëõ´æ´¢£¬ÉÏÈı½ÇÔªËØ²ÉÓÃĞĞÑ¹Ëõ´æ´¢*/
+class SpMat // ç”¨äºCRAMç®—æ³•çš„ç‡ƒè€—çŸ©é˜µå­˜å‚¨æ ¼å¼
+	/* å¯¹è§’å…ƒå•ç‹¬å­˜å‚¨ï¼Œä¸‹ä¸‰è§’å…ƒç´ é‡‡ç”¨åˆ—å‹ç¼©å­˜å‚¨ï¼Œä¸Šä¸‰è§’å…ƒç´ é‡‡ç”¨è¡Œå‹ç¼©å­˜å‚¨*/
 {
 public:
 	vector<Complex > diagonal_val_; // value of diagonal element
 	vector<vector<Complex > > lower_val_; // value of lower element
-	vector<vector<int> > lower_index_; // ÏÂÈı½ÇÔªËØµÄÎ»ÖÃ
+	vector<vector<int> > lower_index_; // ä¸‹ä¸‰è§’å…ƒç´ çš„ä½ç½®
 	vector<vector<Complex > > upper_val_; // value of upper element
-	vector<vector<int> > upper_index_; // ÉÏÈı½ÇÔªËØµÄÎ»ÖÃ
+	vector<vector<int> > upper_index_; // ä¸Šä¸‰è§’å…ƒç´ çš„ä½ç½®
 
-	vector<Complex > ce_; // ¾ØÕó·ÇÁãÔª£¨°üÀ¨¶Ô½ÇÔª£©µÄÖµ£¬ÎªÁË·½±ã½øĞĞCRAMÇó½â£¬ÔªËØÊı¾İÀàĞÍÉè¶¨Îª¸´Êı£»
+	vector<Complex > ce_; // çŸ©é˜µéé›¶å…ƒï¼ˆåŒ…æ‹¬å¯¹è§’å…ƒï¼‰çš„å€¼ï¼Œä¸ºäº†æ–¹ä¾¿è¿›è¡ŒCRAMæ±‚è§£ï¼Œå…ƒç´ æ•°æ®ç±»å‹è®¾å®šä¸ºå¤æ•°ï¼›
 
-	int element_amount_ = 0; // ¾ØÕó·Ç¶Ô½Ç·ÇÁãÔª¸öÊı
-	int spmat_dimen_; // ¾ØÕóÎ¬¶È
+	int element_amount_ = 0; // çŸ©é˜µéå¯¹è§’éé›¶å…ƒä¸ªæ•°
+	int spmat_dimen_; // çŸ©é˜µç»´åº¦
 
 public:
 	SpMat()
@@ -331,15 +331,15 @@ public:
 			diagonal_val_[_row] += _val;
 			//element_amount_ ++;
 		}
-		else if (_row > _col) // ÏÂÈı½Ç¾ØÕó
+		else if (_row > _col) // ä¸‹ä¸‰è§’çŸ©é˜µ
 		{
-			/* Ê×ÏÈÅĞ¶Ï¸ÃÎ»ÖÃÊÇ·ñÒÑ¾­´æÔÚÔªËØ£¬Èç¹û»¹Î´´æÔÚ£¬Ö±½ÓÌí¼Ó£¬Èç¹ûÒÑ¾­´æÔÚ£¬×ö¼Ó·¨´¦Àí */
-			int PL = -1; // ±êÊ¶·û£¬ÓÃÀ´ÅĞ¶ÏÊÇ·ñ´æÔÚÔªËØ
+			/* é¦–å…ˆåˆ¤æ–­è¯¥ä½ç½®æ˜¯å¦å·²ç»å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœè¿˜æœªå­˜åœ¨ï¼Œç›´æ¥æ·»åŠ ï¼Œå¦‚æœå·²ç»å­˜åœ¨ï¼ŒåšåŠ æ³•å¤„ç† */
+			int PL = -1; // æ ‡è¯†ç¬¦ï¼Œç”¨æ¥åˆ¤æ–­æ˜¯å¦å­˜åœ¨å…ƒç´ 
 			for (unsigned int i = 0; i < lower_index_[_col].size(); ++i)
 			{
 				if (lower_index_[_col][i] == _row)
 				{ 
-					PL = i; // ±íÊ¾´æÔÚÒÑÓĞºËËØ
+					PL = i; // è¡¨ç¤ºå­˜åœ¨å·²æœ‰æ ¸ç´ 
 					break;
 				}
 			}
@@ -354,15 +354,15 @@ public:
 				lower_val_[_col][PL] += _val;
 			}
 		}
-		else // ÉÏÈı½Ç¾ØÕó
+		else // ä¸Šä¸‰è§’çŸ©é˜µ
 		{
-			/* Ê×ÏÈÅĞ¶Ï¸ÃÎ»ÖÃÊÇ·ñÒÑ¾­´æÔÚÔªËØ£¬Èç¹û»¹Î´´æÔÚ£¬Ö±½ÓÌí¼Ó£¬Èç¹ûÒÑ¾­´æÔÚ£¬×ö¼Ó·¨´¦Àí */
-			int PL = -1; // ±êÊ¶·û£¬ÓÃÀ´ÅĞ¶ÏÊÇ·ñ´æÔÚÔªËØ
+			/* é¦–å…ˆåˆ¤æ–­è¯¥ä½ç½®æ˜¯å¦å·²ç»å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœè¿˜æœªå­˜åœ¨ï¼Œç›´æ¥æ·»åŠ ï¼Œå¦‚æœå·²ç»å­˜åœ¨ï¼ŒåšåŠ æ³•å¤„ç† */
+			int PL = -1; // æ ‡è¯†ç¬¦ï¼Œç”¨æ¥åˆ¤æ–­æ˜¯å¦å­˜åœ¨å…ƒç´ 
 			for (unsigned int i = 0; i < upper_index_[_row].size(); ++i)
 			{
 				if (upper_index_[_row][i] == _col)
 				{
-					PL = i; // ±íÊ¾´æÔÚÒÑÓĞºËËØ
+					PL = i; // è¡¨ç¤ºå­˜åœ¨å·²æœ‰æ ¸ç´ 
 					break;
 				}
 			}
@@ -379,13 +379,74 @@ public:
 		}
 	}
 	
+	void ReplaceElement(const int &_row, const int & _col, const double &_val)
+	{
+		if (_row == -1 || _col == -1)
+		{
+			InfoMessage::ErrorMessage("Position: void SpMat::AddElement; \n Warning: index of row or column equal -1.", 0);
+			return;
+		}
+		if (_row == _col)
+		{
+			diagonal_val_[_row] = _val;
+			//element_amount_ ++;
+		}
+		else if (_row > _col) // ä¸‹ä¸‰è§’çŸ©é˜µ
+		{
+			/* é¦–å…ˆåˆ¤æ–­è¯¥ä½ç½®æ˜¯å¦å·²ç»å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœè¿˜æœªå­˜åœ¨ï¼Œç›´æ¥æ·»åŠ ï¼Œå¦‚æœå·²ç»å­˜åœ¨ï¼ŒåšåŠ æ³•å¤„ç† */
+			int PL = -1; // æ ‡è¯†ç¬¦ï¼Œç”¨æ¥åˆ¤æ–­æ˜¯å¦å­˜åœ¨å…ƒç´ 
+			for (unsigned int i = 0; i < lower_index_[_col].size(); ++i)
+			{
+				if (lower_index_[_col][i] == _row)
+				{
+					PL = i; // è¡¨ç¤ºå­˜åœ¨å·²æœ‰æ ¸ç´ 
+					break;
+				}
+			}
+			if (PL == -1)
+			{
+				lower_index_[_col].push_back(_row);
+				lower_val_[_col].push_back(_val);
+				element_amount_++;
+			}
+			else
+			{
+				lower_val_[_col][PL] = _val;
+			}
+		}
+		else // ä¸Šä¸‰è§’çŸ©é˜µ
+		{
+			/* é¦–å…ˆåˆ¤æ–­è¯¥ä½ç½®æ˜¯å¦å·²ç»å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœè¿˜æœªå­˜åœ¨ï¼Œç›´æ¥æ·»åŠ ï¼Œå¦‚æœå·²ç»å­˜åœ¨ï¼ŒåšåŠ æ³•å¤„ç† */
+			int PL = -1; // æ ‡è¯†ç¬¦ï¼Œç”¨æ¥åˆ¤æ–­æ˜¯å¦å­˜åœ¨å…ƒç´ 
+			for (unsigned int i = 0; i < upper_index_[_row].size(); ++i)
+			{
+				if (upper_index_[_row][i] == _col)
+				{
+					PL = i; // è¡¨ç¤ºå­˜åœ¨å·²æœ‰æ ¸ç´ 
+					break;
+				}
+			}
+			if (PL == -1)
+			{
+				upper_index_[_row].push_back(_col);
+				upper_val_[_row].push_back(_val);
+				element_amount_++;
+			}
+			else
+			{
+				upper_val_[_row][PL] = _val;
+			}
+		}
+	}
+
+
 	double Element(const int & _row, const int & _col)
 	{
 		if (_row == _col)
 		{
 			return diagonal_val_[_row].real_;
 		}
-		else if (_row > _col) // ÏÂÈı½ÇÕó
+		else if (_row > _col) // ä¸‹ä¸‰è§’é˜µ
 		{
 			int size = lower_index_[_col].size();
 			int i;
@@ -405,7 +466,7 @@ public:
 				return 0.0;
 			}
 		}
-		else // ÉÏÈı½ÇÕó
+		else // ä¸Šä¸‰è§’é˜µ
 		{
 			int size = upper_index_[_row].size();
 			int i;
@@ -427,7 +488,7 @@ public:
 		}
 	}
 
-	bool JudgeExist(const int & _row, const int & _col) //ÅĞ¶Ï¾ØÕó¸ÃÎ»ÖÃÊÇ·ñ´æÔÚÔªËØ£¬Èç¹û´æÔÚÔªËØµÄ»°£¬·µ»ØTRUE
+	bool JudgeExist(const int & _row, const int & _col) //åˆ¤æ–­çŸ©é˜µè¯¥ä½ç½®æ˜¯å¦å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœå­˜åœ¨å…ƒç´ çš„è¯ï¼Œè¿”å›TRUE
 	{
 		bool exist_element = false;
 		if (_row == _col)
@@ -437,7 +498,7 @@ public:
 				exist_element = true;
 			}
 		}
-		else if (_row > _col) // ÏÂÈı½ÇÕó
+		else if (_row > _col) // ä¸‹ä¸‰è§’é˜µ
 		{
 			int size = lower_index_[_col].size();
 			int i;
@@ -453,7 +514,7 @@ public:
 				exist_element = true;
 			}
 		}
-		else // ÉÏÈı½ÇÕó
+		else // ä¸Šä¸‰è§’é˜µ
 		{
 			int size = upper_index_[_row].size();
 			int i;
@@ -472,7 +533,7 @@ public:
 		return exist_element;
 	}
 
-	bool JudgeExist(const int & _row, const int & _col,const double &_val) //ÅĞ¶Ï¾ØÕó¸ÃÎ»ÖÃÊÇ·ñ´æÔÚÔªËØ£¬Èç¹û´æÔÚÔªËØµÄ»°£¬·µ»ØTRUE
+	bool JudgeExist(const int & _row, const int & _col,const double &_val) //åˆ¤æ–­çŸ©é˜µè¯¥ä½ç½®æ˜¯å¦å­˜åœ¨å…ƒç´ ï¼Œå¦‚æœå­˜åœ¨å…ƒç´ çš„è¯ï¼Œè¿”å›TRUE
 	{
 		if (_row == -1 || _col == -1)
 		{
@@ -486,7 +547,7 @@ public:
 				exist_element = true;
 			}
 		}
-		else if (_row > _col) // ÏÂÈı½ÇÕó
+		else if (_row > _col) // ä¸‹ä¸‰è§’é˜µ
 		{
 			int size = lower_index_[_col].size();
 			int i;
@@ -502,7 +563,7 @@ public:
 				exist_element = true;
 			}
 		}
-		else // ÉÏÈı½ÇÕó
+		else // ä¸Šä¸‰è§’é˜µ
 		{
 			int size = upper_index_[_row].size();
 			int i;
@@ -535,7 +596,7 @@ public:
 	SpMat operator*(const Complex &time)
 	{
 		int size = diagonal_val_.size();
-		SpMat matrix(*this); // ¸´ÖÆ¹¹Ôìmatrix
+		SpMat matrix(*this); // å¤åˆ¶æ„é€ matrix
 		for (int i = 0; i < size; ++i)
 		{
 			matrix.diagonal_val_[i] = diagonal_val_[i] * time;
@@ -558,7 +619,7 @@ public:
 
 	SpMat operator+(const SpMat& matrix)
 	{
-		SpMat summatrix(matrix); // ÓÃmatrix¶ø²»ÊÇthis¸³ÖµµÄÔ­ÒòÊÇ¿¼ÂÇµ½ÁÑ±ä¾ØÕóÒª´óÓÚË¥±ä¾ØÕó
+		SpMat summatrix(matrix); // ç”¨matrixè€Œä¸æ˜¯thisèµ‹å€¼çš„åŸå› æ˜¯è€ƒè™‘åˆ°è£‚å˜çŸ©é˜µè¦å¤§äºè¡°å˜çŸ©é˜µ
 		int size = summatrix.diagonal_val_.size();
 		for (int i = 0; i < size; ++i)
 		{
@@ -757,20 +818,20 @@ public:
 		}
 	}
 /////////////////////////////////////////////////////////////////////////////////////
-///////////////    ¾ØÕóLU·Ö½âÓë¾ØÕóµÄÏ¡Êè´æ´¢·ÅÔÚÒ»Æğ£¬Ä¿µÄÊÇÓÅ»¯¼ÆËãËÙ¶È /////////////////
+///////////////    çŸ©é˜µLUåˆ†è§£ä¸çŸ©é˜µçš„ç¨€ç–å­˜å‚¨æ”¾åœ¨ä¸€èµ·ï¼Œç›®çš„æ˜¯ä¼˜åŒ–è®¡ç®—é€Ÿåº¦ /////////////////
 public:
-		/* ·ûºÅLU·Ö½âĞèÒªµÄ±äÁ¿ */
+		/* ç¬¦å·LUåˆ†è§£éœ€è¦çš„å˜é‡ */
 		vector<int> IRC;
 		vector<int> ICFR;
 		vector<int> LUP;
 		
 public:
 
-	void SymbolLUElimination() // ·ûºÅLU·Ö½â,Í¬Ê±ĞŞÕıÏ¡Êè¾ØÕóµÄce_
+	void SymbolLUElimination() // ç¬¦å·LUåˆ†è§£,åŒæ—¶ä¿®æ­£ç¨€ç–çŸ©é˜µçš„ce_
 	{
 		int nuclide_number_ = spmat_dimen_;
 		vector<vector<int> > UpperIndex_temp(upper_index_), LowerIndex_temp(lower_index_);
-		vector<vector<int> > LUP_Track(3, vector<int>(1)); // LUPÁĞ±íµÄ×·×ÙÁĞ±í
+		vector<vector<int> > LUP_Track(3, vector<int>(1)); // LUPåˆ—è¡¨çš„è¿½è¸ªåˆ—è¡¨
 		for (int i = 0; i < nuclide_number_; ++i)
 		{
 			int rowsize = LowerIndex_temp[i].size();
@@ -798,7 +859,7 @@ public:
 								break;
 							}
 						}
-						if (check >= size) // ÌîÈëÔª
+						if (check >= size) // å¡«å…¥å…ƒ
 						{
 							LowerIndex_temp[colIndex].push_back(rowIndex);
 
@@ -824,7 +885,7 @@ public:
 								break;
 							}
 						}
-						if (check >= size) // ÌîÈëÔª
+						if (check >= size) // å¡«å…¥å…ƒ
 						{
 							UpperIndex_temp[rowIndex].push_back(colIndex);
 
@@ -901,11 +962,11 @@ public:
 		return;
 	}
 
-	void SymbolLUElimination(const int &nuclide_number_) // ·ûºÅLU·Ö½â,Í¬Ê±ĞŞÕıÏ¡Êè¾ØÕóµÄce_
+	void SymbolLUElimination(const int &nuclide_number_) // ç¬¦å·LUåˆ†è§£,åŒæ—¶ä¿®æ­£ç¨€ç–çŸ©é˜µçš„ce_
 	{
 		//int nuclide_number_ = cNuclNum;
 		vector<vector<int> > UpperIndex_temp(upper_index_), LowerIndex_temp(lower_index_);
-		vector<vector<int> > LUP_Track(3, vector<int>(1)); // LUPÁĞ±íµÄ×·×ÙÁĞ±í
+		vector<vector<int> > LUP_Track(3, vector<int>(1)); // LUPåˆ—è¡¨çš„è¿½è¸ªåˆ—è¡¨
 		for (int i = 0; i < nuclide_number_; ++i)
 		{
 			int rowsize = LowerIndex_temp[i].size();
@@ -937,7 +998,7 @@ public:
 								break;
 							}
 						}
-						if (check >= size) // ÌîÈëÔª
+						if (check >= size) // å¡«å…¥å…ƒ
 						{
 							LowerIndex_temp[colIndex].push_back(rowIndex);
 
@@ -963,7 +1024,7 @@ public:
 								break;
 							}
 						}
-						if (check >= size) // ÌîÈëÔª
+						if (check >= size) // å¡«å…¥å…ƒ
 						{
 							UpperIndex_temp[rowIndex].push_back(colIndex);
 
@@ -1075,7 +1136,7 @@ public:
 			////////////////////////// Forward step of Gauss Elimination////////////////////////////
 			//if(abs(MatrixA[k])==0)
 			//{
-			//	Depth.ErrorWarning("Wrong Gauss Elimination£¡£¡",1);
+			//	Depth.ErrorWarning("Wrong Gauss Eliminationï¼ï¼",1);
 			//}
 
 			int RowIB = ICFR[k];
@@ -1177,7 +1238,7 @@ public:
 			////////////////////////// Forward step of Gauss Elimination////////////////////////////
 			//if(abs(MatrixA[k])==0)
 			//{
-			//	Depth.ErrorWarning("Wrong Gauss Elimination£¡£¡",1);
+			//	Depth.ErrorWarning("Wrong Gauss Eliminationï¼ï¼",1);
 			//}
 
 			int RowIB = ICFR[k];
@@ -1248,7 +1309,7 @@ public:
 		int LUPCount = 1;
 		int LUPpos;
 
-		//////////   Ê¹ÓÃcram·½·¨µÄ¾ØÕóÔ¤´¦Àí ////////////
+		//////////   ä½¿ç”¨cramæ–¹æ³•çš„çŸ©é˜µé¢„å¤„ç† ////////////
 		ce_.resize(IRC.size());
 		for (int i = 0; i < nuclide_number_; ++i)
 		{
@@ -1279,7 +1340,7 @@ public:
 			////////////////////////// Forward step of Gauss Elimination////////////////////////////
 			//if(abs(MatrixA[k])==0)
 			//{
-			//	Depth.ErrorWarning("Wrong Gauss Elimination£¡£¡",1);
+			//	Depth.ErrorWarning("Wrong Gauss Eliminationï¼ï¼",1);
 			//}
 
 			int RowIB = ICFR[k];
@@ -1350,7 +1411,7 @@ public:
 		int LUPCount = 1;
 		int LUPpos;
 
-		//////////   Ê¹ÓÃcram·½·¨µÄ¾ØÕóÔ¤´¦Àí ////////////
+		//////////   ä½¿ç”¨cramæ–¹æ³•çš„çŸ©é˜µé¢„å¤„ç† ////////////
 		ce_.resize(IRC.size());
 		for (int i = 0; i < nuclide_number_; ++i)
 		{

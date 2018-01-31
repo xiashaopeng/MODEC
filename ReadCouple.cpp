@@ -3,18 +3,18 @@
 using namespace std;
 
 
-////////////////////////////////////////////¶ÁÈ¡CoupleµÄft33f001¿â///////////////////////////////////////////////
+////////////////////////////////////////////è¯»å–Coupleçš„ft33f001åº“///////////////////////////////////////////////
 void ModecClass::ReadFromCouple()
 {
-	vector<int> nuclide_number_;// ÎÄ¼şÖĞËùÓĞºËËØID
-	vector<int> DecNum; // ºËËØ¶ÔÓ¦µÄË¥±äÀ´Ô´¸öÊı
-	vector<int> XsNum; // ºËËØ¶ÔÓ¦µÄÖĞ×Ó·´Ó¦À´Ô´¸öÊı
-	vector<vector<int> > DecProdID; // Ë¥±äÀ´Ô´ºËËØID£¬¶ÔÓ¦ÓÚnuclide_number_µÄË³Ğò
-	vector<vector<int> > XsProdID; // ÖĞ×ÓºË·´Ó¦À´Ô´ºËËØID£¬¶ÔÓ¦ÓÚnuclide_number_µÄË³Ğò
-	vector<vector<double> > DecReactRate; // ¾ØÕó·Ç¶Ô½Ç·ÇÁãÔªË¥±ä·´Ó¦ÂÊ£¬¶ÔÓ¦DecProdNum
-	vector<vector<double> > XsReactRate; // ¾ØÕó·Ç¶Ô½Ç·ÇÁãÔªÖĞ×Ó·´Ó¦·´Ó¦ÂÊ£¬¶ÔÓ¦XsProdNum
-	vector<double> DecDiagonal; // ¾ØÕó¶Ô½ÇÔªµÄË¥±ä·´Ó¦ÂÊ
-	vector<double> XsDiagonal; // ¾ØÕó¶Ô½ÇÔªµÄÖĞ×Ó·´Ó¦·´Ó¦ÂÊ
+	vector<int> nuclide_number_;// æ–‡ä»¶ä¸­æ‰€æœ‰æ ¸ç´ ID
+	vector<int> DecNum; // æ ¸ç´ å¯¹åº”çš„è¡°å˜æ¥æºä¸ªæ•°
+	vector<int> XsNum; // æ ¸ç´ å¯¹åº”çš„ä¸­å­ååº”æ¥æºä¸ªæ•°
+	vector<vector<int> > DecProdID; // è¡°å˜æ¥æºæ ¸ç´ IDï¼Œå¯¹åº”äºnuclide_number_çš„é¡ºåº
+	vector<vector<int> > XsProdID; // ä¸­å­æ ¸ååº”æ¥æºæ ¸ç´ IDï¼Œå¯¹åº”äºnuclide_number_çš„é¡ºåº
+	vector<vector<double> > DecReactRate; // çŸ©é˜µéå¯¹è§’éé›¶å…ƒè¡°å˜ååº”ç‡ï¼Œå¯¹åº”DecProdNum
+	vector<vector<double> > XsReactRate; // çŸ©é˜µéå¯¹è§’éé›¶å…ƒä¸­å­ååº”ååº”ç‡ï¼Œå¯¹åº”XsProdNum
+	vector<double> DecDiagonal; // çŸ©é˜µå¯¹è§’å…ƒçš„è¡°å˜ååº”ç‡
+	vector<double> XsDiagonal; // çŸ©é˜µå¯¹è§’å…ƒçš„ä¸­å­ååº”ååº”ç‡
 
 	int size_NuclNum, size_Tot;
 	int fiss_tag, fiss_num;
@@ -53,7 +53,7 @@ void ModecClass::ReadFromCouple()
 			break;
 		}
 	}
-	while (!ReadCouple.eof()) // ¶ÁÈ¡ËùÓĞºËËØµÄID²¢´æÈçnuclide_number_ÏòÁ¿ÖĞ
+	while (!ReadCouple.eof()) // è¯»å–æ‰€æœ‰æ ¸ç´ çš„IDå¹¶å­˜å¦‚nuclide_number_å‘é‡ä¸­
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -65,7 +65,7 @@ void ModecClass::ReadFromCouple()
 			break;
 		}
 	}
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ë¥±äÀ´Ô´µÄ×Ü¸öÊı£¬²¢´æÈëDecNumÏòÁ¿ÖĞ
+	while (!ReadCouple.eof()) // è¯»å–è¡°å˜æ¥æºçš„æ€»ä¸ªæ•°ï¼Œå¹¶å­˜å…¥DecNumå‘é‡ä¸­
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -77,7 +77,7 @@ void ModecClass::ReadFromCouple()
 			break;
 		}
 	}
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ã¿¸öºËËØÀ´Ô´µÄ×Ü¸öÊı£¬²¢´æÈëXsNumÏòÁ¿ÖĞ
+	while (!ReadCouple.eof()) // è¯»å–æ¯ä¸ªæ ¸ç´ æ¥æºçš„æ€»ä¸ªæ•°ï¼Œå¹¶å­˜å…¥XsNumå‘é‡ä¸­
 	{
 		ReadCouple >> itemp;
 		if (itemp == size_NuclNum)
@@ -116,7 +116,7 @@ void ModecClass::ReadFromCouple()
 	}
 
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ã¿¸öºËËØµÄË¥±ä³£ÊıRadioactive decay constants
+	while (!ReadCouple.eof()) // è¯»å–æ¯ä¸ªæ ¸ç´ çš„è¡°å˜å¸¸æ•°Radioactive decay constants
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -161,7 +161,7 @@ void ModecClass::ReadFromCouple()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ã¿¸öºËËØµÄÖĞ×Ó·´Ó¦ÏûÊ§ÂÊCapture cross sections (total removal)
+	while (!ReadCouple.eof()) // è¯»å–æ¯ä¸ªæ ¸ç´ çš„ä¸­å­ååº”æ¶ˆå¤±ç‡Capture cross sections (total removal)
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -174,7 +174,7 @@ void ModecClass::ReadFromCouple()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡ÁÑ±ä½ØÃæ Fission cross sections
+	while (!ReadCouple.eof()) // è¯»å–è£‚å˜æˆªé¢ Fission cross sections
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == fiss_num)
@@ -195,7 +195,7 @@ void ModecClass::ReadFromCouple()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡ÖĞ×Ó²úÉú½ØÃæ Neutron production cross sections 
+	while (!ReadCouple.eof()) // è¯»å–ä¸­å­äº§ç”Ÿæˆªé¢ Neutron production cross sections 
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == fiss_tag + fiss_num)
@@ -216,7 +216,7 @@ void ModecClass::ReadFromCouple()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ë¥±äÈÈÏµÊı Recoverable decay energy values
+	while (!ReadCouple.eof()) // è¯»å–è¡°å˜çƒ­ç³»æ•° Recoverable decay energy values
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -246,7 +246,7 @@ void ModecClass::ReadFromCouple()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡AMPCÏµÊı Radioactive concentration guide values for air
+	while (!ReadCouple.eof()) // è¯»å–AMPCç³»æ•° Radioactive concentration guide values for air
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -267,7 +267,7 @@ void ModecClass::ReadFromCouple()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡WMPCÏµÊı Radioactive concentration guide values for air
+	while (!ReadCouple.eof()) // è¯»å–WMPCç³»æ•° Radioactive concentration guide values for air
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -292,7 +292,7 @@ void ModecClass::ReadFromCouple()
 	///////////////////////////////////////////////////////////////////////////
 
 
-	//////////////////////////////// ¹¹Ôì¾ØÕóTransMatrixDecayºÍTransMatrixCrossSection ////////////////////
+	//////////////////////////////// æ„é€ çŸ©é˜µTransMatrixDecayå’ŒTransMatrixCrossSection ////////////////////
 	int _row, _col;
 	double _val;
 	//int mat_dim = ModecNuclideLibrary.nuclide_library_vector_[0].size();
@@ -329,7 +329,7 @@ void ModecClass::ReadFromCouple()
 		TransMatrixStockage = TransMatrixDecay;
 	}
 
-	/* ÔÚ½ØÃæ¾ØÕó½¨Á¢µÄ¹ı³ÌÖĞ£¬ĞèÒª½«n,g½ØÃæ±£´æÏÂÀ´£¬ÓÃÓÚ¹¦ÂÊ¡¢Í¨Á¿×ª»»µÄ¼ÆËã */
+	/* åœ¨æˆªé¢çŸ©é˜µå»ºç«‹çš„è¿‡ç¨‹ä¸­ï¼Œéœ€è¦å°†n,gæˆªé¢ä¿å­˜ä¸‹æ¥ï¼Œç”¨äºåŠŸç‡ã€é€šé‡è½¬æ¢çš„è®¡ç®— */
 	
 	for (int i = 0; i < size_NuclNum; ++i)
 	{
@@ -339,7 +339,7 @@ void ModecClass::ReadFromCouple()
 		if ((!TransMatrixCrossSection.JudgeExist(_row, _row, _val)) && _val>0.0)
 		{
 			TransMatrixCrossSection.AddElement(_row, _row, -_val);
-			ModecNuclideLibrary.nuclide_library_vector_[6][_row] = _val; // ½«ºËËØµÄ n,t ½ØÃæ±£´æÏÂÀ´
+			ModecNuclideLibrary.nuclide_library_vector_[6][_row] = _val; // å°†æ ¸ç´ çš„ n,t æˆªé¢ä¿å­˜ä¸‹æ¥
 		}
 		for (unsigned int j = 0; j < XsProdID[i].size(); ++j)
 		{
@@ -357,9 +357,9 @@ void ModecClass::ReadFromCouple()
 			if ((!TransMatrixCrossSection.JudgeExist(_row, _col, _val)) && _val > 0.0)
 			{
 				TransMatrixCrossSection.AddElement(_row, _col, _val);
-				if (((ReactID - ProdcID == 10) && (ProdcID % 10 ==0)) || ReactID - ProdcID == 9) //°üÀ¨¼¤·¢Ì¬ºËËØºÍ»ùÌ¬ºËËØµÄn,g·´Ó¦£¬×¢Òâ£¬²»°üº¬n,gx·´Ó¦
+				if (((ReactID - ProdcID == 10) && (ProdcID % 10 ==0)) || ReactID - ProdcID == 9) //åŒ…æ‹¬æ¿€å‘æ€æ ¸ç´ å’ŒåŸºæ€æ ¸ç´ çš„n,gååº”ï¼Œæ³¨æ„ï¼Œä¸åŒ…å«n,gxååº”
 				{
-					ModecNuclideLibrary.nuclide_library_vector_[8][_col] = _val; // ½«ºËËØµÄ n,g ½ØÃæ±£´æÏÂÀ´
+					ModecNuclideLibrary.nuclide_library_vector_[8][_col] = _val; // å°†æ ¸ç´ çš„ n,g æˆªé¢ä¿å­˜ä¸‹æ¥
 				}
 			}
 		}
@@ -368,15 +368,15 @@ void ModecClass::ReadFromCouple()
 
 void ModecClass::ReadFromCoupleForTta()
 {
-	vector<int> nuclide_number_;// ÎÄ¼şÖĞËùÓĞºËËØID
-	vector<int> DecNum; // ºËËØ¶ÔÓ¦µÄË¥±äÀ´Ô´¸öÊı
-	vector<int> XsNum; // ºËËØ¶ÔÓ¦µÄÖĞ×Ó·´Ó¦À´Ô´¸öÊı
-	vector<vector<int> > DecProdID; // Ë¥±äÀ´Ô´ºËËØID£¬¶ÔÓ¦ÓÚnuclide_number_µÄË³Ğò
-	vector<vector<int> > XsProdID; // ÖĞ×ÓºË·´Ó¦À´Ô´ºËËØID£¬¶ÔÓ¦ÓÚnuclide_number_µÄË³Ğò
-	vector<vector<double> > DecReactRate; // ¾ØÕó·Ç¶Ô½Ç·ÇÁãÔªË¥±ä·´Ó¦ÂÊ£¬¶ÔÓ¦DecProdNum
-	vector<vector<double> > XsReactRate; // ¾ØÕó·Ç¶Ô½Ç·ÇÁãÔªÖĞ×Ó·´Ó¦·´Ó¦ÂÊ£¬¶ÔÓ¦XsProdNum
-	vector<double> DecDiagonal; // ¾ØÕó¶Ô½ÇÔªµÄË¥±ä·´Ó¦ÂÊ
-	vector<double> XsDiagonal; // ¾ØÕó¶Ô½ÇÔªµÄÖĞ×Ó·´Ó¦·´Ó¦ÂÊ
+	vector<int> nuclide_number_;// æ–‡ä»¶ä¸­æ‰€æœ‰æ ¸ç´ ID
+	vector<int> DecNum; // æ ¸ç´ å¯¹åº”çš„è¡°å˜æ¥æºä¸ªæ•°
+	vector<int> XsNum; // æ ¸ç´ å¯¹åº”çš„ä¸­å­ååº”æ¥æºä¸ªæ•°
+	vector<vector<int> > DecProdID; // è¡°å˜æ¥æºæ ¸ç´ IDï¼Œå¯¹åº”äºnuclide_number_çš„é¡ºåº
+	vector<vector<int> > XsProdID; // ä¸­å­æ ¸ååº”æ¥æºæ ¸ç´ IDï¼Œå¯¹åº”äºnuclide_number_çš„é¡ºåº
+	vector<vector<double> > DecReactRate; // çŸ©é˜µéå¯¹è§’éé›¶å…ƒè¡°å˜ååº”ç‡ï¼Œå¯¹åº”DecProdNum
+	vector<vector<double> > XsReactRate; // çŸ©é˜µéå¯¹è§’éé›¶å…ƒä¸­å­ååº”ååº”ç‡ï¼Œå¯¹åº”XsProdNum
+	vector<double> DecDiagonal; // çŸ©é˜µå¯¹è§’å…ƒçš„è¡°å˜ååº”ç‡
+	vector<double> XsDiagonal; // çŸ©é˜µå¯¹è§’å…ƒçš„ä¸­å­ååº”ååº”ç‡
 
 	int size_NuclNum, size_Tot;
 	int fiss_tag, fiss_num;
@@ -415,7 +415,7 @@ void ModecClass::ReadFromCoupleForTta()
 			break;
 		}
 	}
-	while (!ReadCouple.eof()) // ¶ÁÈ¡ËùÓĞºËËØµÄID²¢´æÈçnuclide_number_ÏòÁ¿ÖĞ
+	while (!ReadCouple.eof()) // è¯»å–æ‰€æœ‰æ ¸ç´ çš„IDå¹¶å­˜å¦‚nuclide_number_å‘é‡ä¸­
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -427,7 +427,7 @@ void ModecClass::ReadFromCoupleForTta()
 			break;
 		}
 	}
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ë¥±äÀ´Ô´µÄ×Ü¸öÊı£¬²¢´æÈëDecNumÏòÁ¿ÖĞ
+	while (!ReadCouple.eof()) // è¯»å–è¡°å˜æ¥æºçš„æ€»ä¸ªæ•°ï¼Œå¹¶å­˜å…¥DecNumå‘é‡ä¸­
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -439,7 +439,7 @@ void ModecClass::ReadFromCoupleForTta()
 			break;
 		}
 	}
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ã¿¸öºËËØÀ´Ô´µÄ×Ü¸öÊı£¬²¢´æÈëXsNumÏòÁ¿ÖĞ
+	while (!ReadCouple.eof()) // è¯»å–æ¯ä¸ªæ ¸ç´ æ¥æºçš„æ€»ä¸ªæ•°ï¼Œå¹¶å­˜å…¥XsNumå‘é‡ä¸­
 	{
 		ReadCouple >> itemp;
 		if (itemp == size_NuclNum)
@@ -478,7 +478,7 @@ void ModecClass::ReadFromCoupleForTta()
 	}
 
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ã¿¸öºËËØµÄË¥±ä³£ÊıRadioactive decay constants
+	while (!ReadCouple.eof()) // è¯»å–æ¯ä¸ªæ ¸ç´ çš„è¡°å˜å¸¸æ•°Radioactive decay constants
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -523,7 +523,7 @@ void ModecClass::ReadFromCoupleForTta()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ã¿¸öºËËØµÄÖĞ×Ó·´Ó¦ÏûÊ§ÂÊCapture cross sections (total removal)
+	while (!ReadCouple.eof()) // è¯»å–æ¯ä¸ªæ ¸ç´ çš„ä¸­å­ååº”æ¶ˆå¤±ç‡Capture cross sections (total removal)
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -536,7 +536,7 @@ void ModecClass::ReadFromCoupleForTta()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡ÁÑ±ä½ØÃæ Fission cross sections
+	while (!ReadCouple.eof()) // è¯»å–è£‚å˜æˆªé¢ Fission cross sections
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == fiss_num)
@@ -557,7 +557,7 @@ void ModecClass::ReadFromCoupleForTta()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡ÖĞ×Ó²úÉú½ØÃæ Neutron production cross sections 
+	while (!ReadCouple.eof()) // è¯»å–ä¸­å­äº§ç”Ÿæˆªé¢ Neutron production cross sections 
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == fiss_tag + fiss_num)
@@ -578,7 +578,7 @@ void ModecClass::ReadFromCoupleForTta()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡Ë¥±äÈÈÏµÊı Recoverable decay energy values
+	while (!ReadCouple.eof()) // è¯»å–è¡°å˜çƒ­ç³»æ•° Recoverable decay energy values
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -608,7 +608,7 @@ void ModecClass::ReadFromCoupleForTta()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡AMPCÏµÊı Radioactive concentration guide values for air
+	while (!ReadCouple.eof()) // è¯»å–AMPCç³»æ•° Radioactive concentration guide values for air
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -629,7 +629,7 @@ void ModecClass::ReadFromCoupleForTta()
 		}
 	}
 
-	while (!ReadCouple.eof()) // ¶ÁÈ¡WMPCÏµÊı Radioactive concentration guide values for air
+	while (!ReadCouple.eof()) // è¯»å–WMPCç³»æ•° Radioactive concentration guide values for air
 	{
 		ReadCouple >> dtemp;
 		if (dtemp == size_NuclNum)
@@ -654,7 +654,7 @@ void ModecClass::ReadFromCoupleForTta()
 	///////////////////////////////////////////////////////////////////////////
 
 
-	//////////////////////////////// ¹¹Ôì¾ØÕóTransMatrixDecayºÍTransMatrixCrossSection ////////////////////
+	//////////////////////////////// æ„é€ çŸ©é˜µTransMatrixDecayå’ŒTransMatrixCrossSection ////////////////////
 	int _row, _col;
 	double _val;
 	//int mat_dim = ModecNuclideLibrary.nuclide_library_vector_[0].size();
@@ -691,7 +691,7 @@ void ModecClass::ReadFromCoupleForTta()
 	//	TransMatrixStockage = TtaMatrixDecay;
 	//}
 
-	/* ÔÚ½ØÃæ¾ØÕó½¨Á¢µÄ¹ı³ÌÖĞ£¬ĞèÒª½«n,g½ØÃæ±£´æÏÂÀ´£¬ÓÃÓÚ¹¦ÂÊ¡¢Í¨Á¿×ª»»µÄ¼ÆËã */
+	/* åœ¨æˆªé¢çŸ©é˜µå»ºç«‹çš„è¿‡ç¨‹ä¸­ï¼Œéœ€è¦å°†n,gæˆªé¢ä¿å­˜ä¸‹æ¥ï¼Œç”¨äºåŠŸç‡ã€é€šé‡è½¬æ¢çš„è®¡ç®— */
 
 	for (int i = 0; i < size_NuclNum; ++i)
 	{
@@ -701,7 +701,7 @@ void ModecClass::ReadFromCoupleForTta()
 		if ((!TtaMatrixCrossSection.JudgeExist(_row, _row, _val)) && _val>0.0)
 		{
 			TtaMatrixCrossSection.AddElementCCS(_row, _row, -_val);
-			ModecNuclideLibrary.nuclide_library_vector_[6][_row] = _val; // ½«ºËËØµÄ n,t ½ØÃæ±£´æÏÂÀ´
+			ModecNuclideLibrary.nuclide_library_vector_[6][_row] = _val; // å°†æ ¸ç´ çš„ n,t æˆªé¢ä¿å­˜ä¸‹æ¥
 		}
 		for (unsigned int j = 0; j < XsProdID[i].size(); ++j)
 		{
@@ -719,9 +719,9 @@ void ModecClass::ReadFromCoupleForTta()
 			if ((!TtaMatrixCrossSection.JudgeExist(_row, _col, _val)) && _val > 0.0)
 			{
 				TtaMatrixCrossSection.AddElementCCS(_row, _col, _val);
-				if (((ReactID - ProdcID == 10) && (ProdcID % 10 == 0)) || ReactID - ProdcID == 9) //°üÀ¨¼¤·¢Ì¬ºËËØºÍ»ùÌ¬ºËËØµÄn,g·´Ó¦£¬×¢Òâ£¬²»°üº¬n,gx·´Ó¦
+				if (((ReactID - ProdcID == 10) && (ProdcID % 10 == 0)) || ReactID - ProdcID == 9) //åŒ…æ‹¬æ¿€å‘æ€æ ¸ç´ å’ŒåŸºæ€æ ¸ç´ çš„n,gååº”ï¼Œæ³¨æ„ï¼Œä¸åŒ…å«n,gxååº”
 				{
-					ModecNuclideLibrary.nuclide_library_vector_[8][_col] = _val; // ½«ºËËØµÄ n,g ½ØÃæ±£´æÏÂÀ´
+					ModecNuclideLibrary.nuclide_library_vector_[8][_col] = _val; // å°†æ ¸ç´ çš„ n,g æˆªé¢ä¿å­˜ä¸‹æ¥
 				}
 			}
 		}

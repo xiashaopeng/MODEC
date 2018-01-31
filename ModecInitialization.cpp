@@ -16,7 +16,7 @@ void ModecClass::ModecInitial(int argc, char *argv[])
 	}
 	GetInputFileName.close();
 
-	int num_nucl;								// ≥ı º∫ÀÀÿ∏ˆ ˝ 
+	int num_nucl;								// ÂàùÂßãÊ†∏Á¥†‰∏™Êï∞ 
 
 	if (argc == 2)
 	{
@@ -217,6 +217,7 @@ readfile:
 			record >> sub;
 			substep_.push_back(sub);		
 		}
+		
 		if (tag == "Power")
 		{
 			if_read_mode_tag_ = 1;
@@ -255,6 +256,18 @@ readfile:
 			
 		}
 
+		if (tag == "Calc_Flow_Depletion")
+		{
+			record >> if_flow_mode_;
+		}
+		if (tag == "Residue_Time")
+		{
+			double temp;
+			record >> temp;
+			residue_time_.push_back(temp);
+			record >> temp;
+			residue_time_.push_back(temp);
+		}
 		//////////////////////////////////////////////////
 
 		/////////////////// Block 3 //////////////////////
@@ -311,7 +324,7 @@ readfile:
 				int id = ModecNuclideLibrary.GetNuclIndex(nucl_id);
 				double awt = double((nucl_id - nucl_id / 10000 * 10000) / 10);
 
-				ModecNuclideLibrary.nuclide_library_vector_[0][id] = mass / awt; // ◊™ªª≥…molΩ¯––¥Ê¥¢
+				ModecNuclideLibrary.nuclide_library_vector_[0][id] = mass / awt; // ËΩ¨Êç¢ÊàêmolËøõË°åÂ≠òÂÇ®
 				
 				if (awt >= 220)
 				{
@@ -332,11 +345,11 @@ readfile:
 				int id = ModecNuclideLibrary.GetNuclIndex(nucl_id);
 				double awt = double((nucl_id - nucl_id / 10000 * 10000) / 10);
 
-				ModecNuclideLibrary.nuclide_library_vector_[0][id] = mass * 1000.0 / awt; // ◊™ªª≥…molΩ¯––¥Ê¥¢
+				ModecNuclideLibrary.nuclide_library_vector_[0][id] = mass * 1000.0 / awt; // ËΩ¨Êç¢ÊàêmolËøõË°åÂ≠òÂÇ®
 
 				if (awt >= 220)
 				{
-					ModecNuclideLibrary.heavy_metal_mass_ += mass * 1000.0; // ◊™ªª≥…g¿¥¥Ê¥¢
+					ModecNuclideLibrary.heavy_metal_mass_ += mass * 1000.0; // ËΩ¨Êç¢ÊàêgÊù•Â≠òÂÇ®
 				}
 			}
 			goto readfile;
@@ -353,11 +366,11 @@ readfile:
 				int id = ModecNuclideLibrary.GetNuclIndex(nucl_id);
 				double awt = nucl_id - nucl_id / 10000 * 10000;
 
-				ModecNuclideLibrary.nuclide_library_vector_[0][id] = atom / (6.022140857E+23); // ◊™ªª≥…molΩ¯––¥Ê¥¢
+				ModecNuclideLibrary.nuclide_library_vector_[0][id] = atom / (6.022140857E+23); // ËΩ¨Êç¢ÊàêmolËøõË°åÂ≠òÂÇ®
 
 				if (awt >= 220)
 				{
-					ModecNuclideLibrary.heavy_metal_mass_ += atom / (6.022140857E+23) * awt; // ◊™ªª≥…g¿¥¥Ê¥¢
+					ModecNuclideLibrary.heavy_metal_mass_ += atom / (6.022140857E+23) * awt; // ËΩ¨Êç¢ÊàêgÊù•Â≠òÂÇ®
 				}
 			}
 			goto readfile;
@@ -374,11 +387,11 @@ readfile:
 				int id = ModecNuclideLibrary.GetNuclIndex(nucl_id);
 				double awt = nucl_id - nucl_id / 10000 * 10000;
 
-				ModecNuclideLibrary.nuclide_library_vector_[0][id] = atom / (6.022140857E-1); // ◊™ªª≥…molΩ¯––¥Ê¥¢
+				ModecNuclideLibrary.nuclide_library_vector_[0][id] = atom / (6.022140857E-1); // ËΩ¨Êç¢ÊàêmolËøõË°åÂ≠òÂÇ®
 
 				if (awt >= 220)
 				{
-					ModecNuclideLibrary.heavy_metal_mass_ += atom / (6.022140857E-1) * awt; // ◊™ªª≥…g¿¥¥Ê¥¢
+					ModecNuclideLibrary.heavy_metal_mass_ += atom / (6.022140857E-1) * awt; // ËΩ¨Êç¢ÊàêgÊù•Â≠òÂÇ®
 				}
 			}
 			goto readfile;
@@ -462,7 +475,7 @@ readfile:
 				if (if_tracking_stockage == true)
 				{
 					int size = ModecNuclideLibrary.nuclide_library_vector_[0].size();
-					ModecNuclideLibrary.nuclide_library_vector_[0].resize(2 * size); // »Ù“™◊∑◊Ÿ∂—Õ‚∫ÀÀÿ—›ªØ£¨‘Úæÿ’Û÷–∫ÀÀÿ◊‹ ˝”¶Œ™‘≠¿¥µƒ¡Ω±∂
+					ModecNuclideLibrary.nuclide_library_vector_[0].resize(2 * size); // Ëã•Ë¶ÅËøΩË∏™Â†ÜÂ§ñÊ†∏Á¥†ÊºîÂåñÔºåÂàôÁü©Èòµ‰∏≠Ê†∏Á¥†ÊÄªÊï∞Â∫î‰∏∫ÂéüÊù•ÁöÑ‰∏§ÂÄç
 				}
 				modec_inp_ >> removetag;
 				if (removetag != "StokageRadioactivity")
@@ -638,6 +651,21 @@ readfile:
 	}
 	modec_inp_.close();
 
+	if (if_flow_mode_ == 1)
+	{
+		if(residue_time_.size() ==0)
+			InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no residue time data are read.", 1);
+
+		if (residue_time_[0] == 0 || residue_time_[1] == 0)
+		{
+			if_flow_mode_ = 0;
+			InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: zero residue time means totally well-mixed.",0);
+			for (int i = 0; i < evolution_value_.size(); ++i)
+			{
+				evolution_value_[i] /= 2.0; // ÂÆåÂÖ®ÂùáÂåÄÂàôÊÑèÂë≥ÁùÄÂáèÂçä
+			}
+		}
+	}
 	if (decay_library_name_.length() == 0 && depth_library_name_.length() == 0 && couple_library_name_.length() == 0)
 	{
 		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no library name in the input file.", 1);
@@ -713,13 +741,13 @@ void ModecClass::BuildSpMat()
 		{
 			DecayToSpMatForTta();
 		}
-		if (i < size) // ÒÓ∫œTRITON
+		if (i < size) // ËÄ¶ÂêàTRITON
 		{
 			XSfromTriton();
 			CalculateEffectiveFissionYields();
 		}
 	}
-	else if (lib_tag_ == 1) // ∂¡»°depth_library_name_
+	else if (lib_tag_ == 1) // ËØªÂèñdepth_library_name_
 	{
 		int size = evolution_mode_.size();
 		int i;
@@ -730,7 +758,7 @@ void ModecClass::BuildSpMat()
 				break;
 			}
 		}
-		if (i >= size) // ¥øÀ•±‰«È–Œ
+		if (i >= size) // Á∫ØË°∞ÂèòÊÉÖÂΩ¢
 		{
 			if (solver_selection_ == 1)
 			{
@@ -755,7 +783,7 @@ void ModecClass::BuildSpMat()
 			}
 		}
 	}
-	else if (lib_tag_ == 2)// ∂¡»°Couple
+	else if (lib_tag_ == 2)// ËØªÂèñCouple
 	{
 		int size = evolution_mode_.size();
 		int i;
@@ -773,15 +801,13 @@ void ModecClass::BuildSpMat()
 		else if( solver_selection_ == 0 )
 		{
 			ReadFromCoupleForTta();
-			//ConstructFissionYieldsSpMat(TransMatrixFissionYields, ModecNuclideLibrary);
 		}
 	}
 
-	int th233_index = ModecNuclideLibrary.GetNuclIndex(902330);
-	double th233_xs = TransMatrixCrossSection.Element(th233_index, th233_index);
-
-	int pa234_index = ModecNuclideLibrary.GetNuclIndex(912340);
-	double pa234_xs = TransMatrixCrossSection.Element(pa234_index, pa234_index);
+	if (if_flow_mode_ == 1)
+	{
+		TransMatrixPureDecay = TransMatrixDecay; // ÂÆö‰πâÁ∫ØË°∞ÂèòÁü©Èòµ
+	}
 
  	if (if_continously_remove_ == true)
 	{

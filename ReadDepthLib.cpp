@@ -2,9 +2,9 @@
 
 using namespace std;
 
-////////////////////////////////////////////¶ÁÈ¡Depth¿â///////////////////////////////////////////////
+////////////////////////////////////////////è¯»å–Depthåº“///////////////////////////////////////////////
 
-/// ¼È¶ÁÈ¡Ë¥±ä¾ØÕó£¬Ò²¶ÁÈ¡ÁÑ±ä¾ØÕó
+/// æ—¢è¯»å–è¡°å˜çŸ©é˜µï¼Œä¹Ÿè¯»å–è£‚å˜çŸ©é˜µ
 void ModecClass::ReadFromDepthLib()
 {
 	char line[200];
@@ -14,9 +14,9 @@ void ModecClass::ReadFromDepthLib()
 	double lamda;
 	int alphaID = ModecNuclideLibrary.GetNuclIndex(20040);
 	int protonID = ModecNuclideLibrary.GetNuclIndex(10010);
-	int FisNucNum, PrdctNum; // ÓĞÁÑ±ä³¡µÄÁÑ±äºËËØ¸öÊı¼°ÁÑ±ä²úÎï¸öÊı
-	int FPid; // ÁÑ±ä²úÎïID
-	double FPyield; // ÁÑ±ä²úÎï·İ¶î
+	int FisNucNum, PrdctNum; // æœ‰è£‚å˜åœºçš„è£‚å˜æ ¸ç´ ä¸ªæ•°åŠè£‚å˜äº§ç‰©ä¸ªæ•°
+	int FPid; // è£‚å˜äº§ç‰©ID
+	double FPyield; // è£‚å˜äº§ç‰©ä»½é¢
 					//vector<int> FisNucIndex;
 
 	double halfl, fb1, fp, fp1, fa, ft;       //// first line
@@ -25,7 +25,7 @@ void ModecClass::ReadFromDepthLib()
 	double SNG, SN2N, SN3N_SNA, SNF_SNP, SNGX, SN2NX;       //// fourth line cross-section
 	double fisrate;
 
-	//int mat_dim = ModecNuclideLibrary.nuclide_library_vector_[0].size(); // ¾ØÕóÎ¬¶È
+	//int mat_dim = ModecNuclideLibrary.nuclide_library_vector_[0].size(); // çŸ©é˜µç»´åº¦
 
 	ifstream ReadDepth;
 	ReadDepth.open(depth_library_name_, ios::in);
@@ -87,10 +87,10 @@ void ModecClass::ReadFromDepthLib()
 
 		if (itemp != -1)
 		{
-			InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLib; \n Error: error flag in DEPTH lib£¡",1);
+			InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLib; \n Error: error flag in DEPTH libï¼",1);
 		}
 
-		// Ë¥±ä¾ØÕóTransMatrixDecay½¨Á¢
+		// è¡°å˜çŸ©é˜µTransMatrixDecayå»ºç«‹
 		if (lamda != 0.0 && _col != -1)
 		{
 			//lamda = log(2) / halfl;
@@ -126,7 +126,7 @@ void ModecClass::ReadFromDepthLib()
 				double _val = lamda*fa;
 				TransMatrixDecay.AddElement(_row, _col, _val);
 				
-				TransMatrixDecay.AddElement(alphaID, _col, _val); // °¢¶û·¨Ë¥±ä²úÉúµÄHe-4ÔªËØ
+				TransMatrixDecay.AddElement(alphaID, _col, _val); // é˜¿å°”æ³•è¡°å˜äº§ç”Ÿçš„He-4å…ƒç´ 
 			}
 
 			if (ft != 0.0)
@@ -176,7 +176,7 @@ void ModecClass::ReadFromDepthLib()
 				_row = ModecNuclideLibrary.GetNuclIndex(ProdID);
 				double _val = lamda*fba;
 				TransMatrixDecay.AddElement(_row, _col, _val);
-				TransMatrixDecay.AddElement(alphaID, _col, _val); // °¢¶û·¨Ë¥±ä²úÉúµÄHe-4ÔªËØ
+				TransMatrixDecay.AddElement(alphaID, _col, _val); // é˜¿å°”æ³•è¡°å˜äº§ç”Ÿçš„He-4å…ƒç´ 
 			}
 
 			if (_col != -1)
@@ -197,7 +197,7 @@ void ModecClass::ReadFromDepthLib()
 		}
 		////////////////////////
 
-		// ½ØÃæ¾ØÕómatrix_XS½¨Á¢
+		// æˆªé¢çŸ©é˜µmatrix_XSå»ºç«‹
 
 		//1: (n,g) cross-section of nuclide leading to ground state of the daughter nuclide
 		if (SNG != 0.0 && _col != -1)
@@ -271,7 +271,7 @@ void ModecClass::ReadFromDepthLib()
 
 
 
-		if (NuclID > 900000 && SNF_SNP != 0.0 && _col != -1) // Depth ³ÌĞòÖĞÈÏÎªºËËØID´óÓÚ900000ÈÏÎªÆäÎªï¹ÏµºËËØ£¬ÇÒï¹ÏµºËËØÓĞSNFµ«Ã»ÓĞSNP
+		if (NuclID > 900000 && SNF_SNP != 0.0 && _col != -1) // Depth ç¨‹åºä¸­è®¤ä¸ºæ ¸ç´ IDå¤§äº900000è®¤ä¸ºå…¶ä¸ºé”•ç³»æ ¸ç´ ï¼Œä¸”é”•ç³»æ ¸ç´ æœ‰SNFä½†æ²¡æœ‰SNP
 		{
 			ModecNuclideLibrary.nuclide_library_vector_[7][_col] = SNF_SNP;
 		}
@@ -304,7 +304,7 @@ void ModecClass::ReadFromDepthLib()
 	ModecNuclideLibrary.effective_fission_yields_vector_.resize(FisNucNum);
 	for (int i = 0; i < FisNucNum; ++i)
 	{
-		ReadDepth >> ModecNuclideLibrary.fissionable_nuclide_id_vector_[i]; // ½«ÓµÓĞÁÑ±ä³¡µÄºËËØID´æ´¢ÆğÀ´
+		ReadDepth >> ModecNuclideLibrary.fissionable_nuclide_id_vector_[i]; // å°†æ‹¥æœ‰è£‚å˜åœºçš„æ ¸ç´ IDå­˜å‚¨èµ·æ¥
 	}
 
 	for (int i = 0; i < FisNucNum; ++i)
@@ -330,7 +330,7 @@ void ModecClass::ReadFromDepthLib()
 
 		if (itemp != -1)
 		{
-			InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLib; \n Error: error flag in DEPTH lib£¡" ,1);
+			InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLib; \n Error: error flag in DEPTH libï¼" ,1);
 		}
 		ReadDepth.getline(line, 200);
 	}
@@ -349,9 +349,9 @@ void ModecClass::ReadFromDepthLibForTta()
 	double lamda;
 	int alphaID = ModecNuclideLibrary.GetNuclIndex(20040);
 	int protonID = ModecNuclideLibrary.GetNuclIndex(10010);
-	int FisNucNum, PrdctNum; // ÓĞÁÑ±ä³¡µÄÁÑ±äºËËØ¸öÊı¼°ÁÑ±ä²úÎï¸öÊı
-	int FPid; // ÁÑ±ä²úÎïID
-	double FPyield; // ÁÑ±ä²úÎï·İ¶î
+	int FisNucNum, PrdctNum; // æœ‰è£‚å˜åœºçš„è£‚å˜æ ¸ç´ ä¸ªæ•°åŠè£‚å˜äº§ç‰©ä¸ªæ•°
+	int FPid; // è£‚å˜äº§ç‰©ID
+	double FPyield; // è£‚å˜äº§ç‰©ä»½é¢
 					//vector<int> FisNucIndex;
 
 	double halfl, fb1, fp, fp1, fa, ft;       //// first line
@@ -360,7 +360,7 @@ void ModecClass::ReadFromDepthLibForTta()
 	double SNG, SN2N, SN3N_SNA, SNF_SNP, SNGX, SN2NX;       //// fourth line cross-section
 	double fisrate;
 
-	//int mat_dim = ModecNuclideLibrary.nuclide_library_vector_[0].size(); // ¾ØÕóÎ¬¶È
+	//int mat_dim = ModecNuclideLibrary.nuclide_library_vector_[0].size(); // çŸ©é˜µç»´åº¦
 
 	ifstream ReadDepth;
 	ReadDepth.open(depth_library_name_, ios::in);
@@ -422,10 +422,10 @@ void ModecClass::ReadFromDepthLibForTta()
 
 		if (itemp != -1)
 		{
-			InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLibForTta; \n Error: error flag in DEPTH lib£¡", 1);
+			InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLibForTta; \n Error: error flag in DEPTH libï¼", 1);
 		}
 
-		// Ë¥±ä¾ØÕóTransMatrixDecay½¨Á¢
+		// è¡°å˜çŸ©é˜µTransMatrixDecayå»ºç«‹
 		if (lamda != 0.0 && _col != -1)
 		{
 			//lamda = log(2) / halfl;
@@ -461,7 +461,7 @@ void ModecClass::ReadFromDepthLibForTta()
 				double _val = lamda*fa;
 				TtaMatrixDecay.AddElementCCS(_row, _col, _val);
 
-				TtaMatrixDecay.AddElementCCS(alphaID, _col, _val); // °¢¶û·¨Ë¥±ä²úÉúµÄHe-4ÔªËØ
+				TtaMatrixDecay.AddElementCCS(alphaID, _col, _val); // é˜¿å°”æ³•è¡°å˜äº§ç”Ÿçš„He-4å…ƒç´ 
 			}
 
 			if (ft != 0.0)
@@ -511,7 +511,7 @@ void ModecClass::ReadFromDepthLibForTta()
 					_row = ModecNuclideLibrary.GetNuclIndex(ProdID);
 				double _val = lamda*fba;
 				TtaMatrixDecay.AddElementCCS(_row, _col, _val);
-				TtaMatrixDecay.AddElementCCS(alphaID, _col, _val); // °¢¶û·¨Ë¥±ä²úÉúµÄHe-4ÔªËØ
+				TtaMatrixDecay.AddElementCCS(alphaID, _col, _val); // é˜¿å°”æ³•è¡°å˜äº§ç”Ÿçš„He-4å…ƒç´ 
 			}
 
 			if (_col != -1)
@@ -532,7 +532,7 @@ void ModecClass::ReadFromDepthLibForTta()
 		}*/
 		////////////////////////
 
-		// ½ØÃæ¾ØÕómatrix_XS½¨Á¢
+		// æˆªé¢çŸ©é˜µmatrix_XSå»ºç«‹
 
 		//1: (n,g) cross-section of nuclide leading to ground state of the daughter nuclide
 		if (SNG != 0.0 && _col != -1)
@@ -606,7 +606,7 @@ void ModecClass::ReadFromDepthLibForTta()
 
 
 
-		if (NuclID > 900000 && SNF_SNP != 0.0 && _col != -1) // Depth ³ÌĞòÖĞÈÏÎªºËËØID´óÓÚ900000ÈÏÎªÆäÎªï¹ÏµºËËØ£¬ÇÒï¹ÏµºËËØÓĞSNFµ«Ã»ÓĞSNP
+		if (NuclID > 900000 && SNF_SNP != 0.0 && _col != -1) // Depth ç¨‹åºä¸­è®¤ä¸ºæ ¸ç´ IDå¤§äº900000è®¤ä¸ºå…¶ä¸ºé”•ç³»æ ¸ç´ ï¼Œä¸”é”•ç³»æ ¸ç´ æœ‰SNFä½†æ²¡æœ‰SNP
 		{
 			ModecNuclideLibrary.nuclide_library_vector_[7][_col] = SNF_SNP;
 		}
@@ -639,7 +639,7 @@ void ModecClass::ReadFromDepthLibForTta()
 	ModecNuclideLibrary.effective_fission_yields_vector_.resize(FisNucNum);
 	for (int i = 0; i < FisNucNum; ++i)
 	{
-		ReadDepth >> ModecNuclideLibrary.fissionable_nuclide_id_vector_[i]; // ½«ÓµÓĞÁÑ±ä³¡µÄºËËØID´æ´¢ÆğÀ´
+		ReadDepth >> ModecNuclideLibrary.fissionable_nuclide_id_vector_[i]; // å°†æ‹¥æœ‰è£‚å˜åœºçš„æ ¸ç´ IDå­˜å‚¨èµ·æ¥
 	}
 
 	for (int i = 0; i < FisNucNum; ++i)
@@ -665,7 +665,7 @@ void ModecClass::ReadFromDepthLibForTta()
 
 		if (itemp != -1)
 		{
-			InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLibForTta; \n Error: error flag in DEPTH lib£¡", 1);
+			InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLibForTta; \n Error: error flag in DEPTH libï¼", 1);
 		}
 		ReadDepth.getline(line, 200);
 	}
@@ -675,7 +675,7 @@ void ModecClass::ReadFromDepthLibForTta()
 	return;
 };
 
-// ÔÚORIGENS»òÕßTRITONñîºÏÖĞ£¬²»ĞèÒª½øĞĞÁÑ±ä³¡µÄĞŞÕı£¬Ö»ÓĞÔÚ¶ÁÈ¡ORIGEN2µÄ½ØÃæÎÄ¼şÖĞ£¬²ÅĞèÒª½øĞĞĞŞÕı
+// åœ¨ORIGENSæˆ–è€…TRITONè€¦åˆä¸­ï¼Œä¸éœ€è¦è¿›è¡Œè£‚å˜åœºçš„ä¿®æ­£ï¼Œåªæœ‰åœ¨è¯»å–ORIGEN2çš„æˆªé¢æ–‡ä»¶ä¸­ï¼Œæ‰éœ€è¦è¿›è¡Œä¿®æ­£
 void ModecClass::ConstructFissionYieldsSpMat()
 {
 	TransMatrixFissionYields.Reset();

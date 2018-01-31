@@ -1,7 +1,7 @@
 #include"IntegralMethods.h"
 
-////////////////// 初始化静态成员变量，GLa_weight和GLa_abscissa //////////////////////////////////
-int GaussLaguerreQuadrature::GLa_order = 10; // 默认值为10
+////////////////// 鍒濆鍖栭潤鎬佹垚鍛樺彉閲忥紝GLa_weight鍜孏La_abscissa //////////////////////////////////
+int GaussLaguerreQuadrature::GLa_order = 10; // 榛樿鍊间负10
 
 vector<vector<double> > GaussLaguerreQuadrature::Value_GLa_weight()
 {

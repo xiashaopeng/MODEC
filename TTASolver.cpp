@@ -1,7 +1,7 @@
 #include "SolveTrans.h"
 
 
-// TTAÓÃÓÚË¥±ä¼ÆËã£¬Ã»ÓĞ±ÕºÏ»·Â·£¬»ù±¾²»´æÔÚÍêÈ«ÏàµÈµÄË¥±ä³£Êı£¬¹Ê²ÉÓÃµİÍÆ¹ØÏµÊ½Çó½âÏµÊı×îÎª¸ßĞ§ //
+// TTAç”¨äºè¡°å˜è®¡ç®—ï¼Œæ²¡æœ‰é—­åˆç¯è·¯ï¼ŒåŸºæœ¬ä¸å­˜åœ¨å®Œå…¨ç›¸ç­‰çš„è¡°å˜å¸¸æ•°ï¼Œæ•…é‡‡ç”¨é€’æ¨å…³ç³»å¼æ±‚è§£ç³»æ•°æœ€ä¸ºé«˜æ•ˆ //
 //void SolveTrans::SearchOneChainForDecay(int n0_index, long double time, int& chain_point_count)
 //{
 //	long double beff = chain_beff_list_.back();
@@ -20,13 +20,13 @@
 //		long double lamda_jj = -matrix_diagonal_val_[next_daughter_index].real();
 //		long double beff_ji = matrix_col_val_[n0_index][0].real();
 //
-//		beff = beff * beff_ji / lamda_ii; // °´ÕÕ±ê×¼µÄ¹«Ê½À´¼ÆËãTTAµÄÏà¹ØÏµÊı
+//		beff = beff * beff_ji / lamda_ii; // æŒ‰ç…§æ ‡å‡†çš„å…¬å¼æ¥è®¡ç®—TTAçš„ç›¸å…³ç³»æ•°
 //
 //		long double alpha_new = 1;
 //		long double alpha_sum = 0;
 //		for (int ii = 0; ii < alpha.size(); ++ii)
 //		{
-//			if (lamda_jj == chain_lamda_list_[ii]) // ÕâÀïµÄlamdaÏµÊıµÄ´¦Àí¿ÉÄÜ´æÔÚÎÊÌâ
+//			if (lamda_jj == chain_lamda_list_[ii]) // è¿™é‡Œçš„lamdaç³»æ•°çš„å¤„ç†å¯èƒ½å­˜åœ¨é—®é¢˜
 //			{
 //				lamda_jj = lamda_jj*(1 + 1e-5);
 //			}
@@ -55,8 +55,8 @@
 //	{
 //		node_matirx_index_list_.push_back(n0_index);
 //		node_chain_index_list_.push_back(chain_point_count);
-//		node_alpha_list_.push_back(alpha); // µÚÒ»¸öºËËØ×÷ÎªÊ×¸ö½Úµã£¬ÆäalphaÏµÊıĞèÒª´æ´¢
-//		node_beff_list_.push_back(beff); // µÚÒ»¸öºËËØ×÷ÎªÊ×¸ö½Úµã£¬ÆäbeffÏµÊıĞèÒª´æ´¢
+//		node_alpha_list_.push_back(alpha); // ç¬¬ä¸€ä¸ªæ ¸ç´ ä½œä¸ºé¦–ä¸ªèŠ‚ç‚¹ï¼Œå…¶alphaç³»æ•°éœ€è¦å­˜å‚¨
+//		node_beff_list_.push_back(beff); // ç¬¬ä¸€ä¸ªæ ¸ç´ ä½œä¸ºé¦–ä¸ªèŠ‚ç‚¹ï¼Œå…¶beffç³»æ•°éœ€è¦å­˜å‚¨
 //		node_daughter_number_list_.push_back(next_index_list.size());
 //
 //		int node_location = node_chain_index_list_.back(); // 
@@ -89,7 +89,7 @@
 //
 //			for (int ii = 0; ii < alpha.size(); ++ii)
 //			{
-//				if (lamda_jj == chain_lamda_list_[ii]) // ÕâÀïµÄlamdaÏµÊıµÄ´¦Àí¿ÉÄÜ´æÔÚÎÊÌâ
+//				if (lamda_jj == chain_lamda_list_[ii]) // è¿™é‡Œçš„lamdaç³»æ•°çš„å¤„ç†å¯èƒ½å­˜åœ¨é—®é¢˜
 //				{
 //					lamda_jj = lamda_jj*(1 + 1e-5);
 //				}
@@ -118,7 +118,7 @@
 //
 //}
 
-// ¶ÔÓÚÈ¼ºÄÎÊÌâ£¬²»¿¼ÂÇ±£ÁôÃ¿²½µÄalphaºÍbeff£¨ÄÚ´æ±¬Õ¨£©£¬¶øÊÇÖ»±£ÁôÃ¿¸öºËËØµÄË¥±äºÍ½ØÃæĞÅÏ¢£¬ÔÙÃ¿²½Ê±¼ÆËãalphaºÍbeff
+// å¯¹äºç‡ƒè€—é—®é¢˜ï¼Œä¸è€ƒè™‘ä¿ç•™æ¯æ­¥çš„alphaå’Œbeffï¼ˆå†…å­˜çˆ†ç‚¸ï¼‰ï¼Œè€Œæ˜¯åªä¿ç•™æ¯ä¸ªæ ¸ç´ çš„è¡°å˜å’Œæˆªé¢ä¿¡æ¯ï¼Œå†æ¯æ­¥æ—¶è®¡ç®—alphaå’Œbeff
 //void SolveTrans::SearchOneChainForDepletion(SparseMatrixMCS &matrix_, int n0_index, long double time, int& chain_point_count)
 //{
 //	vector<int> next_index_list = matrix_.RowListIndex(n0_index);
@@ -144,12 +144,12 @@
 //		long double lamda_jj = -matrix_.diagonal_val_[next_daughter_index].real();
 //		long double beff_ji = matrix_.ElementCCS(next_daughter_index, n0_index).real();
 //
-//		//beff = beff * beff_ji / lamda_ii; // °´ÕÕ±ê×¼µÄ¹«Ê½À´¼ÆËãTTAµÄÏà¹ØÏµÊı
+//		//beff = beff * beff_ji / lamda_ii; // æŒ‰ç…§æ ‡å‡†çš„å…¬å¼æ¥è®¡ç®—TTAçš„ç›¸å…³ç³»æ•°
 //
 //		int visited_number = 0;
 //		for (int ii = 0; ii < chain_nuclide_id.size(); ++ii)
 //		{
-//			if (next_daughter_index == chain_nuclide_id[ii]) // ÕâÀïµÄlamdaÏµÊıµÄ´¦Àí¿ÉÄÜ´æÔÚÎÊÌâ
+//			if (next_daughter_index == chain_nuclide_id[ii]) // è¿™é‡Œçš„lamdaç³»æ•°çš„å¤„ç†å¯èƒ½å­˜åœ¨é—®é¢˜
 //			{
 //				visited_number ++;
 //			}
@@ -165,7 +165,7 @@
 //			}
 //		}
 //
-//		long double temp_n = 0; // ×ÓºËµÄºËËØÅ¨¶È
+//		long double temp_n = 0; // å­æ ¸çš„æ ¸ç´ æµ“åº¦
 //		long double temp_gamma_j0 = 0;
 //		long double temp_gamma_i1 = 0;
 //		int equal_j = -1;
@@ -252,8 +252,8 @@
 //		node_a_.push_back(chain_a_);
 //		node_b_.push_back(chain_b_);
 //		//node_chain_index_list_.push_back(chain_point_count);
-//		//node_alpha_list_.push_back(alpha); // µÚÒ»¸öºËËØ×÷ÎªÊ×¸ö½Úµã£¬ÆäalphaÏµÊıĞèÒª´æ´¢
-//		//node_beff_list_.push_back(beff); // µÚÒ»¸öºËËØ×÷ÎªÊ×¸ö½Úµã£¬ÆäbeffÏµÊıĞèÒª´æ´¢
+//		//node_alpha_list_.push_back(alpha); // ç¬¬ä¸€ä¸ªæ ¸ç´ ä½œä¸ºé¦–ä¸ªèŠ‚ç‚¹ï¼Œå…¶alphaç³»æ•°éœ€è¦å­˜å‚¨
+//		//node_beff_list_.push_back(beff); // ç¬¬ä¸€ä¸ªæ ¸ç´ ä½œä¸ºé¦–ä¸ªèŠ‚ç‚¹ï¼Œå…¶beffç³»æ•°éœ€è¦å­˜å‚¨
 //		node_gamma_.push_back(chain_gamma_);
 //
 //		//int node_location = node_chain_index_list_.back(); // 
@@ -291,12 +291,12 @@
 //			long double lamda_jj = -matrix_.diagonal_val_[next_daughter_index].real();
 //			long double beff_ji = matrix_.ElementCCS(next_daughter_index, n0_index).real();
 //
-//			//beff = beff * beff_ji / lamda_ii; // °´ÕÕ±ê×¼µÄ¹«Ê½À´¼ÆËãTTAµÄÏà¹ØÏµÊı
+//			//beff = beff * beff_ji / lamda_ii; // æŒ‰ç…§æ ‡å‡†çš„å…¬å¼æ¥è®¡ç®—TTAçš„ç›¸å…³ç³»æ•°
 //
 //			int visited_number = 0;
 //			for (int ii = 0; ii < chain_nuclide_id.size(); ++ii)
 //			{
-//				if (next_daughter_index == chain_nuclide_id[ii]) // ÕâÀïµÄlamdaÏµÊıµÄ´¦Àí¿ÉÄÜ´æÔÚÎÊÌâ
+//				if (next_daughter_index == chain_nuclide_id[ii]) // è¿™é‡Œçš„lamdaç³»æ•°çš„å¤„ç†å¯èƒ½å­˜åœ¨é—®é¢˜
 //				{
 //					visited_number++;
 //				}
@@ -316,7 +316,7 @@
 //				}
 //			}
 //
-//			long double temp_n = 0; // ×ÓºËµÄºËËØÅ¨¶È
+//			long double temp_n = 0; // å­æ ¸çš„æ ¸ç´ æµ“åº¦
 //			long double temp_gamma_j0 = 0;
 //			int equal_j = -1;
 //
@@ -449,7 +449,7 @@ void SolveTrans::SearchOneChainForDepletion(const int & n0_index, const long dou
 		int visited_number(0);
 		for (int ii = 0; ii < chain_nuclide_id.size(); ++ii)
 		{
-			if (next_daughter_index == chain_nuclide_id[ii]) // ÕâÀïµÄlamdaÏµÊıµÄ´¦Àí¿ÉÄÜ´æÔÚÎÊÌâ
+			if (next_daughter_index == chain_nuclide_id[ii]) // è¿™é‡Œçš„lamdaç³»æ•°çš„å¤„ç†å¯èƒ½å­˜åœ¨é—®é¢˜
 			{
 				visited_number++;
 			}
@@ -472,7 +472,7 @@ void SolveTrans::SearchOneChainForDepletion(const int & n0_index, const long dou
 			}
 		}
 
-		long double temp_n(0.0); // ×ÓºËµÄºËËØÅ¨¶È
+		long double temp_n(0.0); // å­æ ¸çš„æ ¸ç´ æµ“åº¦
 		long double temp_gamma_j0(0.0);
 		int equal_j(-1);
 
@@ -576,7 +576,7 @@ long double SolveTrans::CalCutoffFlag(const int & next_daughter_index, const lon
 	vector<int> chain_b = chain_b_;
 	vector<vector<long double> > chain_gamma = chain_gamma_;
 
-	long double temp_n = 0; // ×ÓºËµÄºËËØÅ¨¶È
+	long double temp_n = 0; // å­æ ¸çš„æ ¸ç´ æµ“åº¦
 	long double temp_gamma_j0 = 0;
 	int equal_j = -1;
 	for (int j = 0; j < chain_a; ++j)
@@ -645,7 +645,7 @@ long double SolveTrans::CalCutoffFlag(const int & next_daughter_index, const lon
 
 void SolveTrans::CalOneTree(const int &n0_index, const long double &time)
 {
-	//--------------------- ¼ÆËãÊ÷¸ùºËËØµÄalphaÏµÊıºÍbeffÏµÊı ---------------------//
+	//--------------------- è®¡ç®—æ ‘æ ¹æ ¸ç´ çš„alphaç³»æ•°å’Œbeffç³»æ•° ---------------------//
 	long double lamda = -matrix_diagonal_val_[n0_index];
 	//-------------------------------------------------------------------------------//
 	chain_a_ = 1;
@@ -654,7 +654,7 @@ void SolveTrans::CalOneTree(const int &n0_index, const long double &time)
 	//-------------------------------------------------------------------------------//
 
 
-	int chain_point_count = 0; // ¼ÆÊı£¬Èç¹ûÕÒµ½Ò»¸ö×ÓºË£¬¼Ó1
+	int chain_point_count = 0; // è®¡æ•°ï¼Œå¦‚æœæ‰¾åˆ°ä¸€ä¸ªå­æ ¸ï¼ŒåŠ 1
 
 	node_visited_list_[n0_index] += 1;
 	if (node_visited_list_[n0_index] > 1)
@@ -671,7 +671,7 @@ void SolveTrans::CalOneTree(const int &n0_index, const long double &time)
 		return;
 	}
 
-	end_n_[n0_index] += initial_n_ * exp(-lamda*time); // µÃµ½Ê÷¸ùºËËØµÄÅ¨¶È
+	end_n_[n0_index] += initial_n_ * exp(-lamda*time); // å¾—åˆ°æ ‘æ ¹æ ¸ç´ çš„æµ“åº¦
 
 	chain_lamda_list_.push_back(lamda);
 	
@@ -682,7 +682,7 @@ void SolveTrans::CalOneTree(const int &n0_index, const long double &time)
 	// ----------------- search one chain depletion using recursion method  ------------------ //
 	SearchOneChainForDepletion(n0_index, time); //
 
-	//------------------------------- Íê³ÉÒ»ÌõÈ¼ºÄÊ÷µÄ¼ÆËã£¬ÇåÀíÏà¹ØÏòÁ¿ ------------------------------//
+	//------------------------------- å®Œæˆä¸€æ¡ç‡ƒè€—æ ‘çš„è®¡ç®—ï¼Œæ¸…ç†ç›¸å…³å‘é‡ ------------------------------//
 
 	chain_lamda_list_.clear();
 
@@ -801,7 +801,7 @@ vector<double> SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, co
 	matrix_diagonal_val_.back() = - epsilon_ / time;
 
 	long double dummy_initial_nuclide(tot_feeding_rate_ * time / epsilon_);
-	initial_n_vector_[initial_n_vector_.size() - 1] = dummy_initial_nuclide; // Î±ºËËØµÄ³õÊ¼Öµ
+	initial_n_vector_[initial_n_vector_.size() - 1] = dummy_initial_nuclide; // ä¼ªæ ¸ç´ çš„åˆå§‹å€¼
 
 
 	for (unsigned int i = 0; i < feed_rate_.size(); ++i)
@@ -858,7 +858,7 @@ void SolveTrans::TtaSolverForFeeding(const SparseMatrixMCS &matrix, vector<doubl
         matrix_diagonal_val_.back() = - epsilon_ / time;
 
         long double dummy_initial_nuclide(tot_feeding_rate_ * time / epsilon_);
-        initial_n_vector_.back() = dummy_initial_nuclide; // Î±ºËËØµÄ³õÊ¼Öµ
+        initial_n_vector_.back() = dummy_initial_nuclide; // ä¼ªæ ¸ç´ çš„åˆå§‹å€¼
 
 
 	// initialize the sort vector
