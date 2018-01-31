@@ -42,6 +42,9 @@ public:
 	
 	vector<int> evolution_mode_;					  	///< 燃耗模式: 0：衰变演化  1：定通量演化  2：定功率演化  3：自定义流程
 	vector<double> evolution_value_;                  			///< 对应燃耗模式，存储对应通量或者功率数值
+	
+	int if_flow_mode_ = 0;							///< 判断是否求解流动燃耗模型: 0: 不流动模型; 1: 流动模型
+	vector<double> residue_time_;						///< 流动燃耗模型下，每个燃耗区的滞留时间
 
 	int solver_selection_ = 1;						///< 燃耗求解器。0: TTA方法   1：CRAM方法（缺省值）
 	/** @} */

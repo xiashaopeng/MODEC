@@ -17,7 +17,7 @@ void ModecClass::ModecProcedure()
 		}
 		double time = burnup_time_[i];
 		int subtime = substep_[i];
-		Evolution(mode, time, subtime);
+		Evolution(mode + 3 * if_flow_mode_, time, subtime);
 	}
 };
 
@@ -1817,6 +1817,135 @@ void ModecClass::Evolution(int mode, double time, int subtime)
 				}
 			}
 			break;
+		}
+		case 3: // 纯衰变+流动
+		{
+			int num_depletion_zone( residue_time_.size() ); // 燃耗区数量
+			int spmat_dimen( TransMatrixDecay.spmat_dimen_ );
+			SpMat MatrixFlow( num_depletion_zone * spmat_dimen );
+			vector< complex<double> > temp_mol;
+			temp_mol.resize( num_depletion_zone * spmat_dimen);
+			for ( int i = 0; i < spmat_dimen; ++i )
+			{
+				temp_mol[2 * i] = ModecNuclideLibrary.nuclide_library_vector_[0][i];
+				temp_mol[2 * i + 1] = ModecNuclideLibrary.nuclide_library_vector_[0][i];  
+			}
+			
+			n_vector_.resize(0);
+			n_vector_.push_back(temp_mol);
+
+			for (int _row = 0; _row < spmat_dimen; ++ _row)
+			{
+				for( int _col = 0; _col < spmat_dimen; ++ _col)
+				{
+					double element = TransMatrixDecay.Element(_row,_col);
+					if (element != 0.0)
+					{
+						MatrixFlow.AddElement( 2 * _row, 2 * _col, element );
+						MatrixFlow.AddElement( 2 * _row + 1, 2 * _col + 1, element );
+					}
+				}
+			}
+			for ( int _row = 0; _row < spmat_dimen; ++_row)
+			{
+				MatrixFlow.AddElement( 2 * _row, 2 * _row, -1 / residue_time[0]);
+				MatrixFlow.AddElement( 2 * _row + 1, 2 * _row + 1, -1 / residue_time_[1]);
+				MatrixFlow.AddElement( 2 * _row, 2 * _row + 1, 1 / residue_time[0]);
+				MatrixFlow.AddElement( 2 * _row + 1, 2 * _row, 1 / residue_time[1]);
+			}
+			MatrixFlow.SymbolLUElimination();
+			
+			for ( int i = 1; i < subtime; ++ i)
+			{
+				temp_mol = Solver.PfdCramSolver(MatrixFlow, temp_mol, time);
+				n_vector_.push_back(temp_mol);
+				flux_vector_.push_back(0);
+				power_vector_.push_back(0);
+			}
+			break;
+		}
+		case 4: // 定通量+流动
+		{
+			if( lib_tag_ == 1) // 读取DEPTH数据库
+			{
+				int num_depletion_zone( residue_time_size() ); // 燃耗区数量
+				int spmat_dimen( TransMatrixDecay.spmat_dimen_ );
+				SpMat MatrixFlow( num_depletion_zone * spmat_dimen );
+				vector<int> _IRC;
+				vector<int> _ICFR;
+				vector<int> _LUP;
+				
+				vector< complex<double> > temp_mol;
+				temp_mol.resize(num_depletion_zone * spmat_dimen);
+				for( int i = 0; i < spmat_dimen; ++i)
+				{
+					temp_mol[2 * i] = ModecNuclideLibrary.nuclide_library_vector_[0][i];
+					temp_mol[2 * i + 1] = ModecNuclideLibrary.nuclide_library_vector_[0][i];
+				}
+			
+				n_vector_.resize(0);
+				n_vector_.push_back(temp_mol);	
+			
+				for (int _row = 0; _row < spmat_dimen; ++ _row)
+				{	
+					MatrixFlow.AddElement( 2 * _row, 2 * _row, -1 / residue_time[0]);
+					MatrixFlow.AddElement( 2 * _row + 1, 2 * _row + 1, -1 / residue_time_[1]);
+					MatrixFlow.AddElement( 2 * _row, 2 * _row + 1, 1 / residue_time[0]);
+					MatrixFlow.AddElement( 2 * _row + 1, 2 * _row, 1 / residue_time[1]);
+				}
+
+				SpMat TransMatrix;
+				
+				ModecNuclideLibrary.CalculateFlux( mode - 3 ); // 减掉流动燃耗的标志
+				for (int i = 1; i <= subtime; ++i)
+				{
+					TransMatrix = TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields) * (ModecNuclideLibrary.flux_ * 1.0e-24);
+					for ( int _row = 0; _row < spmat_dimen; ++ _row )
+					{
+						for( int _col = 0; _col < spmat_dimen; ++ _col)
+						{
+							double element1 = TransMatrix.Element(_row, _col);
+							double element2 = TransDecayMatrix.Element(_row, _col);
+							if ( element1 != 0.0)
+							{
+								MatrixFlow.AddElement(2 * _row, 2 * _col, element1);
+							}
+							if ( element2 != 0.0)
+							{
+								MatrixFlow.AddElement(2 * _row + 1, 2 * _col + 1, element2);
+							}
+						}
+					}
+					if ( i == 1)
+					{
+						MatrixFlow.SymbolLUElimination();
+						_IRC = MatrixFlow.IRC;
+						_ICFR = MatrixFlow.ICFR;
+						_LUP = MatrixFlow.LUP;
+					}
+					else
+					{
+						MatrixFlow.IRC = _IRC;
+						MatrixFlow.ICFR = _ICFR;
+						MatrixFlow.LUP = _LUP;
+					}
+					
+					temp_mol = Solver.PfdCramSolver(MatrixFlow, temp_mol, time);
+					
+					n_vector_.push_back(temp_mol);
+					
+					for (int i = 0; i < spmat_dimen; ++i)
+					{
+						ModecNuclideLibrary.nuclide_library_vector_[0][i] = temp_mol[2 * i];
+					}
+					ModecNuclideLibrary.CalculateFlux( mode - 3);
+					flux_vector_.push_back(ModecNuclideLibrary.flux_);
+					power_vector_.push_back(ModecNuclideLibrary.specified_power_);
+				}
+		}
+		case 5: // 定功率+流动
+		{
+			
 		}
 	}
 }
