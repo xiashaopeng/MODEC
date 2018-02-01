@@ -379,6 +379,67 @@ public:
 		}
 	}
 	
+	void ReplaceElement(const int &_row, const int & _col, const double &_val)
+	{
+		if (_row == -1 || _col == -1)
+		{
+			InfoMessage::ErrorMessage("Position: void SpMat::AddElement; \n Warning: index of row or column equal -1.", 0);
+			return;
+		}
+		if (_row == _col)
+		{
+			diagonal_val_[_row] = _val;
+			//element_amount_ ++;
+		}
+		else if (_row > _col) // 下三角矩阵
+		{
+			/* 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 */
+			int PL = -1; // 标识符，用来判断是否存在元素
+			for (unsigned int i = 0; i < lower_index_[_col].size(); ++i)
+			{
+				if (lower_index_[_col][i] == _row)
+				{
+					PL = i; // 表示存在已有核素
+					break;
+				}
+			}
+			if (PL == -1)
+			{
+				lower_index_[_col].push_back(_row);
+				lower_val_[_col].push_back(_val);
+				element_amount_++;
+			}
+			else
+			{
+				lower_val_[_col][PL] = _val;
+			}
+		}
+		else // 上三角矩阵
+		{
+			/* 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 */
+			int PL = -1; // 标识符，用来判断是否存在元素
+			for (unsigned int i = 0; i < upper_index_[_row].size(); ++i)
+			{
+				if (upper_index_[_row][i] == _col)
+				{
+					PL = i; // 表示存在已有核素
+					break;
+				}
+			}
+			if (PL == -1)
+			{
+				upper_index_[_row].push_back(_col);
+				upper_val_[_row].push_back(_val);
+				element_amount_++;
+			}
+			else
+			{
+				upper_val_[_row][PL] = _val;
+			}
+		}
+	}
+
+
 	double Element(const int & _row, const int & _col)
 	{
 		if (_row == _col)

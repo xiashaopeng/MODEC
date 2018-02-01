@@ -35,7 +35,7 @@ public:
 	 * @param[in] time The sub-step time of burnup calculations   
 	 * @return The nuclide concentration vector at the end of the sub-step
 	*/
-	vector<double>PfdCramSolver(SpMat &matrix, const vector <double> &N, const double &time);
+	void PfdCramSolver(SpMat &matrix, vector <double> &N, const double &time);
 
         /**
          * @brief PFD格式的CRAM求解器重载，用于追踪堆外核素演化
@@ -45,7 +45,7 @@ public:
          * @param[in] time The sub-step time of burnup calculations   
          * @return The nuclide concentration vector at the end of the sub-step
         */	
-	vector<double>PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, const vector < double > &N, const double &time);
+	void PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time);
 	
 	/* IPF —— incomplete partial fractions 是CRAM方法数值实现的一类算法*/
 	int ipf_cram_order = 16;	///< IPF格式的CRAM方法的阶数，默认16阶

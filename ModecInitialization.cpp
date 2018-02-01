@@ -217,6 +217,7 @@ readfile:
 			record >> sub;
 			substep_.push_back(sub);		
 		}
+		
 		if (tag == "Power")
 		{
 			if_read_mode_tag_ = 1;
@@ -255,6 +256,18 @@ readfile:
 			
 		}
 
+		if (tag == "Calc_Flow_Depletion")
+		{
+			record >> if_flow_mode_;
+		}
+		if (tag == "Residue_Time")
+		{
+			double temp;
+			record >> temp;
+			residue_time_.push_back(temp);
+			record >> temp;
+			residue_time_.push_back(temp);
+		}
 		//////////////////////////////////////////////////
 
 		/////////////////// Block 3 //////////////////////
@@ -638,6 +651,28 @@ readfile:
 	}
 	modec_inp_.close();
 
+	if (if_flow_mode_ == 1)
+	{
+		if(residue_time_.size() ==0)
+			InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no residue time data are read.", 1);
+
+		if (residue_time_[0] == 0 || residue_time_[1] == 0)
+		{
+			if_flow_mode_ = 0;
+			InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: zero residue time means totally well-mixed.",0);
+			for (int i = 0; i < evolution_value_.size(); ++i)
+			{
+				evolution_value_[i] /= 2.0; // 完全均匀则意味着减半
+			}
+		}
+		
+		if(solver_selection_ == 0)
+		{
+			InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: CRAM method must be used when flow depletion is calculated.",0);
+			solver_selection_ == 1;
+		}
+	}
+	
 	if (decay_library_name_.length() == 0 && depth_library_name_.length() == 0 && couple_library_name_.length() == 0)
 	{
 		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no library name in the input file.", 1);
@@ -773,15 +808,13 @@ void ModecClass::BuildSpMat()
 		else if( solver_selection_ == 0 )
 		{
 			ReadFromCoupleForTta();
-			//ConstructFissionYieldsSpMat(TransMatrixFissionYields, ModecNuclideLibrary);
 		}
 	}
 
-	int th233_index = ModecNuclideLibrary.GetNuclIndex(902330);
-	double th233_xs = TransMatrixCrossSection.Element(th233_index, th233_index);
-
-	int pa234_index = ModecNuclideLibrary.GetNuclIndex(912340);
-	double pa234_xs = TransMatrixCrossSection.Element(pa234_index, pa234_index);
+	if (if_flow_mode_ == 1)
+	{
+		TransMatrixPureDecay = TransMatrixDecay; // 定义纯衰变矩阵
+	}
 
  	if (if_continously_remove_ == true)
 	{

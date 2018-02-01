@@ -1,7 +1,7 @@
 //#include <iostream>
 #include "SolveTrans.h"
 
-vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const vector <double> &N,const double &time)
+void SolveTrans::PfdCramSolver(SpMat &matrix, vector <double> &N,const double &time)
 {
 	const double alpha0 = 2.1248537104952237488E-16;
 	const Complex alpha[8] =
@@ -27,9 +27,9 @@ vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const vector <double> &N
 	int dim = N.size();
 	vector < Complex > N_temp(dim);
 	vector < Complex > N_eol;
-	vector<double> N_eol_real;
+	//vector<double> N_eol_real;
 	N_eol.resize(dim);
-	N_eol_real.resize(dim);
+	//N_eol_real.resize(dim);
 	
 	for (int j = 0; j < 8; ++j)
 	{
@@ -45,14 +45,14 @@ vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const vector <double> &N
 	}
 	for (int i = 0; i < dim; ++i)
 	{
-		N_eol[i] += N[i] * alpha0;
-		N_eol_real[i] = N_eol[i].real_;
+		//N_eol[i] += N[i] * alpha0;
+		N[i] = N_eol[i].real_ + N[i] * alpha0;
 	}
 	
-	return N_eol_real;
+	//return N_eol_real;
 }
 
-vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, const vector < double > &N, const double &time)
+void SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time)
 {
 	const double alpha0 = 2.1248537104952237488E-16;
 	const Complex alpha[8] =
@@ -87,8 +87,8 @@ vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrix
 		vector <Complex > N_eol;
 		N_eol.resize(dim);
 		
-		vector <double> N_eol_real;
-		N_eol_real.resize(dim);
+		//vector <double> N_eol_real;
+		//N_eol_real.resize(dim);
 
 		for (int j = 0; j < 8; ++j)
 		{
@@ -119,11 +119,11 @@ vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrix
 		}
 		for (unsigned int i = 0; i < dim; ++i)
 		{
-			N_eol[i] += N[i] * alpha0;
-			N_eol_real[i] = N_eol[i].real_;
+			//N_eol[i] += N[i] * alpha0;
+			N[i] = N_eol[i].real_ + N[i] * alpha0;
 		}
 
-		return N_eol_real;
+		//return N_eol_real;
 	}
 	else
 	{
@@ -133,8 +133,8 @@ vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrix
 		vector <Complex > N_eol;
 		N_eol.resize(dim);
 		
-		vector <double> N_eol_real;
-		N_eol_real.resize(dim);
+		//vector <double> N_eol_real;
+		//N_eol_real.resize(dim);
 		
 
 		for (int j = 0; j < 8; ++j)
@@ -168,16 +168,16 @@ vector<double> SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrix
 		}
 		for (unsigned int i = 0; i < dim; ++i)
 		{
-			N_eol[i] += N[i] * alpha0;
-			N_eol_real[i] = N_eol[i].real_;
+			//N_eol[i] += N[i] * alpha0;
+			N[i] = N_eol[i].real_ + N[i] * alpha0;
 		}
 
-		return N_eol_real;
+		//return N_eol_real;
 	}
 	
 }
 
-vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const vector <double> &N, const double &time)
+void SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, vector <double> &N, const double &time)
 {
 
 	const double alpha0 = 2.1248537104952237488E-16;
@@ -204,9 +204,9 @@ vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const 
 	int dim = N.size();
 	vector <Complex > N_temp(dim);
 	vector <Complex > N_eol;
-	vector<double> N_eol_real;
+	//vector<double> N_eol_real;
 	N_eol.resize(dim);
-	N_eol_real.resize(dim);
+	//N_eol_real.resize(dim);
 
 	for (int j = 0; j < 8; ++j)
 	{
@@ -222,14 +222,14 @@ vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const 
 	}
 	for (unsigned int i = 0; i < dim; ++i)
 	{
-		N_eol[i] += N[i] * alpha0;
-		N_eol_real[i] = N_eol[i].real_;
+		//N_eol[i] += N[i] * alpha0;
+		N[i] = N_eol[i].real_ + N[i] * alpha0;
 	}
 
-	return N_eol_real;
+	//return N_eol_real;
 }
 
-vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, const vector < double > &N, const double &time)
+void SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time)
 {
 	const double alpha0 = 2.1248537104952237488E-16;
 	const Complex alpha[8] =
@@ -264,8 +264,8 @@ vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const 
 		vector <Complex > N_eol;
 		N_eol.resize(dim);
 		//N_eol_real.resize(dim / 2);
-		vector <double> N_eol_real;
-		N_eol_real.resize(dim);
+		//vector <double> N_eol_real;
+		//N_eol_real.resize(dim);
 
 
 		for (int j = 0; j < 8; ++j)
@@ -297,11 +297,11 @@ vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const 
 		}
 		for (unsigned int i = 0; i < dim; ++i)
 		{
-			N_eol[i] += N[i] * alpha0;
-			N_eol_real[i] = N_eol[i].real_;
+			//N_eol[i] += N[i] * alpha0;
+			N[i] = N_eol[i].real_ + N[i] * alpha0;
 		}
 
-		return N_eol_real;
+		//return N_eol_real;
 	}
 	else
 	{
@@ -312,8 +312,8 @@ vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const 
 		N_eol.resize(dim);
 		//N_eol_real.resize(dim / 2);
 
-		vector <double> N_eol_real;
-		N_eol_real.resize(dim);
+		//vector <double> N_eol_real;
+		//N_eol_real.resize(dim);
 
 		
 		for (int j = 0; j < 8; ++j)
@@ -347,11 +347,11 @@ vector<double> SolveTrans::IpfCramSolver(const int &order, SpMat &matrix, const 
 		}
 		for (unsigned int i = 0; i < dim; ++i)
 		{
-			N_eol[i] += N[i] * alpha0;
-			N_eol_real[i] = N_eol[i].real_;
+			//N_eol[i] += N[i] * alpha0;
+			N[i] = N_eol[i].real_ + N[i] * alpha0;
 		}
 
-		return N_eol_real;
+		//return N_eol_real;
 	}
 
 }
