@@ -53,12 +53,12 @@ public:
 	/**
 	* @brief IPF格式的CRAM求解器
 	*/
-	vector<double>IpfCramSolver(const int &order, SpMat &matrix, const vector <double> &N, const double &time);
+	void IpfCramSolver(const int &order, SpMat &matrix, vector <double> &N, const double &time);
 	
 	/**
 	* @brief IPF格式的求解器重载，用于追踪堆外核素演化
 	*/
-	vector<double>IpfCramSolver(const int &order, SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, const vector < double > &N, const double &time);
+	void IpfCramSolver(const int &order, SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time);
 
 	/**
 	* @name TTA公式主要计算参数 
