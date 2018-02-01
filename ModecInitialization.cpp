@@ -665,7 +665,14 @@ readfile:
 				evolution_value_[i] /= 2.0; // 完全均匀则意味着减半
 			}
 		}
+		
+		if(solver_selection_ == 0)
+		{
+			InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: CRAM method must be used when flow depletion is calculated.",0);
+			solver_selection_ == 1;
+		}
 	}
+	
 	if (decay_library_name_.length() == 0 && depth_library_name_.length() == 0 && couple_library_name_.length() == 0)
 	{
 		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no library name in the input file.", 1);
