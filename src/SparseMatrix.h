@@ -64,7 +64,7 @@ public:
 		}
 		if (_row == _col)
 		{
-			diagonal_val_[_row] = _val;
+			diagonal_val_[_row] += _val;
 			return;
 		}
 		else

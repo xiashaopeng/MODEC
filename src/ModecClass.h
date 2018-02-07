@@ -9,8 +9,10 @@
 
 #ifndef _RUN_MODEC_H
 #define _RUN_MODEC_H
+#include <sstream>
 #include "SolveTrans.h"
 #include "IntegralMethods.h"
+#include "tinyxml2.h"
 
 /**
  * @brief MODEC的基础类
@@ -29,7 +31,7 @@ public:
 	ofstream modec_out_;							///< MODEC输出文件流
 
 	string work_direc_;							///< 工作文件夹
-	string input_filename_ = "modec.input";					///< 缺省的输入卡文件名
+	string input_filename_ = "modec.xml";					///< 缺省的输入卡文件名
 	string input_file_;							///< 缺省的包含工作文件夹地址的输入卡文件名
 
 	string output_filename_;  						///< 输出文件名。命令规则为输入卡文件名加上相应后缀
