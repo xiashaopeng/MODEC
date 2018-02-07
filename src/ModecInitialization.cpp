@@ -2,41 +2,34 @@
 
 using namespace tinyxml2;
 
-void ModecClass::ModecInitial(int argc, char **argv)
-{
-	if (argc == 2)
-	{
-		input_filename_ = argv[1];
-	}
-	else if (argc > 2)
-	{
-		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: extra message in console.", 1);
-	}
-	input_file_ = work_direc_ + input_filename_;
+void ModecClass::ModecInitial(int argc, char **argv) {
+    if (argc == 2) {
+        input_filename_ = argv[1];
+    } else if (argc > 2) {
+        InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: extra message in console.", 1);
+    }
+    input_file_ = work_direc_ + input_filename_;
 
-	XMLDocument InputFile;
+    XMLDocument InputFile;
 
-	while (InputFile.LoadFile(input_file_.c_str()))
-	{
-		int error_id = InputFile.ErrorID();
-		if(error_id == 0)
-			break;
+    while (InputFile.LoadFile(input_file_.c_str())) {
+        int error_id = InputFile.ErrorID();
+        if(error_id == 0)
+            break;
 
-		if(error_id != 3)
-		{
-			info_message_ ="ERROR OCCURRED WHEN INPUT FILE WAS BEING READ!\nError MESSAGE: " + string(InputFile.ErrorName());
-			InfoMessage::ErrorMessage(info_message_ , 1);
-		}
+        if(error_id != 3) {
+            info_message_ ="ERROR OCCURRED WHEN INPUT FILE WAS BEING READ!\nError MESSAGE: " + string(InputFile.ErrorName());
+            InfoMessage::ErrorMessage(info_message_ , 1);
+        }
 
-		cerr << "NO DEFAULT MODEC INPUT FILE!! " << '\n';
-		cerr << "ENTER USER-DEFINED MODEC INPUT FILENAME OR ENTER '0' TO EXIT: ";
-		cin >> input_filename_;
-		if (input_filename_ == "0")
-		{
-			exit(0);
-		}
-		input_file_ = work_direc_ + input_filename_;
-	}
+        cerr << "NO DEFAULT MODEC INPUT FILE!! " << '\n';
+        cerr << "ENTER USER-DEFINED MODEC INPUT FILENAME OR ENTER '0' TO EXIT: ";
+        cin >> input_filename_;
+        if (input_filename_ == "0") {
+            exit(0);
+        }
+        input_file_ = work_direc_ + input_filename_;
+    }
 
 
 //input_mark:
@@ -49,7 +42,7 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //			info_message_ ="ERROR OCCURRED WHEN INPUT FILE WAS BEING READ!\nError MESSAGE: " + string(InputFile.ErrorName());
 //			InfoMessage::ErrorMessage(info_message_ , 1);
 //		}
-//		
+//
 //		cerr << "NO DEFAULT MODEC INPUT FILE!! " << '\n';
 //		cerr << "ENTER USER-DEFINED MODEC INPUT FILENAME OR ENTER '0' TO EXIT: ";
 //		cin >> input_filename_;
@@ -58,304 +51,273 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //			exit(0);
 //		}
 //		input_file_ = work_direc_ + input_filename_;
-//		goto input_mark; 
+//		goto input_mark;
 //	}
 
-	InfoMessage::start = clock();
-	InfoMessage::InputName = input_filename_ + ".log";
-	
-	XMLElement *modec = InputFile.RootElement();
-	if( string(modec->Name()) != "MODEC")
-	{
-		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'MODEC' tag in the top of input file.", 1);
-	}
+    InfoMessage::start = clock();
+    InfoMessage::InputName = input_filename_ + ".log";
 
-/* ------------------------------------------------------------------------------------*
-				Mother Node "Settings"
-   ------------------------------------------------------------------------------------
-   |	Daughter Node	|			Attributes
-   ------------------------------------------------------------------------------------
-   |	"DataLib"	|	"type" "file"
-   |	"SolverSet"	|	"solver_basic" "solver_nonhom"
-   |	"FlowSet"	|	"tag" "residue_time"
-   |	"PrintSet"	|	"print_den" "print_act" "print_q" "print_ampc"
-   |			|	"print_wmpc" "print_tox" "print_kinf" "print_prod" "print_abs"
-   ------------------------------------------------------------------------------------ */
-	XMLElement * settings = modec->FirstChildElement();
-	if (string(settings->Name()) != "Settings")
-	{
-		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'Settings' tag in the input file" ,1); 	
-	}
-	
-	//	燃耗数据库设置
-	XMLElement * data_lib = settings->FirstChildElement();
-	string data_lib_type = data_lib->Attribute("type");
-	string lib_file = data_lib->Attribute("file");
-	if (data_lib_type == "DepthLib")
-	{
-		depth_library_name_ = lib_file;
-		lib_tag_ = 1;
-	}
-	if (data_lib_type == "DecayLib")
-	{
-		decay_library_name_ = lib_file;
-		lib_tag_ = 0;
-	}
-	if (data_lib_type == "FYlib")
-	{
-		fission_yields_library_name_ = lib_file;
-		lib_tag_ = 0;
-	}
-	if (data_lib_type == "CoupleLib")
-	{
-		couple_library_name_ = lib_file;
-		lib_tag_ = 2;
-	}	
+    XMLElement *modec = InputFile.RootElement();
+    if( string(modec->Name()) != "MODEC") {
+        InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'MODEC' tag in the top of input file.", 1);
+    }
 
-	//	求解器设置
-	XMLElement *solver_set = data_lib->NextSiblingElement();
-	string solver_basic = solver_set->Attribute("solver_basic");
-	if (solver_basic == "CRAM")
-	{
-		solver_selection_ = 1;
-	}
-	else if (solver_basic.substr(0,3) == "TTA"){
-		solver_selection_ = 0;
-		Solver.cutoff_std_ = atof(solver_basic.substr(3).c_str());
-	}
+    /* ------------------------------------------------------------------------------------*
+    				Mother Node "Settings"
+       ------------------------------------------------------------------------------------
+       |	Daughter Node	|			Attributes
+       ------------------------------------------------------------------------------------
+       |	"DataLib"	|	"type" "file"
+       |	"SolverSet"	|	"solver_basic" "solver_nonhom"
+       |	"FlowSet"	|	"tag" "residue_time"
+       |	"PrintSet"	|	"print_den" "print_act" "print_q" "print_ampc"
+       |			|	"print_wmpc" "print_tox" "print_kinf" "print_prod" "print_abs"
+       ------------------------------------------------------------------------------------ */
+    XMLElement * settings = modec->FirstChildElement();
+    if (string(settings->Name()) != "Settings") {
+        InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'Settings' tag in the input file" ,1);
+    }
 
-	//	流动燃耗设置
-	XMLElement *flow_set = solver_set->NextSiblingElement();
-	if_flow_mode_ = atoi(flow_set->Attribute("tag"));
-	if (if_flow_mode_ == 1){
-		if (solver_basic != "CRAM")
-		{
-			InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: CRAM method must be used when flow depletion is calculated.",0);
-			solver_selection_ = 1;
-		}
-		string residue_time_s = flow_set->Attribute("residue_time");
-		stringstream residue_time_ss(residue_time_s);
+    //	燃耗数据库设置
+    XMLElement * data_lib = settings->FirstChildElement();
+    string data_lib_type = data_lib->Attribute("type");
+    string lib_file = data_lib->Attribute("file");
+    if (data_lib_type == "DepthLib") {
+        depth_library_name_ = lib_file;
+        lib_tag_ = 1;
+    }
+    if (data_lib_type == "DecayLib") {
+        decay_library_name_ = lib_file;
+        lib_tag_ = 0;
+    }
+    if (data_lib_type == "FYlib") {
+        fission_yields_library_name_ = lib_file;
+        lib_tag_ = 0;
+    }
+    if (data_lib_type == "CoupleLib") {
+        couple_library_name_ = lib_file;
+        lib_tag_ = 2;
+    }
 
-		double temp1,temp2;
-		residue_time_ss >> temp1 >> temp2;
-		residue_time_.push_back(temp1);
-		residue_time_.push_back(temp2);
-	}
-	
-	//	打印设置
-	XMLElement *print_set = flow_set->NextSiblingElement();
-	print_mode_ = atoi(print_set->Attribute("print_den"));
-	if_print_activity_ = atoi(print_set->Attribute("print_act"));
-	if_print_decayenergy_ = atoi(print_set->Attribute("print_q"));
-	if_print_ampc_ = atoi(print_set->Attribute("print_ampc"));
-	if_print_wmpc_ = atoi(print_set->Attribute("print_wmpc"));
-	if_print_toxicity_ = atoi(print_set->Attribute("print_tox"));
-	if_print_kinf_ = atoi(print_set->Attribute("print_kinf"));
-	if_print_fission_rate_ = atoi(print_set->Attribute("print_prod"));
-	if_print_absorption_rate_ = atoi(print_set->Attribute("print_abs"));
+    //	求解器设置
+    XMLElement *solver_set = data_lib->NextSiblingElement();
+    string solver_basic = solver_set->Attribute("solver_basic");
+    if (solver_basic == "CRAM") {
+        solver_selection_ = 1;
+    } else if (solver_basic.substr(0,3) == "TTA") {
+        solver_selection_ = 0;
+        Solver.cutoff_std_ = atof(solver_basic.substr(3).c_str());
+    }
+
+    //	流动燃耗设置
+    XMLElement *flow_set = solver_set->NextSiblingElement();
+    if_flow_mode_ = atoi(flow_set->Attribute("tag"));
+    if (if_flow_mode_ == 1) {
+        if (solver_basic != "CRAM") {
+            InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: CRAM method must be used when flow depletion is calculated.",0);
+            solver_selection_ = 1;
+        }
+        string residue_time_s = flow_set->Attribute("residue_time");
+        stringstream residue_time_ss(residue_time_s);
+
+        double temp1,temp2;
+        residue_time_ss >> temp1 >> temp2;
+        residue_time_.push_back(temp1);
+        residue_time_.push_back(temp2);
+    }
+
+    //	打印设置
+    XMLElement *print_set = flow_set->NextSiblingElement();
+    print_mode_ = atoi(print_set->Attribute("print_den"));
+    if_print_activity_ = atoi(print_set->Attribute("print_act"));
+    if_print_decayenergy_ = atoi(print_set->Attribute("print_q"));
+    if_print_ampc_ = atoi(print_set->Attribute("print_ampc"));
+    if_print_wmpc_ = atoi(print_set->Attribute("print_wmpc"));
+    if_print_toxicity_ = atoi(print_set->Attribute("print_tox"));
+    if_print_kinf_ = atoi(print_set->Attribute("print_kinf"));
+    if_print_fission_rate_ = atoi(print_set->Attribute("print_prod"));
+    if_print_absorption_rate_ = atoi(print_set->Attribute("print_abs"));
 
 
-/* ------------------------------------------------------------------------------------*
-				Mother Node "Depletions"
-   ------------------------------------------------------------------------------------
-   |	Daughter Node	|			Attributes
-   ------------------------------------------------------------------------------------
-   |	"Depletion"	|	"mode" "value" "time" "step"
-   ------------------------------------------------------------------------------------ */
-	XMLElement *depletions = settings->NextSiblingElement();
-	if (string(depletions->Name()) != "Depletions")
-	{
-		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'Depletions' tag in the input file" ,1); 	
-	}
-	XMLElement *depletion = depletions->FirstChildElement();
-	while(depletion)
-	{
-		string mode = depletion->Attribute("mode");
-		if (mode == "decay")
-		{
-			evolution_mode_.push_back(0);
-			evolution_value_.push_back(0.0);
-		}
-		else if (mode == "flux")
-		{
-			evolution_mode_.push_back(1);
-			evolution_value_.push_back(atof(depletion->Attribute("value")));
-		}
-		else if (mode == "power")
-		{
-			evolution_mode_.push_back(2);
-			evolution_value_.push_back(atof(depletion->Attribute("value")));
-		}
-		
-		stringstream time_ss(depletion->Attribute("time"));
-		double time;
-		string time_unit;
-		time_ss >> time;
-		time_ss >> time_unit;
-		
-		time_unit_.push_back(time_unit);
-		if (time_unit == "d" || time_unit == "day" || time_unit == "days")
-			time = time * 24.0 * 3600.0;
-		if (time_unit == "m" || time_unit == "month" || time_unit == "months")
-			time = time * 24.0 * 3600.0 * 30.0;	
-		if (time_unit == "y" || time_unit == "year" || time_unit == "years")
-			time = time * 365.25 * 24.0 * 3600.0;
-		burnup_time_.push_back(time);
-		
-		substep_.push_back(atoi(depletion->Attribute("step")));
+    /* ------------------------------------------------------------------------------------*
+    				Mother Node "Depletions"
+       ------------------------------------------------------------------------------------
+       |	Daughter Node	|			Attributes
+       ------------------------------------------------------------------------------------
+       |	"Depletion"	|	"mode" "value" "time" "step"
+       ------------------------------------------------------------------------------------ */
+    XMLElement *depletions = settings->NextSiblingElement();
+    if (string(depletions->Name()) != "Depletions") {
+        InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'Depletions' tag in the input file" ,1);
+    }
+    XMLElement *depletion = depletions->FirstChildElement();
+    while(depletion) {
+        string mode = depletion->Attribute("mode");
+        if (mode == "decay") {
+            evolution_mode_.push_back(0);
+            evolution_value_.push_back(0.0);
+        } else if (mode == "flux") {
+            evolution_mode_.push_back(1);
+            evolution_value_.push_back(atof(depletion->Attribute("value")));
+        } else if (mode == "power") {
+            evolution_mode_.push_back(2);
+            evolution_value_.push_back(atof(depletion->Attribute("value")));
+        }
 
-		depletion = depletion->NextSiblingElement();
-	}
+        stringstream time_ss(depletion->Attribute("time"));
+        double time;
+        string time_unit;
+        time_ss >> time;
+        time_ss >> time_unit;
+
+        time_unit_.push_back(time_unit);
+        if (time_unit == "d" || time_unit == "day" || time_unit == "days")
+            time = time * 24.0 * 3600.0;
+        if (time_unit == "m" || time_unit == "month" || time_unit == "months")
+            time = time * 24.0 * 3600.0 * 30.0;
+        if (time_unit == "y" || time_unit == "year" || time_unit == "years")
+            time = time * 365.25 * 24.0 * 3600.0;
+        burnup_time_.push_back(time);
+
+        substep_.push_back(atoi(depletion->Attribute("step")));
+
+        depletion = depletion->NextSiblingElement();
+    }
 
 
-	if( (if_flow_mode_ == 1) && (residue_time_[0] == 0 || residue_time_[1] == 0))
-	{
-		if_flow_mode_ = 0;
-		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: zero residue time means totally well-mixed.",0);
-		for (int i = 0;i < evolution_value_.size(); ++i)
-			evolution_value_[i] /= 2.0;
-	}
+    if( (if_flow_mode_ == 1) && (residue_time_[0] == 0 || residue_time_[1] == 0)) {
+        if_flow_mode_ = 0;
+        InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: zero residue time means totally well-mixed.",0);
+        for (int i = 0; i < evolution_value_.size(); ++i)
+            evolution_value_[i] /= 2.0;
+    }
 
-/* ------------------------------------------------------------------------------------*
-			Mother Node "Nuclides", attributes "units"
-   ------------------------------------------------------------------------------------
-   |	Daughter Node	|			Attributes
-   ------------------------------------------------------------------------------------
-   |	"Nuclide"	|		     "zai" "density"
-   ------------------------------------------------------------------------------------ */
-	XMLElement *nuclides = depletions->NextSiblingElement();
-	if (string(nuclides->Name()) != "Nuclides")
-	{
-		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'Nuclides' tag in the input file" ,1); 	
-	}
-	dens_unit_ = nuclides->Attribute("units");
+    /* ------------------------------------------------------------------------------------*
+    			Mother Node "Nuclides", attributes "units"
+       ------------------------------------------------------------------------------------
+       |	Daughter Node	|			Attributes
+       ------------------------------------------------------------------------------------
+       |	"Nuclide"	|		     "zai" "density"
+       ------------------------------------------------------------------------------------ */
+    XMLElement *nuclides = depletions->NextSiblingElement();
+    if (string(nuclides->Name()) != "Nuclides") {
+        InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'Nuclides' tag in the input file" ,1);
+    }
+    dens_unit_ = nuclides->Attribute("units");
 
-	XMLElement *nuclide = nuclides->FirstChildElement();
-	while (nuclide)
-	{
-		int nucl_id = atoi(nuclide->Attribute("zai"));
-		double awt = double((nucl_id - nucl_id / 10000 * 10000) / 10); 
-		
-		double coeff;
-		if (dens_unit_ == "mol") coeff = 1.0;
-		if (dens_unit_ == "g") coeff = 1.0 / awt;
-		if (dens_unit_ == "kg") coeff = 1000.0/awt;
-		if (dens_unit_ == "atom") coeff = 1.0 / (6.022140857E+23);
-		if (dens_unit_ == "atom/(barn-cm)") coeff = 1.0 / 0.6022140857;
-		ModecNuclideLibrary.nuclide_library_vector_[0][ModecNuclideLibrary.GetNuclIndex(nucl_id)]
-			 = atof(nuclide->Attribute("density")) * coeff;
+    XMLElement *nuclide = nuclides->FirstChildElement();
+    while (nuclide) {
+        int nucl_id = atoi(nuclide->Attribute("zai"));
+        double awt = double((nucl_id - nucl_id / 10000 * 10000) / 10);
 
-		nuclide = nuclide->NextSiblingElement();
-	}
+        double coeff;
+        if (dens_unit_ == "mol") coeff = 1.0;
+        if (dens_unit_ == "g") coeff = 1.0 / awt;
+        if (dens_unit_ == "kg") coeff = 1000.0/awt;
+        if (dens_unit_ == "atom") coeff = 1.0 / (6.022140857E+23);
+        if (dens_unit_ == "atom/(barn-cm)") coeff = 1.0 / 0.6022140857;
+        ModecNuclideLibrary.nuclide_library_vector_[0][ModecNuclideLibrary.GetNuclIndex(nucl_id)]
+            = atof(nuclide->Attribute("density")) * coeff;
+
+        nuclide = nuclide->NextSiblingElement();
+    }
 
 
-/* ------------------------------------------------------------------------------------*
-		Mother Node "OnlineReprocessing", attributes "tag" "track_storage"
-   ------------------------------------------------------------------------------------
-   |	Daughter Node	|			Attributes
-   ------------------------------------------------------------------------------------
-   |	"RemoveElement"	|		     	  "coeff"
-   ------------------------------------------------------------------------------------ */
-	XMLElement * online_reprocessing = nuclides->NextSiblingElement();
-	if (string(online_reprocessing->Name()) != "OnlineReprocessing")
-	{
-		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'OnlineReprocessing' tag in the input file" ,1); 	
-	}
-	if_continously_remove_ = atoi(online_reprocessing->Attribute("tag"));
-	if (if_continously_remove_ == true)
-	{
-		if_tracking_stockage = atoi(online_reprocessing->Attribute("track_storage"));
-		if (if_tracking_stockage == true)
-		{
-			int size = ModecNuclideLibrary.nuclide_library_vector_[0].size();
-			ModecNuclideLibrary.nuclide_library_vector_[0].resize(2 * size);
-			
-			if_print_stockage_activity_ = if_print_activity_;
-			if_print_stockage_decayenergy_ = if_print_decayenergy_;
-			if_print_stockage_ampc_ = if_print_ampc_;
-			if_print_stockage_wmpc_ = if_print_wmpc_;
-			if_print_stockage_toxicity_ = if_print_toxicity_;
-		}	
-		
-		XMLElement * remove_element = online_reprocessing->FirstChildElement();
-		while (remove_element)
-		{
-			remove_rate_vector_.push_back(atof(remove_element->Attribute("coeff")));
-			
-			vector< int > remove_element_vector;
-			stringstream remove_ele_ss(remove_element->GetText());
-			int temp_ele;
-			while (remove_ele_ss >> temp_ele)
-				remove_element_vector.push_back(temp_ele);
-			remove_element_vector_.push_back(remove_element_vector);
-			remove_group_vector_.push_back(remove_element_vector.size());
+    /* ------------------------------------------------------------------------------------*
+    		Mother Node "OnlineReprocessing", attributes "tag" "track_storage"
+       ------------------------------------------------------------------------------------
+       |	Daughter Node	|			Attributes
+       ------------------------------------------------------------------------------------
+       |	"RemoveElement"	|		     	  "coeff"
+       ------------------------------------------------------------------------------------ */
+    XMLElement * online_reprocessing = nuclides->NextSiblingElement();
+    if (string(online_reprocessing->Name()) != "OnlineReprocessing") {
+        InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'OnlineReprocessing' tag in the input file" ,1);
+    }
+    if_continously_remove_ = atoi(online_reprocessing->Attribute("tag"));
+    if (if_continously_remove_ == true) {
+        if_tracking_stockage = atoi(online_reprocessing->Attribute("track_storage"));
+        if (if_tracking_stockage == true) {
+            int size = ModecNuclideLibrary.nuclide_library_vector_[0].size();
+            ModecNuclideLibrary.nuclide_library_vector_[0].resize(2 * size);
 
-			remove_element = remove_element->NextSiblingElement();
-		}
-		remove_group_number_ = remove_group_vector_.size();
-	}
+            if_print_stockage_activity_ = if_print_activity_;
+            if_print_stockage_decayenergy_ = if_print_decayenergy_;
+            if_print_stockage_ampc_ = if_print_ampc_;
+            if_print_stockage_wmpc_ = if_print_wmpc_;
+            if_print_stockage_toxicity_ = if_print_toxicity_;
+        }
+
+        XMLElement * remove_element = online_reprocessing->FirstChildElement();
+        while (remove_element) {
+            remove_rate_vector_.push_back(atof(remove_element->Attribute("coeff")));
+
+            vector< int > remove_element_vector;
+            stringstream remove_ele_ss(remove_element->GetText());
+            int temp_ele;
+            while (remove_ele_ss >> temp_ele)
+                remove_element_vector.push_back(temp_ele);
+            remove_element_vector_.push_back(remove_element_vector);
+            remove_group_vector_.push_back(remove_element_vector.size());
+
+            remove_element = remove_element->NextSiblingElement();
+        }
+        remove_group_number_ = remove_group_vector_.size();
+    }
 
 
-/* ------------------------------------------------------------------------------------*
-		Mother Node "ContinouslyFeeding", attributes "tag"
-   ------------------------------------------------------------------------------------
-   |	Daughter Node	|			Attributes
-   ------------------------------------------------------------------------------------
-   |	"FeedNuclide"	|		     "zai" "feed_rate"
-   ------------------------------------------------------------------------------------ */
-	XMLElement * continously_feeding = online_reprocessing->NextSiblingElement();
-	if (string(continously_feeding->Name()) != "ContinouslyFeeding")
-	{
-		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'ContinouslyFeeding' tag in the input file" ,1); 	
-	}
-	if_constant_online_feeding_ = atoi(continously_feeding->Attribute("tag"));
-	if (if_constant_online_feeding_ == true)
-	{
-		stringstream method(continously_feeding->Attribute("method"));
-		string method_name;
-		method >> method_name;
-		if( method_name == "Gauss")
-		{
-			constant_feeding_calculation_methods_ = 1;
-			method >> GaussLegendreQuadrature::GL_order;
-			gauss_legendre_weight_ = GaussLegendreQuadrature::gauss_legendre_weight_[GaussLegendreQuadrature::GL_order];
-			gauss_legendre_abscissa_ = GaussLegendreQuadrature::gauss_legendre_abscissa_[GaussLegendreQuadrature::GL_order];
-		}
-		XMLElement * feed_nuclide = continously_feeding->FirstChildElement();
-		while (feed_nuclide)
-		{
-			constant_feeding_nuclide_id_vector_.push_back(atoi(feed_nuclide->Attribute("zai")));
-			constant_feeding_rate_.push_back(atof(feed_nuclide->Attribute("feed_rate")));
-			feed_nuclide = feed_nuclide->NextSiblingElement();
-		}
-		constant_feeding_nuclide_num_ = constant_feeding_rate_.size();
-	}
+    /* ------------------------------------------------------------------------------------*
+    		Mother Node "ContinouslyFeeding", attributes "tag"
+       ------------------------------------------------------------------------------------
+       |	Daughter Node	|			Attributes
+       ------------------------------------------------------------------------------------
+       |	"FeedNuclide"	|		     "zai" "feed_rate"
+       ------------------------------------------------------------------------------------ */
+    XMLElement * continously_feeding = online_reprocessing->NextSiblingElement();
+    if (string(continously_feeding->Name()) != "ContinouslyFeeding") {
+        InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no 'ContinouslyFeeding' tag in the input file" ,1);
+    }
+    if_constant_online_feeding_ = atoi(continously_feeding->Attribute("tag"));
+    if (if_constant_online_feeding_ == true) {
+        stringstream method(continously_feeding->Attribute("method"));
+        string method_name;
+        method >> method_name;
+        if( method_name == "Gauss") {
+            constant_feeding_calculation_methods_ = 1;
+            method >> GaussLegendreQuadrature::GL_order;
+            gauss_legendre_weight_ = GaussLegendreQuadrature::gauss_legendre_weight_[GaussLegendreQuadrature::GL_order];
+            gauss_legendre_abscissa_ = GaussLegendreQuadrature::gauss_legendre_abscissa_[GaussLegendreQuadrature::GL_order];
+        }
+        XMLElement * feed_nuclide = continously_feeding->FirstChildElement();
+        while (feed_nuclide) {
+            constant_feeding_nuclide_id_vector_.push_back(atoi(feed_nuclide->Attribute("zai")));
+            constant_feeding_rate_.push_back(atof(feed_nuclide->Attribute("feed_rate")));
+            feed_nuclide = feed_nuclide->NextSiblingElement();
+        }
+        constant_feeding_nuclide_num_ = constant_feeding_rate_.size();
+    }
 
 
-/*---------------------------------------------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------------------------------------------*/
 
-	if (if_constant_online_feeding_ == true && if_tracking_stockage == false && constant_feeding_calculation_methods_ == 1)
-	{
-		constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_);
-		int size = constant_feeding_nuclide_id_vector_.size();
-		for (int i = 0; i < size; ++i)
-		{
-			int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-			constant_feeding_vector_[Index] = constant_feeding_rate_[i];
-		}
-	}
-	if (if_constant_online_feeding_ == true && if_tracking_stockage == true && constant_feeding_calculation_methods_ == 1)
-	{
-		constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_*2);
-		int size = constant_feeding_nuclide_id_vector_.size();
-		for (int i = 0; i < size; ++i)
-		{
-			int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-			constant_feeding_vector_[Index] = constant_feeding_rate_[i];
-		}
-	}
-	
-	n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
+    if (if_constant_online_feeding_ == true && if_tracking_stockage == false && constant_feeding_calculation_methods_ == 1) {
+        constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_);
+        int size = constant_feeding_nuclide_id_vector_.size();
+        for (int i = 0; i < size; ++i) {
+            int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+            constant_feeding_vector_[Index] = constant_feeding_rate_[i];
+        }
+    }
+    if (if_constant_online_feeding_ == true && if_tracking_stockage == true && constant_feeding_calculation_methods_ == 1) {
+        constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_*2);
+        int size = constant_feeding_nuclide_id_vector_.size();
+        for (int i = 0; i < size; ++i) {
+            int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+            constant_feeding_vector_[Index] = constant_feeding_rate_[i];
+        }
+    }
+
+    n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 }
 
 //void ModecClass::ModecInitial(int argc, char *argv[])
@@ -374,7 +336,7 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //	}
 //	GetInputFileName.close();
 //
-//	int num_nucl;								// 初始核素个数 
+//	int num_nucl;								// 初始核素个数
 //
 //	if (argc == 2)
 //	{
@@ -573,9 +535,9 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //			record >> ctemp;
 //			int sub;
 //			record >> sub;
-//			substep_.push_back(sub);		
+//			substep_.push_back(sub);
 //		}
-//		
+//
 //		if (tag == "Power")
 //		{
 //			if_read_mode_tag_ = 1;
@@ -611,7 +573,7 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //			int sub;
 //			record >> sub;
 //			substep_.push_back(sub);
-//			
+//
 //		}
 //
 //		if (tag == "Calc_Flow_Depletion")
@@ -683,14 +645,14 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //				double awt = double((nucl_id - nucl_id / 10000 * 10000) / 10);
 //
 //				ModecNuclideLibrary.nuclide_library_vector_[0][id] = mass / awt; // 转换成mol进行存储
-//				
+//
 //				if (awt >= 220)
 //				{
 //					ModecNuclideLibrary.heavy_metal_mass_ += mass;
 //				}
 //			}
 //			goto readfile;
-//		
+//
 //		kg:
 //			for (int i = 0; i < num_nucl; ++i)
 //			{
@@ -711,7 +673,7 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //				}
 //			}
 //			goto readfile;
-//			
+//
 //		atom:
 //			for (int i = 0; i < num_nucl; ++i)
 //			{
@@ -1023,14 +985,14 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //				evolution_value_[i] /= 2.0; // 完全均匀则意味着减半
 //			}
 //		}
-//		
+//
 //		if(solver_selection_ == 0)
 //		{
 //			InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: CRAM method must be used when flow depletion is calculated.",0);
 //			solver_selection_ == 1;
 //		}
 //	}
-//	
+//
 //	if (decay_library_name_.length() == 0 && depth_library_name_.length() == 0 && couple_library_name_.length() == 0)
 //	{
 //		InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Error: no library name in the input file.", 1);
@@ -1085,101 +1047,70 @@ void ModecClass::ModecInitial(int argc, char **argv)
 //	}
 //};
 
-void ModecClass::BuildSpMat()
-{
-	if (lib_tag_ == 0)
-	{
-		int size = evolution_mode_.size();
-		int i;
-		for (i = 0; i < size; ++i)
-		{
-			if (evolution_mode_[i] > 0)
-			{
-				break;
-			}
-		}
-		if (solver_selection_ == 1)
-		{
-			DecayToSpMat();
-		}
-		else if(solver_selection_ == 0)
-		{
-			DecayToSpMatForTta();
-		}
-		if (i < size) // 耦合TRITON
-		{
-			XSfromTriton();
-			CalculateEffectiveFissionYields();
-		}
-	}
-	else if (lib_tag_ == 1) // 读取depth_library_name_
-	{
-		int size = evolution_mode_.size();
-		int i;
-		for (i = 0; i < size; ++i)
-		{
-			if (evolution_mode_[i] > 0)
-			{
-				break;
-			}
-		}
-		if (i >= size) // 纯衰变情形
-		{
-			if (solver_selection_ == 1)
-			{
-				ReadFromDepthLib();
-			}
-			else if (solver_selection_ == 0)
-			{
-				ReadFromDepthLibForTta();
-			}
-		}
-		else
-		{
-			if (solver_selection_ == 1)
-			{
-				ReadFromDepthLib();
-				ConstructFissionYieldsSpMat();
-			}
-			else if (solver_selection_ == 0)
-			{
-				ReadFromDepthLibForTta();
-				ConstructFissionYieldsSpMatForTta();
-			}
-		}
-	}
-	else if (lib_tag_ == 2)// 读取Couple
-	{
-		int size = evolution_mode_.size();
-		int i;
-		for (i = 0; i < size; ++i)
-		{
-			if (evolution_mode_[i] > 0)
-			{
-				break;
-			}
-		}
-		if (solver_selection_ == 1)
-		{
-			ReadFromCouple();
-		}
-		else if( solver_selection_ == 0 )
-		{
-			ReadFromCoupleForTta();
-		}
-	}
+void ModecClass::BuildSpMat() {
+    if (lib_tag_ == 0) {
+        int size = evolution_mode_.size();
+        int i;
+        for (i = 0; i < size; ++i) {
+            if (evolution_mode_[i] > 0) {
+                break;
+            }
+        }
+        if (solver_selection_ == 1) {
+            DecayToSpMat();
+        } else if(solver_selection_ == 0) {
+            DecayToSpMatForTta();
+        }
+        if (i < size) { // 耦合TRITON
+            XSfromTriton();
+            CalculateEffectiveFissionYields();
+        }
+    } else if (lib_tag_ == 1) { // 读取depth_library_name_
+        int size = evolution_mode_.size();
+        int i;
+        for (i = 0; i < size; ++i) {
+            if (evolution_mode_[i] > 0) {
+                break;
+            }
+        }
+        if (i >= size) { // 纯衰变情形
+            if (solver_selection_ == 1) {
+                ReadFromDepthLib();
+            } else if (solver_selection_ == 0) {
+                ReadFromDepthLibForTta();
+            }
+        } else {
+            if (solver_selection_ == 1) {
+                ReadFromDepthLib();
+                ConstructFissionYieldsSpMat();
+            } else if (solver_selection_ == 0) {
+                ReadFromDepthLibForTta();
+                ConstructFissionYieldsSpMatForTta();
+            }
+        }
+    } else if (lib_tag_ == 2) { // 读取Couple
+        int size = evolution_mode_.size();
+        int i;
+        for (i = 0; i < size; ++i) {
+            if (evolution_mode_[i] > 0) {
+                break;
+            }
+        }
+        if (solver_selection_ == 1) {
+            ReadFromCouple();
+        } else if( solver_selection_ == 0 ) {
+            ReadFromCoupleForTta();
+        }
+    }
 
-	if (if_flow_mode_ == 1)
-	{
-		TransMatrixPureDecay = TransMatrixDecay; // 定义纯衰变矩阵
-	}
+    if (if_flow_mode_ == 1) {
+        TransMatrixPureDecay = TransMatrixDecay; // 定义纯衰变矩阵
+    }
 
- 	if (if_continously_remove_ == true)
-	{
-		AddOnlineReprocessingCoeffi();
-	}
-	if (if_variable_feeding_ == true)
-	{
-		ContinuouslyFeeding();
-	}
+    if (if_continously_remove_ == true) {
+        AddOnlineReprocessingCoeffi();
+    }
+    if (if_variable_feeding_ == true) {
+        ContinuouslyFeeding();
+    }
 }
