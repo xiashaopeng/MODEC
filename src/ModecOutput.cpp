@@ -214,6 +214,7 @@ void ModecClass::ModecOutputXml() {
                                         XMLText * abs_text = doc.NewText(abs_s);
                                         abs_node->InsertEndChild(abs_text);
                                         root->InsertEndChild(abs_node);
+                                    }
                                         else{
                                         stringstream abs_string;
                                         for(int j = 0; j < size_tot; ++j){
@@ -230,7 +231,60 @@ void ModecClass::ModecOutputXml() {
 
                                     }
 
+                                        XMLElement *nuclides = doc.NewElement("Nuclides");
+                                        root->InsertEndChild(nuclides);
+
+                                        XMLElement *concentrations = doc.NewElement("Concentrations");
+                                        concentrations->SetAttribute("unit",dens_unit_.c_str());
+                                        nuclides->InsertEndChild(concentrations);
+
+                                        double convert_coeff;
+
+                                        for ( int i = 0; i < nucl_size; ++i){
+                                        XMLElement *nuclide = doc.NewElement("nuclide");
+                                        int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                                        int NZ = nucl_id / 10000;
+                                        int NA = (nucl_id - NZ * 10000) / 10;
+                                        int NG = nucl_id - nucl_id / 10 * 10;
+                                        string nucl_name;
+                                        nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + itoa(NA);
+                                        if(NG == 1){
+                                        nucl_name += "m";
                                     }
+
+                                        if (dens_unit_ == "mol"){
+                                        convert_coeff = 1.0;
+                                    } else if (dens_unit_ == "g") {
+                                        convert_coeff = double(NA);
+                                    } else if (dens_unit_ == "kg") {
+                                        convert_coeff = double(NA) / 1000.0;
+                                    } else if (dens_unit_ == "atom") {
+                                        convert_coeff = Avogadro_Constant;
+                                    } else if (dens_unit_ == "atom/(barn-cm)") {
+                                        convert_coeff = Avogadro_Constant * 1.0e-24;
+                                    }
+
+                                        nuclide->SetAttribute("zai",itoa(nucl_id).c_str());
+                                        nuclide->SetAttribute("name",nucl_name.c_str());
+                                        if (print_mode_ == 0){
+                                        stringstream nuclide_string;
+                                        nuclide_string << ftoa(n_vector_[0][i] * convert_coeff);
+                                        nuclide_string << " ";
+                                        if(n_vector_[size_tot][i] < cutoff){
+                                        nuclide_string << "0.0";
+                                    }
+                                        else{
+                                        nuclide_string << ftoa(n_vector_[size_tot][i] * convert_coeff);
+                                    }
+                                        string nuclide_s;
+                                        nuclide_string >> nuclide_s;
+                                        XMLText *nuclide = doc.NewText(nuclide_s);
+
+
+
+
+                                    }
+
                                     }
                                     }
 
