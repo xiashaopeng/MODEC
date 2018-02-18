@@ -5,6 +5,7 @@ const double Electron_Coulomb = 1.6021766208E-19;//1.6021766208E-19; // 电子�
 
 const double cutoff = 1e-50; // 浓度的截断误差
 
+using namespace std;
 using namespace tinyxml2;
 
 void ModecClass::ModecOutputXml() {
@@ -19,7 +20,7 @@ void ModecClass::ModecOutputXml() {
     int size = evolution_mode_.size();
     int size_tot = 0;
     vector<string> time_unit;
-    if(int i = 0; i < size; ++i) {
+    for(int i = 0; i < size; ++i) {
         size_tot += substep_[i];
     }
 
@@ -36,206 +37,732 @@ void ModecClass::ModecOutputXml() {
     }
 
     if( if_flow_mode_ == 0 ) {
-        if(if_calculate_equilibrium_ == false) {
-            XMLElement *time = doc.NewElement("Time");
-            time->SetAttribute("unit","s");
-            if(print_mode_ == 0) {
-                stringstream time_string;
-                time_string << ftoa(cum_time[0]);
-                time_string << " ";
-                time_string << ftoa(cum_time.back());
+        XMLElement *time = doc.NewElement("Time");
+        time->SetAttribute("unit","s");
+        if(print_mode_ == 0) {
+            stringstream time_string;
+            time_string << scientific << setprecision(9);
+            time_string << cum_time[0];
+            time_string << " ";
+            time_string << cum_time.back();
 
-                string time_s;
-                time_string >> time_s;
-                XMLText *time_text = doc.NewText(time_s);
-                time->InsertEndChild(time_text);
-                root->InsertEndChild(time);
+            string time_s(time_string.str());
+            XMLText *time_text = doc.NewText(time_s.c_str());
+            time->InsertEndChild(time_text);
+            root->InsertEndChild(time);
+        } else {
+            stringstream time_string;
+            time_string << scientific << setprecision(9);
+            for (int j = 0; j < size_tot; ++j) {
+                time_string << cum_time[j] << " ";
+            }
+            time_string << cum_time.back();
+
+            string time_s(time_string.str());
+            //time_string >> time_s;
+            XMLText *time_text = doc.NewText(time_s.c_str());
+            time->InsertEndChild(time_text);
+            root->InsertEndChild(time);
+        }
+
+        XMLElement *power = doc.NewElement("Power");
+        power->SetAttribute("unit","MW");
+        if(print_mode_ == 0) {
+            stringstream power_string;
+            power_string << scientific << setprecision(9);
+            power_string << power_vector_[0];
+            power_string << " ";
+            power_string << power_vector_.back();
+
+            string power_s(power_string.str());
+            XMLText * power_text = doc.NewText(power_s.c_str());
+            power->InsertEndChild(power_text);
+            root->InsertEndChild(power);
+        } else {
+            stringstream power_string;
+            power_string << scientific << setprecision(9);
+            for (int j = 0; j < size_tot; ++j) {
+                power_string << power_vector_[j] << " ";
+            }
+            power_string << power_vector_.back();
+
+            string power_s(power_string.str());
+            XMLText *power_text = doc.NewText(power_s.c_str());
+            power->InsertEndChild(power_text);
+            root->InsertEndChild(power);
+        }
+
+        XMLElement *flux = doc.NewElement("Flux");
+        flux->SetAttribute("unit","cm-2*s-1");
+        if(print_mode_ == 0) {
+            stringstream flux_string;
+            flux_string << scientific << setprecision(9);
+            flux_string << flux_vector_[0];
+            flux_string << " ";
+            flux_string << flux_vector_.back();
+
+            string flux_s(flux_string.str());
+            XMLText * flux_text = doc.NewText(flux_s.c_str());
+            flux->InsertEndChild(flux_text);
+            root->InsertEndChild(flux);
+        } else {
+            stringstream flux_string;
+            flux_string << scientific << setprecision(9);
+            for (int j = 0; j < size_tot; ++j) {
+                flux_string << flux_vector_[j] << " ";
+            }
+            flux_string << flux_vector_.back();
+
+            string flux_s(flux_string.str());
+            XMLText *flux_text = doc.NewText(flux_s.c_str());
+            flux->InsertEndChild(flux_text);
+            root->InsertEndChild(flux);
+        }
+
+        vector<double> kinf;
+        vector<double> prod_neu;
+        vector<double> abs_neu;
+        if (if_print_kinf_ != 0 || if_print_fission_rate_ != 0 || if_print_absorption_rate_ != 0) {
+            kinf.resize(size_tot + 1);
+            prod_neu.resize(size_tot + 1);
+            abs_neu.resize(size_tot + 1);
+
+            for (int j = 0; j <= size_tot; ++j) {
+                for (int i = 0; i <= nucl_size; ++i) {
+                    prod_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24;
+                    abs_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24;
+                }
+
+                prod_neu[j] *= flux_vector_[j];
+                abs_neu[j] *= flux_vector_[j];
+
+                if (abs_neu[j] != 0.0) {
+                    kinf[j] = prod_neu[j] / abs_neu[j];
+                }
+            }
+
+            if (if_print_kinf_ == true) {
+                XMLElement* kinf_node = doc.NewElement("K-infinite");
+                if (print_mode_ == 0) {
+                    stringstream kinf_string;
+                    kinf_string << scientific << setprecision(9);
+                    kinf_string << kinf[0];
+                    kinf_string << " ";
+                    kinf_string << kinf.back();
+
+                    string kinf_s(kinf_string.str());
+
+                    XMLText *kinf_text = doc.NewText(kinf_s.c_str());
+                    kinf_node->InsertEndChild(kinf_text);
+                    root->InsertEndChild(kinf_node);
+                } else {
+                    stringstream kinf_string;
+                    kinf_string << scientific << setprecision(9);
+                    for (int j = 0; j < size_tot; ++j) {
+                        kinf_string << kinf[j] << " ";
+                    }
+                    kinf_string << kinf.back();
+
+                    string kinf_s(kinf_string.str());
+                    XMLText *kinf_text = doc.NewText(kinf_s.c_str());
+                    kinf_node->InsertEndChild(kinf_text);
+                    root->InsertEndChild(kinf_node);
+                }
+            }
+
+        }
+
+        XMLElement *nuclides = doc.NewElement("Nuclides");
+        nuclides->SetAttribute("zone","core");
+        root->InsertEndChild(nuclides);
+
+        XMLElement *concentration = doc.NewElement("Concentration");
+        concentration->SetAttribute("unit",dens_unit_.c_str());
+        nuclides->InsertEndChild(concentration);
+
+        double convert_coeff;
+
+        for ( int i = 0; i < nucl_size; ++i) {
+            XMLElement *nuclide = doc.NewElement("nuclide");
+            int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+            int NZ = nucl_id / 10000;
+            int NA = (nucl_id - NZ * 10000) / 10;
+            int NG = nucl_id - nucl_id / 10 * 10;
+            string nucl_name;
+            nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+            if(NG == 1) {
+                nucl_name += "m";
+            }
+
+            if (dens_unit_ == "mol") {
+                convert_coeff = 1.0;
+            } else if (dens_unit_ == "g") {
+                convert_coeff = double(NA);
+            } else if (dens_unit_ == "kg") {
+                convert_coeff = double(NA) / 1000.0;
+            } else if (dens_unit_ == "atom") {
+                convert_coeff = Avogadro_Constant;
+            } else if (dens_unit_ == "atom/(barn-cm)") {
+                convert_coeff = Avogadro_Constant * 1.0e-24;
+            }
+
+            nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+            nuclide->SetAttribute("name",nucl_name.c_str());
+            if (print_mode_ == 0) {
+                stringstream nuclide_string;
+                nuclide_string << scientific << setprecision(9);
+                nuclide_string << n_vector_[0][i] * convert_coeff;
+                nuclide_string << " ";
+                if(n_vector_[size_tot][i] < cutoff) {
+                    nuclide_string << 0.0;
+                } else {
+                    nuclide_string << n_vector_[size_tot][i] * convert_coeff;
+                }
+                string nuclide_s(nuclide_string.str());
+                XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                nuclide->InsertEndChild(nuclide_text);
+                concentration->InsertEndChild(nuclide);
             } else {
-                stringstream time_string;
+                stringstream nuclide_string;
+                nuclide_string << scientific << setprecision(9);
                 for (int j = 0; j < size_tot; ++j) {
-                    time_string << ftoa(cum_time[j]) << " ";
+                    if (n_vector_[j][i] < cutoff) {
+                        nuclide_string << 0.0 << " ";
+                    } else {
+                        nuclide_string << n_vector_[j][i] * convert_coeff << " ";
+                    }
                 }
-                time_string << ftoa(cum_time.back());
+                if (n_vector_[size_tot][i] < cutoff) {
+                    nuclide_string << 0.0 ;
+                } else {
 
-                string time_s;
-                time_string >> time_s;
-                XMLText *time_text = doc.NewText(time_s);
-                time->InsertEndChild(time_text);
-                root->InsertEndChild(time);
+                    nuclide_string << n_vector_[size_tot][i] * convert_coeff;
+                }
+                string nuclide_s(nuclide_string.str());
+                XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                nuclide->InsertEndChild(nuclide_text);
+                concentration->InsertEndChild(nuclide);
             }
 
-            XMLElement *power = doc.NewElement("Power");
-            power->SetAttribute("unit","MW");
-            if(print_mode_ == 0) {
-                stringstream power_string;
-                power_string << ftoa(power_vector_[0]);
-                power_string << " ";
-                power_string << ftoa(power_vector_.back());
+        }
+        if (if_print_activity_ == true) {
+            XMLElement * act_node = doc.NewElement("RadioActivity");
+            act_node->SetAttribute("unit","Ci");
+            nuclides->InsertEndChild(act_node);
 
-                string power_s;
-                power_string >> power_s;
-                XMLText * power_text = doc.NewText(power_s);
-                power->InsertEndChild(power_text);
-                root->InsertEndChild(power);
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    nuclide_string << " ";
+                    if (n_vector_[size][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    act_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][i] * Avogadro_Constant * lambda[i] / (3.7e10) << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    act_node->InsertEndChild(nuclide);
+                }
+            }
+
+        }
+
+        if (if_print_decayenergy_ == true) {
+
+            XMLElement * decay_node = doc.NewElement("DecayHeat");
+            decay_node->SetAttribute("unit","Watts");
+            nuclides->InsertEndChild(decay_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            vector< double > Q;
+            Q = ModecNuclideLibrary.nuclide_library_vector_[3];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    nuclide_string << " ";
+                    if (n_vector_[size][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    decay_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6 << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    decay_node->InsertEndChild(nuclide);
+                }
+            }
+
+        }
+
+        if (if_print_ampc_ == true) {
+
+            XMLElement * ampc_node = doc.NewElement("AMPC");
+            ampc_node->SetAttribute("unit","m3-air/Bq");
+            nuclides->InsertEndChild(ampc_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            vector< double > AMPC;
+            AMPC = ModecNuclideLibrary.nuclide_library_vector_[4];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    nuclide_string << " ";
+                    if (n_vector_[size][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    ampc_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    ampc_node->InsertEndChild(nuclide);
+                }
+            }
+
+        }
+
+        if (if_print_wmpc_ == true) {
+
+            XMLElement * wmpc_node = doc.NewElement("WMPC");
+            wmpc_node->SetAttribute("unit","m3-water/Bq");
+            nuclides->InsertEndChild(wmpc_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            vector< double > WMPC;
+            WMPC = ModecNuclideLibrary.nuclide_library_vector_[5];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    nuclide_string << " ";
+                    if (n_vector_[size][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    wmpc_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    wmpc_node->InsertEndChild(nuclide);
+                }
+            }
+
+        }
+
+        if (if_print_toxicity_ == true) {
+
+            XMLElement * toxicity_node = doc.NewElement("RadioToxicity");
+            toxicity_node->SetAttribute("unit","Sv");
+            nuclides->InsertEndChild(toxicity_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            vector< double > TOXCI;
+            TOXCI = ModecNuclideLibrary.nuclide_library_vector_[10];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    nuclide_string << " ";
+                    if (n_vector_[size][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    toxicity_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][i] * Avogadro_Constant * lambda[i] * TOXCI[i] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    toxicity_node->InsertEndChild(nuclide);
+                }
+            }
+
+        }
+
+        if (if_print_fission_rate_ == true) {
+            XMLElement* prod_node = doc.NewElement("NeuProdRate");
+            prod_node->SetAttribute("unit","s-1");
+            nuclides->InsertEndChild(prod_node);
+
+            XMLElement *prod_tot = doc.NewElement("total");
+            if (print_mode_ == 0) {
+                stringstream prod_string;
+                prod_string << scientific << setprecision(9);
+                prod_string << prod_neu[0];
+                prod_string << " ";
+                prod_string << prod_neu.back();
+
+                string prod_s(prod_string.str());
+
+                XMLText *prod_text = doc.NewText(prod_s.c_str());
+                prod_tot->InsertEndChild(prod_text);
+                prod_node->InsertEndChild(prod_tot);
             } else {
-                stringstream power_string;
+                stringstream prod_string;
+                prod_string << scientific << setprecision(9);
                 for (int j = 0; j < size_tot; ++j) {
-                    power_string << ftoa(power_vector_[j]) << " ";
+                    prod_string << prod_neu[j] << " ";
                 }
-                power_string << ftoa(power_vector_.back());
+                prod_string << prod_neu.back();
 
-                string power_s;
-                power_string >> power_s;
-                XMLText *power_text = doc.NewText(power_s);
-                power->InsertEndChild(power_text);
-                root->InsertEndChild(power);
+                string prod_s(prod_string.str());
+                XMLText *prod_text = doc.NewText(prod_s.c_str());
+                prod_tot->InsertEndChild(prod_text);
+                prod_node->InsertEndChild(prod_tot);
             }
 
-            XMLElement *flux = doc.NewELement("Flux");
-            flux->SetAttribute("unit","cm-2*s-1");
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[0];
+                    nuclide_string << " ";
+                    if (n_vector_[size][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[size_tot];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    prod_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[j] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[size_tot];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    prod_node->InsertEndChild(nuclide);
+                }
+            }
+
+        }
+
+
+        if( if_print_absorption_rate_ == true) {
+            XMLElement* abs_node = doc.NewElement("NeuAbsRate");
+            abs_node->SetAttribute("unit","s-1");
+            nuclides->InsertEndChild(abs_node);
+
+            XMLElement *abs_tot = doc.NewElement("total");
             if(print_mode_ == 0) {
-                stringstream flux_string;
-                flux_string << ftoa(flux_vector_[0]);
-                flux_string << " ";
-                flux_string << ftoa(flux_vector_.back());
+                stringstream abs_string;
+                abs_string << scientific << setprecision(9);
+                abs_string << abs_neu[0];
+                abs_string << " ";
+                abs_string << abs_neu.back();
 
-                string flux_s;
-                flux_string >> flux_s;
-                XMLText * flux_text = doc.NewText(flux_s);
-                flux->InsertEndChild(flux_text);
-                root->InsertEndChild(flux);
+                string abs_s(abs_string.str());
+
+                XMLText * abs_text = doc.NewText(abs_s.c_str());
+                abs_tot->InsertEndChild(abs_text);
+                abs_node->InsertEndChild(abs_tot);
             } else {
-                stringstream flux_string;
-                for (int j = 0; j < size_tot; ++j) {
-                    flux_string << ftoa(flux_vector_[j]) << " ";
+                stringstream abs_string;
+                abs_string << scientific << setprecision(9);
+                for(int j = 0; j < size_tot; ++j) {
+                    abs_string << abs_neu[j] << " ";
                 }
-                flux_string << ftoa(flux_vector_.back());
+                abs_string << abs_neu.back();
 
-                string flux_s;
-                flux_string >> flux_s;
-                XMLText *flux_text = doc.NewText(flux_s);
-                flux->InsertEndChild(flux_text);
-                root->InsertEndChild(flux);
+                string abs_s(abs_string.str());
+                XMLText *abs_text = doc.NewText(abs_s.c_str());
+                abs_tot->InsertEndChild(abs_text);
+                abs_node->InsertEndChild(abs_tot);
             }
 
-            vector<double> kinf;
-            vector<double> prod_neu;
-            vector<double> abs_neu;
-            if (if_print_kinf_ != 0 || if_print_fission_rate_ != 0 || if_print_absorption_rate_ != 0) {
-                kinf.resize(size_tot + 1);
-                prod_neu.resize(size_tot + 1);
-                abs_neu.resize(size_tot + 1);
-
-                for (int j = 0; i <= size_tot; ++j) {
-                    for (int i = 0; i <= nucl_size; ++i) {
-                        prod_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24;
-                        abs_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24;
-                    }
-
-                    prod_neu[j] *= flux_vector_[j];
-                    abs_neu[j] *= flux_vector_[j];
-
-                    if (abs_neu[j] != 0.0) {
-                        kinf[j] = prod_neu[j] / abs_neu[j];
-                    }
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
                 }
 
-                if (if_print_kinf_ == true) {
-                    XMLElement* kinf_node = doc.NewElement("K-inf");
-                    if (print_mode_ == 0) {
-                        stringstream kinf_string;
-                        kinf_string << ftoa(kinf[0]);
-                        kinf_string << " ";
-                        kinf_string << ftoa(kinf.back());
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
 
-                        string kinf_s;
-                        kinf_string >> kinf_s;
-
-                        XMLText *kinf_text = doc.NewText(kinf_s);
-                        kinf_node->InsertEndChild(kinf_text);
-                        root->InsertEndChild(kinf_node);
+                    nuclide_string << n_vector_[0][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[0];
+                    nuclide_string << " ";
+                    if (n_vector_[size][i] < cutoff) {
+                        nuclide_string << 0.0;
                     } else {
-                        stringstream kinf_string;
-                        for (int j = 0; j < size_tot; ++j) {
-                            kinf_string << ftoa(kinf[j]) << " ";
-                        }
-                        kinf_string << ftoa(kinf.back());
-
-                        string kinf_s;
-                        kinf_string >> kinf_s;
-                        XMLText *kinf_text = doc.NewText(kinf_s);
-                        kinf_node->InsertEndChild(kinf_text);
-                        root->InsertEndChild(kinf_node);
-                    }
-                }
-
-                if (if_print_fission_rate_ == true) {
-                    XMLElement* prod_node = doc.NewElement("NeuProdRate");
-
-                    if (print_mode_ == 0) {
-                        stringstream prod_string;
-                        prod_string << ftoa(prod_neu[0]);
-                        prod_string << " ";
-                        prod_string << ftoa(prod_neu.back());
-
-                        string prod_s;
-                        prod_string >> prod_s;
-
-                        XMLText *prod_text = doc.NewText(prod_s);
-                        prod_node->InsertEndChild(prod_text);
-                        root->InsertEndChild(prod_node);
-                    } else {
-                        stringstream prod_string;
-                        for (int j = 0; j < size_tot; ++j) {
-                            prod_string << ftoa(prod_neu[j]) << " ";
-                        }
-                        prod_string << ftoa(prod_neu.back());
-
-                        string prod_s;
-                        prod_string >> prod_s;
-                        XMLText *prod_text = doc.NewText(prod_s);
-                        prod_node->InsertEndChild(prod_text);
-                        root->InsertEndChild(prod_node);
-                    }
-                }
-
-                if( if_print_absorption_rate_ == true) {
-                    XMLElement* abs_node = doc.NewElement("NeuAbsRate");
-                    if(print_mode_ == 0) {
-                        stringstream abs_string;
-                        abs_string << ftoa(abs_neu[0]);
-                        abs_string << " ";
-                        abs_string << ftoa(abs_neu.back());
-
-                        string abs_s;
-                        abs_string >> abs_s;
-
-                        XMLText * abs_text = doc.NewText(abs_s);
-                        abs_node->InsertEndChild(abs_text);
-                        root->InsertEndChild(abs_node);
-                    } else {
-                        stringstream abs_string;
-                        for(int j = 0; j < size_tot; ++j) {
-                            abs_string << ftoa(abs_neu[j]) << " ";
-                        }
-                        abs_string << ftoa(abs_neu.back());
-
-                        string abs_s;
-                        abs_string >> abs_s;
-                        XMLText *abs_text = doc.NewText(abs_s);
-                        abs_neu->InsertEndChild(abs_s);
-                        root->InsertEndChild(abs_neu);
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[size_tot];
                     }
 
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    abs_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[j] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[size_tot];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    abs_node->InsertEndChild(nuclide);
                 }
             }
-
+        }
+        if (if_tracking_stockage == true) {
             XMLElement *nuclides = doc.NewElement("Nuclides");
+            nuclides->SetAttribute("zone","stockage");
             root->InsertEndChild(nuclides);
 
-            XMLElement *concentrations = doc.NewElement("Concentrations");
-            concentrations->SetAttribute("unit",dens_unit_.c_str());
-            nuclides->InsertEndChild(concentrations);
+            XMLElement *concentration = doc.NewElement("Concentration");
+            concentration->SetAttribute("unit",dens_unit_.c_str());
+            nuclides->InsertEndChild(concentration);
 
             double convert_coeff;
 
@@ -246,7 +773,7 @@ void ModecClass::ModecOutputXml() {
                 int NA = (nucl_id - NZ * 10000) / 10;
                 int NG = nucl_id - nucl_id / 10 * 10;
                 string nucl_name;
-                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + itoa(NA);
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
                 if(NG == 1) {
                     nucl_name += "m";
                 }
@@ -263,49 +790,1405 @@ void ModecClass::ModecOutputXml() {
                     convert_coeff = Avogadro_Constant * 1.0e-24;
                 }
 
-                nuclide->SetAttribute("zai",itoa(nucl_id).c_str());
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if (print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << ftoa(n_vector_[0][i] * convert_coeff);
+                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << n_vector_[0][i + nucl_size] * convert_coeff;
                     nuclide_string << " ";
-                    if(n_vector_[size_tot][i] < cutoff) {
-                        nuclide_string << "0.0";
+                    if(n_vector_[size_tot][i + nucl_size] < cutoff) {
+                        nuclide_string << 0.0;
                     } else {
-                        nuclide_string << ftoa(n_vector_[size_tot][i] * convert_coeff);
+                        nuclide_string << n_vector_[size_tot][i + nucl_size] * convert_coeff;
                     }
-                    string nuclide_s;
-                    nuclide_string >> nuclide_s;
-                    XMLText *nuclide_text = doc.NewText(nuclide_s);
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
                     nuclide->InsertEndChild(nuclide_text);
-                    concentrations->InsertEndChild(nuclide);
+                    concentration->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
                     for (int j = 0; j < size_tot; ++j) {
-                        if (n_vector_[j][i] < cutoff) {
-                            nuclide_string << "0.0" << " ";
+                        if (n_vector_[j][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0 << " ";
                         } else {
-                            nuclide_string << ftoa(n_vector_[j][i] * convert_coeff) << " ";
+                            nuclide_string << n_vector_[j][i + nucl_size] * convert_coeff << " ";
                         }
-                        nuclide_string << ftoa(n_vector_[size_tot][i] * convert_coeff);
-                        string nuclide_s;
-                        nuclide_string >> nuclide_s;
-                        XMLText * nuclide_text = doc.NewText(nuclide_s);
-                        nuclide->InsertEndChild(nuclide_text);
-                        concentrations->InsertEndChild(nuclide);
                     }
+                    if (n_vector_[size_tot][i + nucl_size] < cutoff) {
+                        nuclide_string << 0.0 ;
+                    } else {
+
+                        nuclide_string << n_vector_[size_tot][i + nucl_size] * convert_coeff;
+                    }
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    concentration->InsertEndChild(nuclide);
                 }
 
             }
             if (if_print_activity_ == true) {
-                XMLElement * act_node = doc.NewElement("Radioactivity");
+                XMLElement * act_node = doc.NewElement("RadioActivity");
                 act_node->SetAttribute("unit","Ci");
-                vector< double > lamda;
-                lamda = ModecNuclideLibrary.nuclide_library_vector_[1];
+                nuclides->InsertEndChild(act_node);
+
+                vector< double > lambda;
+                lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+                for (int i = 0; i < nucl_size; ++ i) {
+                    XMLElement *nuclide = doc.NewElement("nuclide");
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string nucl_name;
+                    nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                    if(NG == 1) {
+                        nucl_name += "m";
+                    }
+
+                    nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                    nuclide->SetAttribute("name",nucl_name.c_str());
+                    if(print_mode_ == 0) {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        nuclide_string << n_vector_[0][i + nucl_size] * Avogadro_Constant * lambda[i] / (3.7e10);
+                        nuclide_string << " ";
+                        if (n_vector_[size][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] / (3.7e10);
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        act_node->InsertEndChild(nuclide);
+                    } else {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        for ( int j = 0; j < size_tot; ++j) {
+                            if(n_vector_[j][i + nucl_size] < cutoff) {
+                                nuclide_string << 0.0 <<" ";
+                            } else {
+                                nuclide_string << n_vector_[j][i + nucl_size] * Avogadro_Constant * lambda[i] / (3.7e10) << " ";
+                            }
+                        }
+                        if (n_vector_[size_tot][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] / (3.7e10);
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        act_node->InsertEndChild(nuclide);
+                    }
+                }
+
+            }
+
+            if (if_print_decayenergy_ == true) {
+
+                XMLElement * decay_node = doc.NewElement("DecayHeat");
+                decay_node->SetAttribute("unit","Watts");
+                nuclides->InsertEndChild(decay_node);
+
+                vector< double > lambda;
+                lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+                vector< double > Q;
+                Q = ModecNuclideLibrary.nuclide_library_vector_[3];
+
+                for (int i = 0; i < nucl_size; ++ i) {
+                    XMLElement *nuclide = doc.NewElement("nuclide");
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string nucl_name;
+                    nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                    if(NG == 1) {
+                        nucl_name += "m";
+                    }
+
+                    nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                    nuclide->SetAttribute("name",nucl_name.c_str());
+                    if(print_mode_ == 0) {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        nuclide_string << n_vector_[0][i + nucl_size] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                        nuclide_string << " ";
+                        if (n_vector_[size][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        decay_node->InsertEndChild(nuclide);
+                    } else {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        for ( int j = 0; j < size_tot; ++j) {
+                            if(n_vector_[j][i + nucl_size] < cutoff) {
+                                nuclide_string << 0.0 <<" ";
+                            } else {
+                                nuclide_string << n_vector_[j][i + nucl_size] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6 << " ";
+                            }
+                        }
+                        if (n_vector_[size_tot][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        decay_node->InsertEndChild(nuclide);
+                    }
+                }
+
+            }
+
+            if (if_print_ampc_ == true) {
+
+                XMLElement * ampc_node = doc.NewElement("AMPC");
+                ampc_node->SetAttribute("unit","m3-air/Bq");
+                nuclides->InsertEndChild(ampc_node);
+
+                vector< double > lambda;
+                lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+                vector< double > AMPC;
+                AMPC = ModecNuclideLibrary.nuclide_library_vector_[4];
+
+                for (int i = 0; i < nucl_size; ++ i) {
+                    XMLElement *nuclide = doc.NewElement("nuclide");
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string nucl_name;
+                    nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                    if(NG == 1) {
+                        nucl_name += "m";
+                    }
+
+                    nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                    nuclide->SetAttribute("name",nucl_name.c_str());
+                    if(print_mode_ == 0) {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << n_vector_[0][i + nucl_size] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                        nuclide_string << " ";
+                        if (n_vector_[size][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        ampc_node->InsertEndChild(nuclide);
+                    } else {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        for ( int j = 0; j < size_tot; ++j) {
+                            if(n_vector_[j][i + nucl_size] < cutoff) {
+                                nuclide_string << 0.0 <<" ";
+                            } else {
+                                nuclide_string << n_vector_[j][i + nucl_size] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i] << " ";
+                            }
+                        }
+                        if (n_vector_[size_tot][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        ampc_node->InsertEndChild(nuclide);
+                    }
+                }
+
+            }
+
+            if (if_print_wmpc_ == true) {
+
+                XMLElement * wmpc_node = doc.NewElement("WMPC");
+                wmpc_node->SetAttribute("unit","m3-water/Bq");
+                nuclides->InsertEndChild(wmpc_node);
+
+                vector< double > lambda;
+                lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+                vector< double > WMPC;
+                WMPC = ModecNuclideLibrary.nuclide_library_vector_[5];
+
+                for (int i = 0; i < nucl_size; ++ i) {
+                    XMLElement *nuclide = doc.NewElement("nuclide");
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string nucl_name;
+                    nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                    if(NG == 1) {
+                        nucl_name += "m";
+                    }
+
+                    nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                    nuclide->SetAttribute("name",nucl_name.c_str());
+                    if(print_mode_ == 0) {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                        nuclide_string << " ";
+                        if (n_vector_[size][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        wmpc_node->InsertEndChild(nuclide);
+                    } else {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        for ( int j = 0; j < size_tot; ++j) {
+                            if(n_vector_[j][i + nucl_size] < cutoff) {
+                                nuclide_string << 0.0 <<" ";
+                            } else {
+                                nuclide_string << n_vector_[j][i + nucl_size] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i] << " ";
+                            }
+                        }
+                        if (n_vector_[size_tot][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        wmpc_node->InsertEndChild(nuclide);
+                    }
+                }
+
+            }
+
+            if (if_print_toxicity_ == true) {
+
+                XMLElement * toxicity_node = doc.NewElement("RadioToxicity");
+                toxicity_node->SetAttribute("unit","Sv");
+                nuclides->InsertEndChild(toxicity_node);
+
+                vector< double > lambda;
+                lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+                vector< double > TOXCI;
+                TOXCI = ModecNuclideLibrary.nuclide_library_vector_[10];
+
+                for (int i = 0; i < nucl_size; ++ i) {
+                    XMLElement *nuclide = doc.NewElement("nuclide");
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string nucl_name;
+                    nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                    if(NG == 1) {
+                        nucl_name += "m";
+                    }
+
+                    nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                    nuclide->SetAttribute("name",nucl_name.c_str());
+                    if(print_mode_ == 0) {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        nuclide_string << n_vector_[0][i + nucl_size] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                        nuclide_string << " ";
+                        if (n_vector_[size][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        toxicity_node->InsertEndChild(nuclide);
+                    } else {
+                        stringstream nuclide_string;
+                        nuclide_string << scientific << setprecision(9);
+
+                        for ( int j = 0; j < size_tot; ++j) {
+                            if(n_vector_[j][i + nucl_size] < cutoff) {
+                                nuclide_string << 0.0 <<" ";
+                            } else {
+                                nuclide_string << n_vector_[j][i + nucl_size] * Avogadro_Constant * lambda[i] * TOXCI[i] << " ";
+                            }
+                        }
+                        if (n_vector_[size_tot][i + nucl_size] < cutoff) {
+                            nuclide_string << 0.0;
+                        } else {
+                            nuclide_string << n_vector_[size_tot][i + nucl_size] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                        }
+
+                        string nuclide_s(nuclide_string.str());
+                        XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                        nuclide->InsertEndChild(nuclide_text);
+                        toxicity_node->InsertEndChild(nuclide);
+                    }
+                }
+
             }
 
         }
+    } else if (if_flow_mode_ == 1) {
+        XMLElement *time = doc.NewElement("Time");
+        time->SetAttribute("unit","s");
+        if(print_mode_ == 0) {
+            stringstream time_string;
+            time_string << scientific << setprecision(9);
+            time_string << cum_time[0];
+            time_string << " ";
+            time_string << cum_time.back();
+
+            string time_s(time_string.str());
+            XMLText *time_text = doc.NewText(time_s.c_str());
+            time->InsertEndChild(time_text);
+            root->InsertEndChild(time);
+        } else {
+            stringstream time_string;
+            time_string << scientific << setprecision(9);
+            for (int j = 0; j < size_tot; ++j) {
+                time_string << cum_time[j] << " ";
+            }
+            time_string << cum_time.back();
+
+            string time_s(time_string.str());
+            //time_string >> time_s;
+            XMLText *time_text = doc.NewText(time_s.c_str());
+            time->InsertEndChild(time_text);
+            root->InsertEndChild(time);
+        }
+
+        XMLElement *power = doc.NewElement("Power");
+        power->SetAttribute("unit","MW");
+        if(print_mode_ == 0) {
+            stringstream power_string;
+            power_string << scientific << setprecision(9);
+            power_string << power_vector_[0];
+            power_string << " ";
+            power_string << power_vector_.back();
+
+            string power_s(power_string.str());
+            XMLText * power_text = doc.NewText(power_s.c_str());
+            power->InsertEndChild(power_text);
+            root->InsertEndChild(power);
+        } else {
+            stringstream power_string;
+            power_string << scientific << setprecision(9);
+            for (int j = 0; j < size_tot; ++j) {
+                power_string << power_vector_[j] << " ";
+            }
+            power_string << power_vector_.back();
+
+            string power_s(power_string.str());
+            XMLText *power_text = doc.NewText(power_s.c_str());
+            power->InsertEndChild(power_text);
+            root->InsertEndChild(power);
+        }
+
+        XMLElement *flux = doc.NewElement("Flux");
+        flux->SetAttribute("unit","cm-2*s-1");
+        if(print_mode_ == 0) {
+            stringstream flux_string;
+            flux_string << scientific << setprecision(9);
+            flux_string << flux_vector_[0];
+            flux_string << " ";
+            flux_string << flux_vector_.back();
+
+            string flux_s(flux_string.str());
+            XMLText * flux_text = doc.NewText(flux_s.c_str());
+            flux->InsertEndChild(flux_text);
+            root->InsertEndChild(flux);
+        } else {
+            stringstream flux_string;
+            flux_string << scientific << setprecision(9);
+            for (int j = 0; j < size_tot; ++j) {
+                flux_string << flux_vector_[j] << " ";
+            }
+            flux_string << flux_vector_.back();
+
+            string flux_s(flux_string.str());
+            XMLText *flux_text = doc.NewText(flux_s.c_str());
+            flux->InsertEndChild(flux_text);
+            root->InsertEndChild(flux);
+        }
+
+        vector<double> kinf;
+        vector<double> prod_neu;
+        vector<double> abs_neu;
+        if (if_print_kinf_ != 0 || if_print_fission_rate_ != 0 || if_print_absorption_rate_ != 0) {
+            kinf.resize(size_tot + 1);
+            prod_neu.resize(size_tot + 1);
+            abs_neu.resize(size_tot + 1);
+
+            for (int j = 0; j <= size_tot; ++j) {
+                for (int i = 0; i <= nucl_size; ++i) {
+                    prod_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24;
+                    abs_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24;
+                }
+
+                prod_neu[j] *= flux_vector_[j];
+                abs_neu[j] *= flux_vector_[j];
+
+                if (abs_neu[j] != 0.0) {
+                    kinf[j] = prod_neu[j] / abs_neu[j];
+                }
+            }
+
+            if (if_print_kinf_ == true) {
+                XMLElement* kinf_node = doc.NewElement("K-infinite");
+                if (print_mode_ == 0) {
+                    stringstream kinf_string;
+                    kinf_string << scientific << setprecision(9);
+                    kinf_string << kinf[0];
+                    kinf_string << " ";
+                    kinf_string << kinf.back();
+
+                    string kinf_s(kinf_string.str());
+
+                    XMLText *kinf_text = doc.NewText(kinf_s.c_str());
+                    kinf_node->InsertEndChild(kinf_text);
+                    root->InsertEndChild(kinf_node);
+                } else {
+                    stringstream kinf_string;
+                    kinf_string << scientific << setprecision(9);
+                    for (int j = 0; j < size_tot; ++j) {
+                        kinf_string << kinf[j] << " ";
+                    }
+                    kinf_string << kinf.back();
+
+                    string kinf_s(kinf_string.str());
+                    XMLText *kinf_text = doc.NewText(kinf_s.c_str());
+                    kinf_node->InsertEndChild(kinf_text);
+                    root->InsertEndChild(kinf_node);
+                }
+            }
+
+        }
+
+        XMLElement *nuclides = doc.NewElement("Nuclides");
+        nuclides->SetAttribute("zone","core");
+        root->InsertEndChild(nuclides);
+
+        XMLElement *nuclides_loop = doc.NewElement("Nuclides");
+        nuclides_loop->SetAttribute("zone","loop");
+        root->InsertEndChild(nuclides_loop);
+
+        XMLElement *concentration = doc.NewElement("Concentration");
+        concentration->SetAttribute("unit",dens_unit_.c_str());
+        nuclides->InsertEndChild(concentration);
+
+        XMLElement *concentration_loop = doc.NewElement("Concentration");
+        concentration_loop->SetAttribute("unit",dens_unit_.c_str());
+        nuclides_loop->InsertEndChild(concentration_loop);
+
+        double convert_coeff;
+
+        for ( int i = 0; i < nucl_size; ++i) {
+            XMLElement *nuclide = doc.NewElement("nuclide");
+            XMLElement *nuclide_loop = doc.NewElement("nuclide");
+
+            int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+            int NZ = nucl_id / 10000;
+            int NA = (nucl_id - NZ * 10000) / 10;
+            int NG = nucl_id - nucl_id / 10 * 10;
+            string nucl_name;
+            nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+            if(NG == 1) {
+                nucl_name += "m";
+            }
+
+            if (dens_unit_ == "mol") {
+                convert_coeff = 1.0;
+            } else if (dens_unit_ == "g") {
+                convert_coeff = double(NA);
+            } else if (dens_unit_ == "kg") {
+                convert_coeff = double(NA) / 1000.0;
+            } else if (dens_unit_ == "atom") {
+                convert_coeff = Avogadro_Constant;
+            } else if (dens_unit_ == "atom/(barn-cm)") {
+                convert_coeff = Avogadro_Constant * 1.0e-24;
+            }
+
+            nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+            nuclide->SetAttribute("name",nucl_name.c_str());
+
+            nuclide_loop->SetAttribute("zai",to_string(nucl_id).c_str());
+            nuclide_loop->SetAttribute("name",nucl_name.c_str());
+
+            if (print_mode_ == 0) {
+                stringstream nuclide_string;
+                stringstream nuclide_loop_string;
+
+                nuclide_string << scientific << setprecision(9);
+                nuclide_string << n_vector_[0][2 * i] * convert_coeff;
+                nuclide_string << " ";
+                if(n_vector_[size_tot][2 * i] < cutoff) {
+                    nuclide_string << 0.0;
+                } else {
+                    nuclide_string << n_vector_[size_tot][2 * i] * convert_coeff;
+                }
+                string nuclide_s(nuclide_string.str());
+                XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                nuclide->InsertEndChild(nuclide_text);
+                concentration->InsertEndChild(nuclide);
+
+                nuclide_loop_string << scientific << setprecision(9);
+                nuclide_loop_string << n_vector_[0][2 * i + 1] * convert_coeff;
+                nuclide_loop_string << " ";
+                if(n_vector_[size_tot][2 * i + 1] < cutoff) {
+                    nuclide_loop_string << 0.0;
+                } else {
+                    nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * convert_coeff;
+                }
+                string nuclide_loop_s(nuclide_loop_string.str());
+                XMLText *nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                nuclide_loop->InsertEndChild(nuclide_loop_text);
+                concentration_loop->InsertEndChild(nuclide_loop);
+            } else {
+                stringstream nuclide_string;
+                stringstream nuclide_loop_string;
+
+                nuclide_string << scientific << setprecision(9);
+                for (int j = 0; j < size_tot; ++j) {
+                    if (n_vector_[j][2 * i] < cutoff) {
+                        nuclide_string << 0.0 << " ";
+                    } else {
+                        nuclide_string << n_vector_[j][2 * i] * convert_coeff << " ";
+                    }
+                }
+                if (n_vector_[size_tot][2 * i] < cutoff) {
+                    nuclide_string << 0.0 ;
+                } else {
+
+                    nuclide_string << n_vector_[size_tot][2 * i] * convert_coeff;
+                }
+                string nuclide_s(nuclide_string.str());
+                XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                nuclide->InsertEndChild(nuclide_text);
+                concentration->InsertEndChild(nuclide);
+
+                /// 外回路核素浓度
+                nuclide_loop_string << scientific << setprecision(9);
+                for (int j = 0; j < size_tot; ++j) {
+                    if (n_vector_[j][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0 << " ";
+                    } else {
+                        nuclide_loop_string << n_vector_[j][2 * i + 1] * convert_coeff << " ";
+                    }
+                }
+                if (n_vector_[size_tot][2 * i + 1] < cutoff) {
+                    nuclide_loop_string << 0.0 ;
+                } else {
+
+                    nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * convert_coeff;
+                }
+                string nuclide_loop_s(nuclide_loop_string.str());
+                XMLText * nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                nuclide_loop->InsertEndChild(nuclide_loop_text);
+                concentration_loop->InsertEndChild(nuclide_loop);
+            }
+
+        }
+        if (if_print_activity_ == true) {
+            XMLElement * act_node = doc.NewElement("RadioActivity");
+            XMLElement * act_loop_node = doc.NewElement("RadioActivity");
+
+            act_node->SetAttribute("unit","Ci");
+            nuclides->InsertEndChild(act_node);
+
+            /// 外回路
+            act_loop_node->SetAttribute("unit","Ci");
+            nuclides_loop->InsertEndChild(act_loop_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                XMLElement *nuclide_loop = doc.NewElement("nuclide");
+
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+
+                nuclide_loop->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide_loop->SetAttribute("name",nucl_name.c_str());
+
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    nuclide_string << " ";
+                    if (n_vector_[size][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    act_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    nuclide_loop_string << " ";
+                    if (n_vector_[size][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText * nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    act_loop_node->InsertEndChild(nuclide_loop);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][2 * i] * Avogadro_Constant * lambda[i] / (3.7e10) << " ";
+                        }
+                    }
+                    if(n_vector_[size_tot][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    act_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i + 1] < cutoff) {
+                            nuclide_loop_string << 0.0 <<" ";
+                        } else {
+                            nuclide_loop_string << n_vector_[j][2 * i + 1] * Avogadro_Constant * lambda[i] / (3.7e10) << " ";
+                        }
+                    }
+                    if(n_vector_[size_tot][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] / (3.7e10);
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText *nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    act_loop_node->InsertEndChild(nuclide_loop);
+                }
+            }
+
+        }
+
+        if (if_print_decayenergy_ == true) {
+
+            XMLElement * decay_node = doc.NewElement("DecayHeat");
+            decay_node->SetAttribute("unit","Watts");
+            nuclides->InsertEndChild(decay_node);
+
+            XMLElement * decay_loop_node = doc.NewElement("DecayHeat");
+            decay_loop_node->SetAttribute("unit","Watts");
+            nuclides_loop->InsertEndChild(decay_loop_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            vector< double > Q;
+            Q = ModecNuclideLibrary.nuclide_library_vector_[3];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                XMLElement *nuclide_loop = doc.NewElement("nuclide");
+
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+
+                nuclide_loop->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide_loop->SetAttribute("name",nucl_name.c_str());
+
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    nuclide_string << " ";
+                    if (n_vector_[size][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    decay_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    nuclide_loop_string << " ";
+                    if (n_vector_[size][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText * nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    decay_loop_node->InsertEndChild(nuclide_loop);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][2 * i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6 << " ";
+                        }
+                    }
+                    if(n_vector_[size_tot][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    decay_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i + 1] < cutoff) {
+                            nuclide_loop_string << 0.0 <<" ";
+                        } else {
+                            nuclide_loop_string << n_vector_[j][2 * i + 1] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6 << " ";
+                        }
+                    }
+                    if( n_vector_[size_tot][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText *nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    decay_loop_node->InsertEndChild(nuclide_loop);
+                }
+            }
+
+        }
+
+        if (if_print_ampc_ == true) {
+
+            XMLElement * ampc_node = doc.NewElement("AMPC");
+            ampc_node->SetAttribute("unit","m3-air/Bq");
+            nuclides->InsertEndChild(ampc_node);
+
+            XMLElement * ampc_loop_node = doc.NewElement("AMPC");
+            ampc_loop_node->SetAttribute("unit","m3-air/Bq");
+            nuclides_loop->InsertEndChild(ampc_loop_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            vector< double > AMPC;
+            AMPC = ModecNuclideLibrary.nuclide_library_vector_[4];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                XMLElement *nuclide_loop = doc.NewElement("nuclide");
+
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+
+                nuclide_loop->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide_loop->SetAttribute("name",nucl_name.c_str());
+
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    nuclide_string << " ";
+                    if (n_vector_[size][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    ampc_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    nuclide_loop_string << " ";
+                    if (n_vector_[size][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText * nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    ampc_loop_node->InsertEndChild(nuclide_loop);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][2 * i + 1] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    ampc_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i + 1] < cutoff) {
+                            nuclide_loop_string << 0.0 <<" ";
+                        } else {
+                            nuclide_loop_string << n_vector_[j][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText *nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    ampc_loop_node->InsertEndChild(nuclide_loop);
+                }
+            }
+
+        }
+
+        if (if_print_wmpc_ == true) {
+
+            XMLElement * wmpc_node = doc.NewElement("WMPC");
+            XMLElement * wmpc_loop_node = doc.NewElement("WMPC");
+
+            wmpc_node->SetAttribute("unit","m3-water/Bq");
+            nuclides->InsertEndChild(wmpc_node);
+
+            wmpc_loop_node->SetAttribute("unit","m3-water/Bq");
+            nuclides_loop->InsertEndChild(wmpc_loop_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            vector< double > WMPC;
+            WMPC = ModecNuclideLibrary.nuclide_library_vector_[5];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                XMLElement *nuclide_loop = doc.NewElement("nuclide");
+
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+
+                nuclide_loop->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide_loop->SetAttribute("name",nucl_name.c_str());
+
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    nuclide_string << " ";
+                    if (n_vector_[size][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    wmpc_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    nuclide_loop_string << " ";
+                    if (n_vector_[size][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText * nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    wmpc_loop_node->InsertEndChild(nuclide_loop);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i] << " ";
+                        }
+                    }
+                    if ( n_vector_[size_tot][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    wmpc_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i + 1] < cutoff) {
+                            nuclide_loop_string << 0.0 <<" ";
+                        } else {
+                            nuclide_loop_string << n_vector_[j][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i] << " ";
+                        }
+                    }
+                    if ( n_vector_[size_tot][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText *nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    wmpc_loop_node->InsertEndChild(nuclide_loop);
+                }
+            }
+
+        }
+
+        if (if_print_toxicity_ == true) {
+
+            XMLElement * toxicity_node = doc.NewElement("RadioToxicity");
+            XMLElement * toxicity_loop_node = doc.NewElement("RadioToxicity");
+
+            toxicity_node->SetAttribute("unit","Sv");
+            nuclides->InsertEndChild(toxicity_node);
+
+            toxicity_loop_node->SetAttribute("unit","Sv");
+            nuclides_loop->InsertEndChild(toxicity_loop_node);
+
+            vector< double > lambda;
+            lambda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+            vector< double > TOXCI;
+            TOXCI = ModecNuclideLibrary.nuclide_library_vector_[10];
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                XMLElement *nuclide_loop = doc.NewElement("nuclide");
+
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+
+                nuclide_loop->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide_loop->SetAttribute("name",nucl_name.c_str());
+
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    nuclide_string << " ";
+                    if (n_vector_[size][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    toxicity_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    nuclide_loop_string << " ";
+                    if (n_vector_[size][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText * nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    toxicity_loop_node->InsertEndChild(nuclide_loop);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][2 * i] * Avogadro_Constant * lambda[i] * TOXCI[i] << " ";
+                        }
+                    }
+                    if(n_vector_[size_tot][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    toxicity_node->InsertEndChild(nuclide);
+
+                    /// 外回路
+                    stringstream nuclide_loop_string;
+                    nuclide_loop_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i + 1] < cutoff) {
+                            nuclide_loop_string << 0.0 <<" ";
+                        } else {
+                            nuclide_loop_string << n_vector_[j][2 * i + 1] * Avogadro_Constant * lambda[i] * TOXCI[i] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][2 * i + 1] < cutoff) {
+                        nuclide_loop_string << 0.0;
+                    } else {
+                        nuclide_loop_string << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant * lambda[i] * TOXCI[i];
+                    }
+
+                    string nuclide_loop_s(nuclide_loop_string.str());
+                    XMLText *nuclide_loop_text = doc.NewText(nuclide_loop_s.c_str());
+                    nuclide_loop->InsertEndChild(nuclide_loop_text);
+                    toxicity_loop_node->InsertEndChild(nuclide_loop);
+                }
+            }
+
+        }
+
+        if (if_print_fission_rate_ == true) {
+            XMLElement* prod_node = doc.NewElement("NeuProdRate");
+            prod_node->SetAttribute("unit","s-1");
+            nuclides->InsertEndChild(prod_node);
+
+            XMLElement *prod_tot = doc.NewElement("total");
+            if (print_mode_ == 0) {
+                stringstream prod_string;
+                prod_string << scientific << setprecision(9);
+                prod_string << prod_neu[0];
+                prod_string << " ";
+                prod_string << prod_neu.back();
+
+                string prod_s(prod_string.str());
+
+                XMLText *prod_text = doc.NewText(prod_s.c_str());
+                prod_tot->InsertEndChild(prod_text);
+                prod_node->InsertEndChild(prod_tot);
+            } else {
+                stringstream prod_string;
+                prod_string << scientific << setprecision(9);
+                for (int j = 0; j < size_tot; ++j) {
+                    prod_string << prod_neu[j] << " ";
+                }
+                prod_string << prod_neu.back();
+
+                string prod_s(prod_string.str());
+                XMLText *prod_text = doc.NewText(prod_s.c_str());
+                prod_tot->InsertEndChild(prod_text);
+                prod_node->InsertEndChild(prod_tot);
+            }
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[0];
+                    nuclide_string << " ";
+                    if (n_vector_[size][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[size_tot];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    prod_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[j] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[size_tot];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    prod_node->InsertEndChild(nuclide);
+                }
+            }
+
+        }
+
+
+        if( if_print_absorption_rate_ == true) {
+            XMLElement* abs_node = doc.NewElement("NeuAbsRate");
+            abs_node->SetAttribute("unit","s-1");
+            nuclides->InsertEndChild(abs_node);
+
+            XMLElement *abs_tot = doc.NewElement("total");
+            if(print_mode_ == 0) {
+                stringstream abs_string;
+                abs_string << scientific << setprecision(9);
+                abs_string << abs_neu[0];
+                abs_string << " ";
+                abs_string << abs_neu.back();
+
+                string abs_s(abs_string.str());
+
+                XMLText * abs_text = doc.NewText(abs_s.c_str());
+                abs_tot->InsertEndChild(abs_text);
+                abs_node->InsertEndChild(abs_tot);
+            } else {
+                stringstream abs_string;
+                abs_string << scientific << setprecision(9);
+                for(int j = 0; j < size_tot; ++j) {
+                    abs_string << abs_neu[j] << " ";
+                }
+                abs_string << abs_neu.back();
+
+                string abs_s(abs_string.str());
+                XMLText *abs_text = doc.NewText(abs_s.c_str());
+                abs_tot->InsertEndChild(abs_text);
+                abs_node->InsertEndChild(abs_tot);
+            }
+
+            for (int i = 0; i < nucl_size; ++ i) {
+                XMLElement *nuclide = doc.NewElement("nuclide");
+                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                int NZ = nucl_id / 10000;
+                int NA = (nucl_id - NZ * 10000) / 10;
+                int NG = nucl_id - nucl_id / 10 * 10;
+                string nucl_name;
+                nucl_name = ModecNuclideLibrary.element_name_list_[NZ - 1] + to_string(NA);
+                if(NG == 1) {
+                    nucl_name += "m";
+                }
+
+                nuclide->SetAttribute("zai",to_string(nucl_id).c_str());
+                nuclide->SetAttribute("name",nucl_name.c_str());
+                if(print_mode_ == 0) {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[0];
+                    nuclide_string << " ";
+                    if (n_vector_[size][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[size_tot];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText * nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    abs_node->InsertEndChild(nuclide);
+                } else {
+                    stringstream nuclide_string;
+                    nuclide_string << scientific << setprecision(9);
+
+                    for ( int j = 0; j < size_tot; ++j) {
+                        if(n_vector_[j][2 * i] < cutoff) {
+                            nuclide_string << 0.0 <<" ";
+                        } else {
+                            nuclide_string << n_vector_[j][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[j] << " ";
+                        }
+                    }
+                    if (n_vector_[size_tot][2 * i] < cutoff) {
+                        nuclide_string << 0.0;
+                    } else {
+                        nuclide_string << n_vector_[size_tot][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[size_tot];
+                    }
+
+                    string nuclide_s(nuclide_string.str());
+                    XMLText *nuclide_text = doc.NewText(nuclide_s.c_str());
+                    nuclide->InsertEndChild(nuclide_text);
+                    abs_node->InsertEndChild(nuclide);
+                }
+            }
+        }
     }
+
+    if(input_filename_ != "modec.inp") {
+        output_filename_ =  input_filename_.substr(0, input_filename_.find_last_of(".")) + "_out" + ".xml";
+    }
+    doc.SaveFile(output_filename_.c_str());
 }
 
 void ModecClass::ModecOutput() {
@@ -348,8 +2231,7 @@ void ModecClass::ModecOutput() {
             modec_out_.width(8);
             modec_out_ << "Time: ";
             modec_out_.width(18);
-            modec_out_ << "
-                       Initial";
+            modec_out_ << "Initial";
 
             if (print_mode_ == 0) {
                 modec_out_.width(10);
@@ -416,8 +2298,7 @@ void ModecClass::ModecOutput() {
                 modec_out_.precision(4);
                 modec_out_ << power_vector_[0];
                 modec_out_.width(8);
-                modec_out_ << "
-                           MW";
+                modec_out_ << "MW";
 
                 modec_out_.width(10);
                 modec_out_.setf(ios::scientific | ios::uppercase);
@@ -510,8 +2391,7 @@ void ModecClass::ModecOutput() {
                     modec_out_.width(8);
                     modec_out_ << "";
                     modec_out_.width(8);
-                    modec_out_ << "
-                               kinf: ";
+                    modec_out_ << "kinf: ";
 
                     if (print_mode_ == 0) {
                         modec_out_.width(18);
@@ -538,8 +2418,7 @@ void ModecClass::ModecOutput() {
                     modec_out_.width(2);
                     modec_out_ << "";
                     modec_out_.width(14);
-                    modec_out_ << "
-                               NeuProdRate: ";
+                    modec_out_ << "NeuProdRate: ";
 
                     if (print_mode_ == 0) {
                         modec_out_.width(18);
@@ -566,8 +2445,7 @@ void ModecClass::ModecOutput() {
                     modec_out_.width(2);
                     modec_out_ << "";
                     modec_out_.width(14);
-                    modec_out_ << "
-                               NeuAbsRate: ";
+                    modec_out_ << "NeuAbsRate: ";
 
                     if (print_mode_ == 0) {
                         modec_out_.width(18);
@@ -607,8 +2485,7 @@ void ModecClass::ModecOutput() {
                 string Nucl_Name;
                 Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
                 if (NG == 1) {
-                    Nucl_Name += "
-                                 m";
+                    Nucl_Name += "m";
                 }
                 modec_out_.width(8);
                 modec_out_ << Nucl_Name;
@@ -1329,8 +3206,7 @@ void ModecClass::ModecOutput() {
             }
 
             if (if_print_absorption_rate_ == 2) {
-                output_filename_ = input_filename_ + "
-                                   .NeuAbsRate";
+                output_filename_ = input_filename_ + ".NeuAbsRate";
 
                 output_file_ = work_direc_ + output_filename_;
                 modec_out_.open(output_file_);
@@ -1446,8 +3322,7 @@ void ModecClass::ModecOutput() {
 
             }
             if (if_tracking_stockage == true) {
-                output_filename_ = input_filename_ + "
-                                   .stockage.concentration";
+                output_filename_ = input_filename_ + ".stockage.concentration";
 
                 output_file_ = work_direc_ + output_filename_;
                 modec_out_.open(output_file_);
@@ -1480,8 +3355,7 @@ void ModecClass::ModecOutput() {
                 modec_out_.width(8);
                 modec_out_ << "Time: ";
                 modec_out_.width(18);
-                modec_out_ << "
-                           Initial";
+                modec_out_ << "Initial";
 
                 if (print_mode_ == 0) {
                     modec_out_.width(10);
@@ -1551,8 +3425,7 @@ void ModecClass::ModecOutput() {
                     modec_out_.precision(4);
                     modec_out_ << 0.0;
                     modec_out_.width(8);
-                    modec_out_ << "
-                               MW";
+                    modec_out_ << "MW";
 
                     modec_out_.width(10);
                     modec_out_.setf(ios::scientific | ios::uppercase);
@@ -1630,8 +3503,7 @@ void ModecClass::ModecOutput() {
                     string Nucl_Name;
                     Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
                     if (NG == 1) {
-                        Nucl_Name += "
-                                     m";
+                        Nucl_Name += "m";
                     }
                     modec_out_.width(8);
                     modec_out_ << Nucl_Name;
@@ -2263,8 +4135,7 @@ void ModecClass::ModecOutput() {
             modec_out_.width(8);
             modec_out_ << "";
             modec_out_.width(8);
-            modec_out_ << "
-                       Power: ";
+            modec_out_ << "Power: ";
 
             modec_out_.width(10);
             modec_out_.setf(ios::scientific | ios::uppercase);
@@ -2296,8 +4167,7 @@ void ModecClass::ModecOutput() {
                 string Nucl_Name;
                 Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
                 if (NG == 1) {
-                    Nucl_Name += "
-                                 m";
+                    Nucl_Name += "m";
                 }
                 modec_out_.width(8);
                 modec_out_ << Nucl_Name;
@@ -2758,8 +4628,7 @@ void ModecClass::ModecOutput() {
             modec_out_.precision(4);
             modec_out_ << power_vector_[0];
             modec_out_.width(8);
-            modec_out_ << "
-                       MW";
+            modec_out_ << "MW";
 
             modec_out_.width(10);
             modec_out_.setf(ios::scientific | ios::uppercase);
@@ -2852,8 +4721,7 @@ void ModecClass::ModecOutput() {
                 modec_out_.width(8);
                 modec_out_ << "";
                 modec_out_.width(8);
-                modec_out_ << "
-                           kinf: ";
+                modec_out_ << "kinf: ";
 
                 if (print_mode_ == 0) {
                     modec_out_.width(18);
@@ -2880,8 +4748,7 @@ void ModecClass::ModecOutput() {
                 modec_out_.width(2);
                 modec_out_ << "";
                 modec_out_.width(14);
-                modec_out_ << "
-                           NeuProdRate: ";
+                modec_out_ << "NeuProdRate: ";
 
                 if (print_mode_ == 0) {
                     modec_out_.width(18);
@@ -2908,8 +4775,7 @@ void ModecClass::ModecOutput() {
                 modec_out_.width(2);
                 modec_out_ << "";
                 modec_out_.width(14);
-                modec_out_ << "
-                           NeuAbsRate: ";
+                modec_out_ << "NeuAbsRate: ";
 
                 if (print_mode_ == 0) {
                     modec_out_.width(18);
@@ -2948,8 +4814,7 @@ void ModecClass::ModecOutput() {
             string Nucl_Name;
             Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
             if (NG == 1) {
-                Nucl_Name += "
-                             m";
+                Nucl_Name += "m";
             }
             modec_out_.width(8);
             modec_out_ << Nucl_Name;
@@ -3206,788 +5071,785 @@ void ModecClass::ModecOutput() {
                     Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
                     count++;
                 }
-            }
-
-
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(18);
-            modec_out_ << "Initial";
-
-            if (print_mode_ == 0) {
-                modec_out_.width(10);
-                modec_out_.setf(ios::scientific | ios::uppercase);
-                modec_out_.precision(4);
-                modec_out_ << Cum_time[size_tot];
                 modec_out_.width(8);
-                modec_out_ << "s";
-            } else {
-                for (int j = 1; j <= size_tot; ++j) {
-                    modec_out_.width(10);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(4);
-                    modec_out_ << Cum_time[j];
-                    modec_out_.width(8);
-                    modec_out_ << "s";
-                }
-            }
-
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            for (unsigned int i = 0; i < Nucl_size; ++i) {
+                modec_out_ << "";
                 modec_out_.width(8);
-                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
-                modec_out_ << nucl_id;
-                int NZ = nucl_id / 10000;
-                int NA = (nucl_id - NZ * 10000) / 10;
-                stringstream ss;
-                ss << NA;
-                int NG = nucl_id - nucl_id / 10 * 10;
-                string Nucl_Name;
-                Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
-                if (NG == 1) {
-                    Nucl_Name += "m";
-                }
-                modec_out_.width(8);
-                modec_out_ << Nucl_Name;
-                if (print_mode_ == 0) {
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6;
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // 转换成单位 W
-                    }
-
-                    modec_out_ << '\n';
-
-                    modec_out_.width(8);
-                    modec_out_ << nucl_id;
-                    modec_out_.width(8);
-                    modec_out_ << Nucl_Name;
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i + 1] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6;
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i + 1] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // 转换成单位 W
-                    }
-
-                    modec_out_ << '\n';
-
-                }
-                if (print_mode_ == 1) {
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i] < cutoff) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6;
-                        }
-                    }
-                    modec_out_ << '\n';
-
-                    modec_out_.width(8);
-                    modec_out_ << nucl_id;
-                    modec_out_.width(8);
-                    modec_out_ << Nucl_Name;
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i + 1] < cutoff) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i + 1] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6;
-                        }
-                    }
-                    modec_out_ << '\n';
-                }
-            }
-
-            modec_out_.close();
-
-        }
-
-        if (if_print_ampc_ == true) {
-            vector<double > lamda;
-            lamda = ModecNuclideLibrary.nuclide_library_vector_[1];
-
-            vector<double > AMPC;
-            AMPC = ModecNuclideLibrary.nuclide_library_vector_[4];
-
-            output_filename_ = input_filename_ + ".ampc";
-
-            output_file_ = work_direc_ + output_filename_;
-            modec_out_.open(output_file_);
-            modec_out_ << "*********************************** Nuclide Radioactivity, m3-air/Bq ***********************************";
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            modec_out_.setf(ios::left);
-            int size = evolution_mode_.size();
-            int size_tot = 0;
-            for (int i = 0; i < size; ++i) {
-                size_tot += substep_[i];
-            }
-
-            vector<double> Cum_time;
-            Cum_time.resize(size_tot + 1);
-
-            int count = 0;
-            for (int i = 0; i < size; ++i) {
-                for (int j = 0; j < substep_[i]; ++j) {
-                    Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
-                    count++;
-                }
-            }
-
-
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(18);
-            modec_out_ << "Initial";
-
-            if (print_mode_ == 0) {
-                modec_out_.width(10);
-                modec_out_.setf(ios::scientific | ios::uppercase);
-                modec_out_.precision(4);
-                modec_out_ << Cum_time[size_tot];
-                modec_out_.width(8);
-                modec_out_ << "s";
-            } else {
-                for (int j = 1; j <= size_tot; ++j) {
-                    modec_out_.width(10);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(4);
-                    modec_out_ << Cum_time[j];
-                    modec_out_.width(8);
-                    modec_out_ << "s";
-                }
-            }
-
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            for (unsigned int i = 0; i < Nucl_size; ++i) {
-                modec_out_.width(8);
-                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
-                modec_out_ << nucl_id;
-                int NZ = nucl_id / 10000;
-                int NA = (nucl_id - NZ * 10000) / 10;
-                stringstream ss;
-                ss << NA;
-                int NG = nucl_id - nucl_id / 10 * 10;
-                string Nucl_Name;
-                Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
-                if (NG == 1) {
-                    Nucl_Name += "m";
-                }
-                modec_out_.width(8);
-                modec_out_ << Nucl_Name;
-                if (print_mode_ == 0) {
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
-                    }
-
-                    modec_out_ << '\n';
-
-                    modec_out_.width(8);
-                    modec_out_ << nucl_id;
-                    modec_out_.width(8);
-                    modec_out_ << Nucl_Name;
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i + 1] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
-                    }
-
-                    modec_out_ << '\n';
-                }
-                if (print_mode_ == 1) {
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i] < cutoff) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
-                        }
-                    }
-                    modec_out_ << '\n';
-
-                    modec_out_.width(8);
-                    modec_out_ << nucl_id;
-                    modec_out_.width(8);
-                    modec_out_ << Nucl_Name;
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i + 1] < cutoff) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
-                        }
-                    }
-                    modec_out_ << '\n';
-                }
-            }
-
-            modec_out_.close();
-
-        }
-
-        if (if_print_wmpc_ == true) {
-            vector<double > lamda;
-            lamda = ModecNuclideLibrary.nuclide_library_vector_[1];
-
-            vector<double > WMPC;
-            WMPC = ModecNuclideLibrary.nuclide_library_vector_[4];
-
-            output_filename_ = input_filename_ + ".wmpc";
-
-            output_file_ = work_direc_ + output_filename_;
-            modec_out_.open(output_file_);
-            modec_out_ << "*********************************** Nuclide Radioactivity, m3-air/Bq ***********************************";
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            modec_out_.setf(ios::left);
-            int size = evolution_mode_.size();
-            int size_tot = 0;
-            for (int i = 0; i < size; ++i) {
-                size_tot += substep_[i];
-            }
-
-            vector<double> Cum_time;
-            Cum_time.resize(size_tot + 1);
-
-            int count = 0;
-            for (int i = 0; i < size; ++i) {
-                for (int j = 0; j < substep_[i]; ++j) {
-                    Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
-                    count++;
-                }
-            }
-
-
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(18);
-            modec_out_ << "Initial";
-
-            if (print_mode_ == 0) {
-                modec_out_.width(10);
-                modec_out_.setf(ios::scientific | ios::uppercase);
-                modec_out_.precision(4);
-                modec_out_ << Cum_time[size_tot];
-                modec_out_.width(8);
-                modec_out_ << "s";
-            } else {
-                for (int j = 1; j <= size_tot; ++j) {
-                    modec_out_.width(10);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(4);
-                    modec_out_ << Cum_time[j];
-                    modec_out_.width(8);
-                    modec_out_ << "s";
-                }
-            }
-
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            for (unsigned int i = 0; i < Nucl_size; ++i) {
-                modec_out_.width(8);
-                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
-                modec_out_ << nucl_id;
-                int NZ = nucl_id / 10000;
-                int NA = (nucl_id - NZ * 10000) / 10;
-                stringstream ss;
-                ss << NA;
-                int NG = nucl_id - nucl_id / 10 * 10;
-                string Nucl_Name;
-                Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
-                if (NG == 1) {
-                    Nucl_Name += "m";
-                }
-                modec_out_.width(8);
-                modec_out_ << Nucl_Name;
-                if (print_mode_ == 0) {
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
-                    }
-
-                    modec_out_ << '\n';
-
-                    modec_out_.width(8);
-                    modec_out_ << nucl_id;
-                    modec_out_.width(8);
-                    modec_out_ << Nucl_Name;
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i + 1] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
-                    }
-
-                    modec_out_ << '\n';
-                }
-                if (print_mode_ == 1) {
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i] < cutoff) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
-                        }
-                    }
-                    modec_out_ << '\n';
-
-                    modec_out_.width(8);
-                    modec_out_ << nucl_id;
-                    modec_out_.width(8);
-                    modec_out_ << Nucl_Name;
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i + 1] < cutoff) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
-                        }
-                    }
-                    modec_out_ << '\n';
-                }
-            }
-
-            modec_out_.close();
-
-        }
-
-        if (if_print_toxicity_ == true) {
-            vector<double > lamda;
-            lamda = ModecNuclideLibrary.nuclide_library_vector_[1];
-
-            vector<double > TOXCI;
-            TOXCI = ModecNuclideLibrary.nuclide_library_vector_[10];
-
-            output_filename_ = input_filename_ + ".toxicity";
-
-            output_file_ = work_direc_ + output_filename_;
-            modec_out_.open(output_file_);
-            modec_out_ << "*********************************** Nuclide Radiotoxicity, Sv ***********************************";
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            modec_out_.setf(ios::left);
-            int size = evolution_mode_.size();
-            int size_tot = 0;
-            for (int i = 0; i < size; ++i) {
-                size_tot += substep_[i];
-            }
-
-            vector<double> Cum_time;
-            Cum_time.resize(size_tot + 1);
-
-            int count = 0;
-            for (int i = 0; i < size; ++i) {
-                for (int j = 0; j < substep_[i]; ++j) {
-                    Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
-                    count++;
-                }
-            }
-
-
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(18);
-            modec_out_ << "Initial";
-
-            if (print_mode_ == 0) {
-                modec_out_.width(10);
-                modec_out_.setf(ios::scientific | ios::uppercase);
-                modec_out_.precision(4);
-                modec_out_ << Cum_time[size_tot];
-                modec_out_.width(8);
-                modec_out_ << "s";
-            } else {
-                for (int j = 1; j <= size_tot; ++j) {
-                    modec_out_.width(10);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(4);
-                    modec_out_ << Cum_time[j];
-                    modec_out_.width(8);
-                    modec_out_ << "s";
-                }
-            }
-
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            for (unsigned int i = 0; i < Nucl_size; ++i) {
-                modec_out_.width(8);
-                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
-                modec_out_ << nucl_id;
-                int NZ = nucl_id / 10000;
-                int NA = (nucl_id - NZ * 10000) / 10;
-                stringstream ss;
-                ss << NA;
-                int NG = nucl_id - nucl_id / 10 * 10;
-                string Nucl_Name;
-                Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
-                if (NG == 1) {
-                    Nucl_Name += "m";
-                }
-                modec_out_.width(8);
-                modec_out_ << Nucl_Name;
-                if (print_mode_ == 0) {
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant*lamda[i] * TOXCI[i];
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant*lamda[i] * TOXCI[i];
-                    }
-
-                    modec_out_ << '\n';
-
-                    modec_out_.width(8);
-                    modec_out_ << nucl_id;
-                    modec_out_.width(8);
-                    modec_out_ << Nucl_Name;
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i + 1] * Avogadro_Constant*lamda[i] * TOXCI[i];
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i + 1] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant*lamda[i] * TOXCI[i];
-                    }
-
-                    modec_out_ << '\n';
-
-                }
-                if (print_mode_ == 1) {
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i] < cutoff) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant*lamda[i] * TOXCI[i];
-                        }
-                    }
-                    modec_out_ << '\n';
-
-                    modec_out_.width(8);
-                    modec_out_ << nucl_id;
-                    modec_out_.width(8);
-                    modec_out_ << Nucl_Name;
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i + 1] < cutoff) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i + 1] * Avogadro_Constant*lamda[i] * TOXCI[i];
-                        }
-                    }
-                    modec_out_ << '\n';
-                }
-            }
-
-            modec_out_.close();
-
-        }
-
-        if (if_print_fission_rate_ == 2) {
-            output_filename_ = input_filename_ + ".NeuProdRate";
-
-            output_file_ = work_direc_ + output_filename_;
-            modec_out_.open(output_file_);
-            modec_out_ << "*********************************** Neutron Production Rate, s-1***********************************";
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            modec_out_.setf(ios::left);
-            int size = evolution_mode_.size();
-            int size_tot = 0;
-            for (int i = 0; i < size; ++i) {
-                size_tot += substep_[i];
-            }
-
-            vector<double> Cum_time;
-            Cum_time.resize(size_tot + 1);
-
-            int count = 0;
-            for (int i = 0; i < size; ++i) {
-                for (int j = 0; j < substep_[i]; ++j) {
-                    Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
-                    count++;
-                }
-            }
-
-
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(18);
-            modec_out_ << "Initial";
-
-            if (print_mode_ == 0) {
-                modec_out_.width(10);
-                modec_out_.setf(ios::scientific | ios::uppercase);
-                modec_out_.precision(4);
-                modec_out_ << Cum_time[size_tot];
-                modec_out_.width(8);
-                modec_out_ << "s";
-            } else {
-                for (int j = 1; j <= size_tot; ++j) {
-                    modec_out_.width(10);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(4);
-                    modec_out_ << Cum_time[j];
-                    modec_out_.width(8);
-                    modec_out_ << "s";
-                }
-            }
-
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            for (unsigned int i = 0; i < Nucl_size; ++i) {
-                modec_out_.width(8);
-                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
-                modec_out_ << nucl_id;
-                int NZ = nucl_id / 10000;
-                int NA = (nucl_id - NZ * 10000) / 10;
-                stringstream ss;
-                ss << NA;
-                int NG = nucl_id - nucl_id / 10 * 10;
-                string Nucl_Name;
-                Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
-                if (NG == 1) {
-                    Nucl_Name += "m";
-                }
-                modec_out_.width(8);
-                modec_out_ << Nucl_Name;
-                if (print_mode_ == 0) {
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[0];
-                    modec_out_.width(18);
-
-                    if (n_vector_[size_tot][2 * i] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24* flux_vector_[size_tot];
-                    }
-                    modec_out_ << '\n';
-                }
-                if (print_mode_ == 1) {
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
-                        modec_out_.width(18);
-                        if (n_vector_[j][2 * i] < cutoff || n_vector_[j][2 * i] < 0.0) {
-                            modec_out_ << 0.0;
-                        } else {
-                            modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24* flux_vector_[j]; // 单位为Ci
-                        }
-                    }
-                    modec_out_ << '\n';
-                }
-            }
-            modec_out_ << '\n';
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(8);
-            modec_out_ << "Total: ";
-            for (int j = 0; j <= size_tot; ++j) {
+                modec_out_ << "";
                 modec_out_.width(18);
+                modec_out_ << "Initial";
 
-                modec_out_ << prod_neu[j]; // 单位为Ci
-
-            }
-            modec_out_ << '\n';
-
-            modec_out_.close();
-
-        }
-
-        if (if_print_absorption_rate_ == 2) {
-            output_filename_ = input_filename_ + "
-                               .NeuAbsRate";
-
-            output_file_ = work_direc_ + output_filename_;
-            modec_out_.open(output_file_);
-            modec_out_ << "*********************************** Neutron Absorption Rate, s-1 ***********************************";
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            modec_out_.setf(ios::left);
-            int size = evolution_mode_.size();
-            int size_tot = 0;
-            for (int i = 0; i < size; ++i) {
-                size_tot += substep_[i];
-            }
-
-            vector<double> Cum_time;
-            Cum_time.resize(size_tot + 1);
-
-            int count = 0;
-            for (int i = 0; i < size; ++i) {
-                for (int j = 0; j < substep_[i]; ++j) {
-                    Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
-                    count++;
-                }
-            }
-
-
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(18);
-            modec_out_ << "Initial";
-
-            if (print_mode_ == 0) {
-                modec_out_.width(10);
-                modec_out_.setf(ios::scientific | ios::uppercase);
-                modec_out_.precision(4);
-                modec_out_ << Cum_time[size_tot];
-                modec_out_.width(8);
-                modec_out_ << "s";
-            } else {
-                for (int j = 1; j <= size_tot; ++j) {
+                if (print_mode_ == 0) {
                     modec_out_.width(10);
                     modec_out_.setf(ios::scientific | ios::uppercase);
                     modec_out_.precision(4);
-                    modec_out_ << Cum_time[j];
+                    modec_out_ << Cum_time[size_tot];
                     modec_out_.width(8);
                     modec_out_ << "s";
-                }
-            }
-
-            modec_out_ << '\n';
-            modec_out_ << '\n';
-
-            for (unsigned int i = 0; i < Nucl_size; ++i) {
-                modec_out_.width(8);
-                int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
-                modec_out_ << nucl_id;
-                int NZ = nucl_id / 10000;
-                int NA = (nucl_id - NZ * 10000) / 10;
-                stringstream ss;
-                ss << NA;
-                int NG = nucl_id - nucl_id / 10 * 10;
-                string Nucl_Name;
-                Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
-                if (NG == 1) {
-                    Nucl_Name += "m";
-                }
-                modec_out_.width(8);
-                modec_out_ << Nucl_Name;
-                if (print_mode_ == 0) {
-                    modec_out_.width(18);
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24* flux_vector_[0];
-                    modec_out_.width(18);
-                    if (n_vector_[size_tot][2 * i] < cutoff) {
-                        modec_out_ << 0.0;
-                    } else {
-                        modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24* flux_vector_[size_tot];
+                } else {
+                    for (int j = 1; j <= size_tot; ++j) {
+                        modec_out_.width(10);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(4);
+                        modec_out_ << Cum_time[j];
+                        modec_out_.width(8);
+                        modec_out_ << "s";
                     }
-                    modec_out_ << '\n';
                 }
-                if (print_mode_ == 1) {
-                    modec_out_.setf(ios::scientific | ios::uppercase);
-                    modec_out_.precision(9);
-                    for (int j = 0; j <= size_tot; ++j) {
+
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                for (unsigned int i = 0; i < Nucl_size; ++i) {
+                    modec_out_.width(8);
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    modec_out_ << nucl_id;
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    stringstream ss;
+                    ss << NA;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string Nucl_Name;
+                    Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
+                    if (NG == 1) {
+                        Nucl_Name += "m";
+                    }
+                    modec_out_.width(8);
+                    modec_out_ << Nucl_Name;
+                    if (print_mode_ == 0) {
                         modec_out_.width(18);
-                        if (n_vector_[j][2 * i] < cutoff) {
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6;
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i] < cutoff) {
                             modec_out_ << 0.0;
                         } else {
-                            modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24* flux_vector_[j];
+                            modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // 转换成单位 W
                         }
+
+                        modec_out_ << '\n';
+
+                        modec_out_.width(8);
+                        modec_out_ << nucl_id;
+                        modec_out_.width(8);
+                        modec_out_ << Nucl_Name;
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i + 1] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6;
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i + 1] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6; // 转换成单位 W
+                        }
+
+                        modec_out_ << '\n';
+
                     }
-                    modec_out_ << '\n';
+                    if (print_mode_ == 1) {
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6;
+                            }
+                        }
+                        modec_out_ << '\n';
+
+                        modec_out_.width(8);
+                        modec_out_ << nucl_id;
+                        modec_out_.width(8);
+                        modec_out_ << Nucl_Name;
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i + 1] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i + 1] * Avogadro_Constant*lamda[i] * Q[i] * Electron_Coulomb*1.0e6;
+                            }
+                        }
+                        modec_out_ << '\n';
+                    }
                 }
+
+                modec_out_.close();
+
             }
 
-            modec_out_ << '\n';
-            modec_out_.width(8);
-            modec_out_ << "";
-            modec_out_.width(8);
-            modec_out_ << "Total: ";
-            for (int j = 0; j <= size_tot; ++j) {
+            if (if_print_ampc_ == true) {
+                vector<double > lamda;
+                lamda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+                vector<double > AMPC;
+                AMPC = ModecNuclideLibrary.nuclide_library_vector_[4];
+
+                output_filename_ = input_filename_ + ".ampc";
+
+                output_file_ = work_direc_ + output_filename_;
+                modec_out_.open(output_file_);
+                modec_out_ << "*********************************** Nuclide Radioactivity, m3-air/Bq ***********************************";
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                modec_out_.setf(ios::left);
+                int size = evolution_mode_.size();
+                int size_tot = 0;
+                for (int i = 0; i < size; ++i) {
+                    size_tot += substep_[i];
+                }
+
+                vector<double> Cum_time;
+                Cum_time.resize(size_tot + 1);
+
+                int count = 0;
+                for (int i = 0; i < size; ++i) {
+                    for (int j = 0; j < substep_[i]; ++j) {
+                        Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
+                        count++;
+                    }
+                }
+
+
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(8);
+                modec_out_ << "";
                 modec_out_.width(18);
+                modec_out_ << "Initial";
 
-                modec_out_ << absorption_neu[j]; // 单位为Ci
+                if (print_mode_ == 0) {
+                    modec_out_.width(10);
+                    modec_out_.setf(ios::scientific | ios::uppercase);
+                    modec_out_.precision(4);
+                    modec_out_ << Cum_time[size_tot];
+                    modec_out_.width(8);
+                    modec_out_ << "s";
+                } else {
+                    for (int j = 1; j <= size_tot; ++j) {
+                        modec_out_.width(10);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(4);
+                        modec_out_ << Cum_time[j];
+                        modec_out_.width(8);
+                        modec_out_ << "s";
+                    }
+                }
+
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                for (unsigned int i = 0; i < Nucl_size; ++i) {
+                    modec_out_.width(8);
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    modec_out_ << nucl_id;
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    stringstream ss;
+                    ss << NA;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string Nucl_Name;
+                    Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
+                    if (NG == 1) {
+                        Nucl_Name += "m";
+                    }
+                    modec_out_.width(8);
+                    modec_out_ << Nucl_Name;
+                    if (print_mode_ == 0) {
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
+                        }
+
+                        modec_out_ << '\n';
+
+                        modec_out_.width(8);
+                        modec_out_ << nucl_id;
+                        modec_out_.width(8);
+                        modec_out_ << Nucl_Name;
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i + 1] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
+                        }
+
+                        modec_out_ << '\n';
+                    }
+                    if (print_mode_ == 1) {
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
+                            }
+                        }
+                        modec_out_ << '\n';
+
+                        modec_out_.width(8);
+                        modec_out_ << nucl_id;
+                        modec_out_.width(8);
+                        modec_out_ << Nucl_Name;
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i + 1] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / AMPC[i];
+                            }
+                        }
+                        modec_out_ << '\n';
+                    }
+                }
+
+                modec_out_.close();
 
             }
-            modec_out_ << '\n';
 
-            modec_out_.close();
+            if (if_print_wmpc_ == true) {
+                vector<double > lamda;
+                lamda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+                vector<double > WMPC;
+                WMPC = ModecNuclideLibrary.nuclide_library_vector_[4];
+
+                output_filename_ = input_filename_ + ".wmpc";
+
+                output_file_ = work_direc_ + output_filename_;
+                modec_out_.open(output_file_);
+                modec_out_ << "*********************************** Nuclide Radioactivity, m3-air/Bq ***********************************";
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                modec_out_.setf(ios::left);
+                int size = evolution_mode_.size();
+                int size_tot = 0;
+                for (int i = 0; i < size; ++i) {
+                    size_tot += substep_[i];
+                }
+
+                vector<double> Cum_time;
+                Cum_time.resize(size_tot + 1);
+
+                int count = 0;
+                for (int i = 0; i < size; ++i) {
+                    for (int j = 0; j < substep_[i]; ++j) {
+                        Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
+                        count++;
+                    }
+                }
+
+
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(18);
+                modec_out_ << "Initial";
+
+                if (print_mode_ == 0) {
+                    modec_out_.width(10);
+                    modec_out_.setf(ios::scientific | ios::uppercase);
+                    modec_out_.precision(4);
+                    modec_out_ << Cum_time[size_tot];
+                    modec_out_.width(8);
+                    modec_out_ << "s";
+                } else {
+                    for (int j = 1; j <= size_tot; ++j) {
+                        modec_out_.width(10);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(4);
+                        modec_out_ << Cum_time[j];
+                        modec_out_.width(8);
+                        modec_out_ << "s";
+                    }
+                }
+
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                for (unsigned int i = 0; i < Nucl_size; ++i) {
+                    modec_out_.width(8);
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    modec_out_ << nucl_id;
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    stringstream ss;
+                    ss << NA;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string Nucl_Name;
+                    Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
+                    if (NG == 1) {
+                        Nucl_Name += "m";
+                    }
+                    modec_out_.width(8);
+                    modec_out_ << Nucl_Name;
+                    if (print_mode_ == 0) {
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
+                        }
+
+                        modec_out_ << '\n';
+
+                        modec_out_.width(8);
+                        modec_out_ << nucl_id;
+                        modec_out_.width(8);
+                        modec_out_ << Nucl_Name;
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i + 1] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
+                        }
+
+                        modec_out_ << '\n';
+                    }
+                    if (print_mode_ == 1) {
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
+                            }
+                        }
+                        modec_out_ << '\n';
+
+                        modec_out_.width(8);
+                        modec_out_ << nucl_id;
+                        modec_out_.width(8);
+                        modec_out_ << Nucl_Name;
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i + 1] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i + 1] * Avogadro_Constant*lamda[i] / 3.7e10 / WMPC[i];
+                            }
+                        }
+                        modec_out_ << '\n';
+                    }
+                }
+
+                modec_out_.close();
+
+            }
+
+            if (if_print_toxicity_ == true) {
+                vector<double > lamda;
+                lamda = ModecNuclideLibrary.nuclide_library_vector_[1];
+
+                vector<double > TOXCI;
+                TOXCI = ModecNuclideLibrary.nuclide_library_vector_[10];
+
+                output_filename_ = input_filename_ + ".toxicity";
+
+                output_file_ = work_direc_ + output_filename_;
+                modec_out_.open(output_file_);
+                modec_out_ << "*********************************** Nuclide Radiotoxicity, Sv ***********************************";
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                modec_out_.setf(ios::left);
+                int size = evolution_mode_.size();
+                int size_tot = 0;
+                for (int i = 0; i < size; ++i) {
+                    size_tot += substep_[i];
+                }
+
+                vector<double> Cum_time;
+                Cum_time.resize(size_tot + 1);
+
+                int count = 0;
+                for (int i = 0; i < size; ++i) {
+                    for (int j = 0; j < substep_[i]; ++j) {
+                        Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
+                        count++;
+                    }
+                }
+
+
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(18);
+                modec_out_ << "Initial";
+
+                if (print_mode_ == 0) {
+                    modec_out_.width(10);
+                    modec_out_.setf(ios::scientific | ios::uppercase);
+                    modec_out_.precision(4);
+                    modec_out_ << Cum_time[size_tot];
+                    modec_out_.width(8);
+                    modec_out_ << "s";
+                } else {
+                    for (int j = 1; j <= size_tot; ++j) {
+                        modec_out_.width(10);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(4);
+                        modec_out_ << Cum_time[j];
+                        modec_out_.width(8);
+                        modec_out_ << "s";
+                    }
+                }
+
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                for (unsigned int i = 0; i < Nucl_size; ++i) {
+                    modec_out_.width(8);
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    modec_out_ << nucl_id;
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    stringstream ss;
+                    ss << NA;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string Nucl_Name;
+                    Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
+                    if (NG == 1) {
+                        Nucl_Name += "m";
+                    }
+                    modec_out_.width(8);
+                    modec_out_ << Nucl_Name;
+                    if (print_mode_ == 0) {
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant*lamda[i] * TOXCI[i];
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant*lamda[i] * TOXCI[i];
+                        }
+
+                        modec_out_ << '\n';
+
+                        modec_out_.width(8);
+                        modec_out_ << nucl_id;
+                        modec_out_.width(8);
+                        modec_out_ << Nucl_Name;
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i + 1] * Avogadro_Constant*lamda[i] * TOXCI[i];
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i + 1] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i + 1] * Avogadro_Constant*lamda[i] * TOXCI[i];
+                        }
+
+                        modec_out_ << '\n';
+
+                    }
+                    if (print_mode_ == 1) {
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant*lamda[i] * TOXCI[i];
+                            }
+                        }
+                        modec_out_ << '\n';
+
+                        modec_out_.width(8);
+                        modec_out_ << nucl_id;
+                        modec_out_.width(8);
+                        modec_out_ << Nucl_Name;
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i + 1] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i + 1] * Avogadro_Constant*lamda[i] * TOXCI[i];
+                            }
+                        }
+                        modec_out_ << '\n';
+                    }
+                }
+
+                modec_out_.close();
+
+            }
+
+            if (if_print_fission_rate_ == 2) {
+                output_filename_ = input_filename_ + ".NeuProdRate";
+
+                output_file_ = work_direc_ + output_filename_;
+                modec_out_.open(output_file_);
+                modec_out_ << "*********************************** Neutron Production Rate, s-1***********************************";
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                modec_out_.setf(ios::left);
+                int size = evolution_mode_.size();
+                int size_tot = 0;
+                for (int i = 0; i < size; ++i) {
+                    size_tot += substep_[i];
+                }
+
+                vector<double> Cum_time;
+                Cum_time.resize(size_tot + 1);
+
+                int count = 0;
+                for (int i = 0; i < size; ++i) {
+                    for (int j = 0; j < substep_[i]; ++j) {
+                        Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
+                        count++;
+                    }
+                }
+
+
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(18);
+                modec_out_ << "Initial";
+
+                if (print_mode_ == 0) {
+                    modec_out_.width(10);
+                    modec_out_.setf(ios::scientific | ios::uppercase);
+                    modec_out_.precision(4);
+                    modec_out_ << Cum_time[size_tot];
+                    modec_out_.width(8);
+                    modec_out_ << "s";
+                } else {
+                    for (int j = 1; j <= size_tot; ++j) {
+                        modec_out_.width(10);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(4);
+                        modec_out_ << Cum_time[j];
+                        modec_out_.width(8);
+                        modec_out_ << "s";
+                    }
+                }
+
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                for (unsigned int i = 0; i < Nucl_size; ++i) {
+                    modec_out_.width(8);
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    modec_out_ << nucl_id;
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    stringstream ss;
+                    ss << NA;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string Nucl_Name;
+                    Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
+                    if (NG == 1) {
+                        Nucl_Name += "m";
+                    }
+                    modec_out_.width(8);
+                    modec_out_ << Nucl_Name;
+                    if (print_mode_ == 0) {
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[0];
+                        modec_out_.width(18);
+
+                        if (n_vector_[size_tot][2 * i] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24* flux_vector_[size_tot];
+                        }
+                        modec_out_ << '\n';
+                    }
+                    if (print_mode_ == 1) {
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i] < cutoff || n_vector_[j][2 * i] < 0.0) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24* flux_vector_[j]; // 单位为Ci
+                            }
+                        }
+                        modec_out_ << '\n';
+                    }
+                }
+                modec_out_ << '\n';
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(8);
+                modec_out_ << "Total: ";
+                for (int j = 0; j <= size_tot; ++j) {
+                    modec_out_.width(18);
+
+                    modec_out_ << prod_neu[j]; // 单位为Ci
+
+                }
+                modec_out_ << '\n';
+
+                modec_out_.close();
+
+            }
+
+            if (if_print_absorption_rate_ == 2) {
+                output_filename_ = input_filename_ + ".NeuAbsRate";
+
+                output_file_ = work_direc_ + output_filename_;
+                modec_out_.open(output_file_);
+                modec_out_ << "*********************************** Neutron Absorption Rate, s-1 ***********************************";
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                modec_out_.setf(ios::left);
+                int size = evolution_mode_.size();
+                int size_tot = 0;
+                for (int i = 0; i < size; ++i) {
+                    size_tot += substep_[i];
+                }
+
+                vector<double> Cum_time;
+                Cum_time.resize(size_tot + 1);
+
+                int count = 0;
+                for (int i = 0; i < size; ++i) {
+                    for (int j = 0; j < substep_[i]; ++j) {
+                        Cum_time[count + 1] = Cum_time[count] + burnup_time_[i];
+                        count++;
+                    }
+                }
+
+
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(18);
+                modec_out_ << "Initial";
+
+                if (print_mode_ == 0) {
+                    modec_out_.width(10);
+                    modec_out_.setf(ios::scientific | ios::uppercase);
+                    modec_out_.precision(4);
+                    modec_out_ << Cum_time[size_tot];
+                    modec_out_.width(8);
+                    modec_out_ << "s";
+                } else {
+                    for (int j = 1; j <= size_tot; ++j) {
+                        modec_out_.width(10);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(4);
+                        modec_out_ << Cum_time[j];
+                        modec_out_.width(8);
+                        modec_out_ << "s";
+                    }
+                }
+
+                modec_out_ << '\n';
+                modec_out_ << '\n';
+
+                for (unsigned int i = 0; i < Nucl_size; ++i) {
+                    modec_out_.width(8);
+                    int nucl_id = ModecNuclideLibrary.nuclide_list_[i];
+                    modec_out_ << nucl_id;
+                    int NZ = nucl_id / 10000;
+                    int NA = (nucl_id - NZ * 10000) / 10;
+                    stringstream ss;
+                    ss << NA;
+                    int NG = nucl_id - nucl_id / 10 * 10;
+                    string Nucl_Name;
+                    Nucl_Name = ModecNuclideLibrary.element_name_list_[NZ - 1] + ss.str();
+                    if (NG == 1) {
+                        Nucl_Name += "m";
+                    }
+                    modec_out_.width(8);
+                    modec_out_ << Nucl_Name;
+                    if (print_mode_ == 0) {
+                        modec_out_.width(18);
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        modec_out_ << n_vector_[0][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24* flux_vector_[0];
+                        modec_out_.width(18);
+                        if (n_vector_[size_tot][2 * i] < cutoff) {
+                            modec_out_ << 0.0;
+                        } else {
+                            modec_out_ << n_vector_[size_tot][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24* flux_vector_[size_tot];
+                        }
+                        modec_out_ << '\n';
+                    }
+                    if (print_mode_ == 1) {
+                        modec_out_.setf(ios::scientific | ios::uppercase);
+                        modec_out_.precision(9);
+                        for (int j = 0; j <= size_tot; ++j) {
+                            modec_out_.width(18);
+                            if (n_vector_[j][2 * i] < cutoff) {
+                                modec_out_ << 0.0;
+                            } else {
+                                modec_out_ << n_vector_[j][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24* flux_vector_[j];
+                            }
+                        }
+                        modec_out_ << '\n';
+                    }
+                }
+
+                modec_out_ << '\n';
+                modec_out_.width(8);
+                modec_out_ << "";
+                modec_out_.width(8);
+                modec_out_ << "Total: ";
+                for (int j = 0; j <= size_tot; ++j) {
+                    modec_out_.width(18);
+
+                    modec_out_ << absorption_neu[j]; // 单位为Ci
+
+                }
+                modec_out_ << '\n';
+
+                modec_out_.close();
+
+            }
 
         }
 
     }
-
 }

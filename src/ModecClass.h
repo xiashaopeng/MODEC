@@ -10,6 +10,7 @@
 #ifndef _RUN_MODEC_H
 #define _RUN_MODEC_H
 #include <sstream>
+#include <iomanip>
 #include "SolveTrans.h"
 #include "IntegralMethods.h"
 #include "tinyxml2.h"
@@ -183,7 +184,7 @@ class ModecClass {
             CalEquilibrium(evolution_mode_[0]);
         }
         InfoMessage::ends.push_back(clock());
-        ModecOutput();
+        ModecOutputXml(); // 测试XML输出
         InfoMessage::ends.push_back(clock());
         return;
     };
@@ -231,6 +232,11 @@ class ModecClass {
     * @brief 结果输出模块
     */
     void ModecOutput();
+
+    /**
+    * @brief 结果输出模块xml
+    */
+    void ModecOutputXml();
 
     /**
     * @brief 燃耗矩阵构建控制模块
