@@ -317,9 +317,6 @@ class modec_xml_opfile:
         # key = format
         # value = 'sep' 'comb'
 
-        if kwargs.get('x_axis') == 'log':
-            pass
-
         if 'format' in kwargs:
             value = kwargs['format']
             if value == 'sep':
