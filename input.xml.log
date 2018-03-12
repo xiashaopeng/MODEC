@@ -1,0 +1,30 @@
+ ----------------------------------------------------------
+|   MODEC：A MOLTEN-SALT-REACTOR SPECIFIC DEPLETION CODE   |
+ ----------------------------------------------------------
+
+
+[ /mnt/c/Users/夏少鹏/Documents/MODEC/MODEC_linux/modec ]
+[ 2018-03-12 16:20:25 ]
+
+Time cost at each period: 
+-------------------------------------------------
+   Initialization : 0.046875s
+   Calculation    : 1.21875s
+   Saving         : 0.125s
+------------------------------
+   Total          : 1.39062s
+-------------------------------------------------
+
+
+
+Warning Messages during excuting MODEC: 
+-------------------------------------------------
+Perfect Execution!! No Warnings!!
+-------------------------------------------------
+
+
+
+Error Messages during excuting MODEC: 
+-------------------------------------------------
+Correct Execution!! No Errors!!
+-------------------------------------------------

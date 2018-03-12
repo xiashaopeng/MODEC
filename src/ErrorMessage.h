@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#ifdef _WIN32||defined _WIN64
+#ifdef _WIN32
 #include <direct.h>
 #else
 #include <limits.h>

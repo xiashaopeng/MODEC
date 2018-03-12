@@ -27,7 +27,7 @@ void InfoMessage::EndInfo() {
     char buffer_t[256];
 
     ///////////////////// 获取程序执行日期 ////////////////////////
-#ifdef _WIN32||defined _WIN64
+#ifdef _WIN32
     time_t local_time = time(nullptr);
 #else
     time_t local_time = time(NULL);
@@ -38,10 +38,16 @@ void InfoMessage::EndInfo() {
 
 
     ///////////////////// 获取工作目录 ///////////////////////////
-#ifdef _WIN32||defined _WIN64
-    _getcwd(buffer_d, 256);
+#ifdef _WIN32
+    if(_getcwd(buffer_d, 256) == NULL){
+	cerr << "Error in getting path of current directory!" << '\n';
+	return;
+	}
 #else
-    getcwd(buffer_d, 256);
+    if (getcwd(buffer_d, 256) == NULL) {
+	cerr << "Error in getting path of current directory!" << '\n';
+	return;
+	}
 #endif
     //////////////////////////////////////////////////////////////
 
