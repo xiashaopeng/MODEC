@@ -76,7 +76,7 @@ void ModecClass::ReadFromDepthLib() {
         ReadDepth >> itemp;
 
         if (itemp != -1) {
-            InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLib; \n Error: error flag in DEPTH lib！",1);
+            InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLib; \n Error: error flag in DEPTH lib!",1);
         }
 
         // 衰变矩阵TransMatrixDecay建立
@@ -285,7 +285,7 @@ void ModecClass::ReadFromDepthLib() {
         ReadDepth >> itemp;
 
         if (itemp != -1) {
-            InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLib; \n Error: error flag in DEPTH lib！" ,1);
+            InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLib; \n Error: error flag in DEPTH lib!" ,1);
         }
         ReadDepth.getline(line, 200);
     }
@@ -366,7 +366,7 @@ void ModecClass::ReadFromDepthLibForTta() {
         ReadDepth >> itemp;
 
         if (itemp != -1) {
-            InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLibForTta; \n Error: error flag in DEPTH lib！", 1);
+            InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLibForTta; \n Error: error flag in DEPTH lib!", 1);
         }
 
         // 衰变矩阵TransMatrixDecay建立
@@ -576,7 +576,7 @@ void ModecClass::ReadFromDepthLibForTta() {
         ReadDepth >> itemp;
 
         if (itemp != -1) {
-            InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLibForTta; \n Error: error flag in DEPTH lib！", 1);
+            InfoMessage::ErrorMessage("Position: void ModecClass::ReadFromDepthLibForTta; \n Error: error flag in DEPTH lib!", 1);
         }
         ReadDepth.getline(line, 200);
     }

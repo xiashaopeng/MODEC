@@ -221,7 +221,7 @@ class ModecClass {
     /**
     * @brief 输入卡读入模块
     */
-    void ModecInitial(int argc, char *argv[]);
+    void ModecInitial(int argc, char **argv);
 
     /**
     * @brief 燃耗计算控制模块

@@ -58,7 +58,7 @@ class SparseMatrixMCS { // 双链表存储稀疏矩阵
             diagonal_val_[_row] += _val;
             return;
         } else {
-            /* 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 */
+            // 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 
             int PL = -1; // 标识符，用来判断是否存在元素
             for (unsigned int i = 0; i < col_index_[_col].size(); ++i) {
                 if (col_index_[_col][i] == _row) {
@@ -215,7 +215,7 @@ class SparseMatrixMCS { // 双链表存储稀疏矩阵
 };
 
 class SpMat // 用于CRAM算法的燃耗矩阵存储格式
-/* 对角元单独存储，下三角元素采用列压缩存储，上三角元素采用行压缩存储*/
+// 对角元单独存储，下三角元素采用列压缩存储，上三角元素采用行压缩存储
 {
   public:
     vector<Complex > diagonal_val_; // value of diagonal element
@@ -278,7 +278,7 @@ class SpMat // 用于CRAM算法的燃耗矩阵存储格式
             diagonal_val_[_row] += _val;
             //element_amount_ ++;
         } else if (_row > _col) { // 下三角矩阵
-            /* 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 */
+            // 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 
             int PL = -1; // 标识符，用来判断是否存在元素
             for (unsigned int i = 0; i < lower_index_[_col].size(); ++i) {
                 if (lower_index_[_col][i] == _row) {
@@ -294,7 +294,7 @@ class SpMat // 用于CRAM算法的燃耗矩阵存储格式
                 lower_val_[_col][PL] += _val;
             }
         } else { // 上三角矩阵
-            /* 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 */
+            // 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理
             int PL = -1; // 标识符，用来判断是否存在元素
             for (unsigned int i = 0; i < upper_index_[_row].size(); ++i) {
                 if (upper_index_[_row][i] == _col) {
@@ -321,7 +321,7 @@ class SpMat // 用于CRAM算法的燃耗矩阵存储格式
             diagonal_val_[_row] = _val;
             //element_amount_ ++;
         } else if (_row > _col) { // 下三角矩阵
-            /* 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 */
+            // 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 
             int PL = -1; // 标识符，用来判断是否存在元素
             for (unsigned int i = 0; i < lower_index_[_col].size(); ++i) {
                 if (lower_index_[_col][i] == _row) {
@@ -337,7 +337,7 @@ class SpMat // 用于CRAM算法的燃耗矩阵存储格式
                 lower_val_[_col][PL] = _val;
             }
         } else { // 上三角矩阵
-            /* 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理 */
+            // 首先判断该位置是否已经存在元素，如果还未存在，直接添加，如果已经存在，做加法处理
             int PL = -1; // 标识符，用来判断是否存在元素
             for (unsigned int i = 0; i < upper_index_[_row].size(); ++i) {
                 if (upper_index_[_row][i] == _col) {
@@ -646,7 +646,7 @@ class SpMat // 用于CRAM算法的燃耗矩阵存储格式
 /////////////////////////////////////////////////////////////////////////////////////
 ///////////////    矩阵LU分解与矩阵的稀疏存储放在一起，目的是优化计算速度 /////////////////
   public:
-    /* 符号LU分解需要的变量 */
+    // 符号LU分解需要的变量
     vector<int> IRC;
     vector<int> ICFR;
     vector<int> LUP;
