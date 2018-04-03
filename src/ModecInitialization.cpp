@@ -19,6 +19,7 @@ void ModecClass::ModecInitial(int argc, char **argv) {
 
         if(error_id != 3) {
             info_message_ ="ERROR OCCURRED WHEN INPUT FILE WAS BEING READ!\nError MESSAGE: " + string(InputFile.ErrorName());
+            InfoMessage::InputName = input_filename_ + ".log";
             InfoMessage::ErrorMessage(info_message_ , 1);
         }
 
@@ -246,6 +247,11 @@ void ModecClass::ModecInitial(int argc, char **argv) {
             if_print_stockage_ampc_ = if_print_ampc_;
             if_print_stockage_wmpc_ = if_print_wmpc_;
             if_print_stockage_toxicity_ = if_print_toxicity_;
+
+            if (solver_selection_ == 0) {
+                solver_selection_ = 1;
+                InfoMessage::ErrorMessage("Position: void ModecClass::ModecInitial; \n Warning: CRAM method must be used to track the nuclides in the stockage.",0);
+            }
         }
 
         XMLElement * remove_element = online_reprocessing->FirstChildElement();
@@ -282,7 +288,7 @@ void ModecClass::ModecInitial(int argc, char **argv) {
         stringstream method(continously_feeding->Attribute("method"));
         string method_name;
         method >> method_name;
-        if( method_name == "Gauss") {
+        if( method_name == "Gauss" && solver_selection_ == 1) {
             constant_feeding_calculation_methods_ = 1;
             method >> GaussLegendreQuadrature::GL_order;
             gauss_legendre_weight_ = GaussLegendreQuadrature::gauss_legendre_weight_[GaussLegendreQuadrature::GL_order];

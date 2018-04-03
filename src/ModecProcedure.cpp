@@ -621,11 +621,11 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 }
             } else if (solver_selection_ == 0) {
                 if (if_constant_online_feeding_ == false) {
-                    Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0]);
+                    Solver.TtaInitialize(ModecNuclideLibrary.nuclide_library_vector_[0].size());
                     double re_time = 0;
                     for (int i = 1; i <= subtime; ++i) {
                         re_time += time;
-                        ModecNuclideLibrary.nuclide_library_vector_[0] = Solver.TtaSolver(TtaMatrixDecay, re_time);
+                        Solver.TtaSolver(TtaMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], re_time);
                         n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
                         flux_vector_.push_back(0.0);
                         power_vector_.push_back(0.0);
@@ -649,11 +649,11 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                     vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
                     F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 0.0);
 
-                    Solver.TtaInitialize(F_mol);
+                    Solver.TtaInitialize(F_mol.size());
                     double re_time = 0;
                     for (int i = 1; i <= subtime; ++i) {
                         re_time += time;
-                        F_mol = Solver.TtaSolver(TtaMatrixDecay, re_time);
+                        Solver.TtaSolverForFeeding(TtaMatrixDecay, F_mol, re_time);
                         for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                             ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
                         }
@@ -1091,7 +1091,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                         TransMatrix = TtaMatrixDecay + TtaMatrixCrossSection*(ModecNuclideLibrary.flux_ * 1.0e-24);
 
                         for (int i = 1; i <= subtime; ++i) {
-                            Solver.TtaSolver(TransMatrix, F_mol, time);
+                            Solver.TtaSolverForFeeding(TransMatrix, F_mol, time);
 
                             for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                 ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];

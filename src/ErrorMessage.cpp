@@ -65,27 +65,39 @@ void InfoMessage::EndInfo() {
     LogFile << '\n';
     LogFile << "Time cost at each period: " << '\n';
     LogFile << "-------------------------------------------------" << '\n';
-    LogFile << "   Initialization : " << double(ends[0] - start) / CLOCKS_PER_SEC << "s" << '\n'; // clock()得到的返回值必须除以CLOCKS_PER_SEC之后才能得到运行时间
-    LogFile << "   Calculation    : " << double(ends[1] - ends[0]) / CLOCKS_PER_SEC << "s" << '\n';
-    LogFile << "   Saving         : " << double(ends[2] - ends[1]) / CLOCKS_PER_SEC << "s" << '\n';
-    LogFile << "------------------------------" << '\n';
-    LogFile << "   Total          : " << double(ends[3] - start) / CLOCKS_PER_SEC << "s" << '\n';
-    LogFile << "-------------------------------------------------" << '\n';
-    LogFile << '\n';
-    LogFile << '\n';
-    LogFile << '\n';
-    LogFile << "Warning Messages during excuting MODEC: " << '\n';
-    LogFile << "-------------------------------------------------" << '\n';
-    if (size1 > 0) {
-        for (int i = 0; i < size1; ++i) {
-            LogFile << "[" << i+1 << "]: ";
-            LogFile << warning_info[i] <<'\n';
-            LogFile << '\n';
+
+    if (ends.size() == 4) {
+        LogFile << "   Initialization : " << double(ends[0] - start) / CLOCKS_PER_SEC << "s" << '\n'; // clock()得到的返回值必须除以CLOCKS_PER_SEC之后才能得到运行时间
+        LogFile << "   Calculation    : " << double(ends[1] - ends[0]) / CLOCKS_PER_SEC << "s" << '\n';
+        LogFile << "   Saving         : " << double(ends[2] - ends[1]) / CLOCKS_PER_SEC << "s" << '\n';
+        LogFile << "------------------------------" << '\n';
+        LogFile << "   Total          : " << double(ends[3] - start) / CLOCKS_PER_SEC << "s" << '\n';
+        LogFile << "-------------------------------------------------" << '\n';
+        LogFile << '\n';
+        LogFile << '\n';
+        LogFile << '\n';
+        LogFile << "Warning Messages during excuting MODEC: " << '\n';
+        LogFile << "-------------------------------------------------" << '\n';
+        if (size1 > 0) {
+            for (int i = 0; i < size1; ++i) {
+                LogFile << "[" << i+1 << "]: ";
+                LogFile << warning_info[i] <<'\n';
+                LogFile << '\n';
+            }   
+        } else {
+            LogFile << "Perfect Execution!! No Warnings!!" << '\n';
         }
-    } else {
-        LogFile << "Perfect Execution!! No Warnings!!" << '\n';
+        LogFile << "-------------------------------------------------" << '\n';
     }
-    LogFile << "-------------------------------------------------" << '\n';
+    else {
+        LogFile << "   Initialization : " <<  "*** Error ***" << '\n'; // clock()得到的返回值必须除以CLOCKS_PER_SEC之后才能得到运行时间
+        LogFile << "   Calculation    : " <<  "*** Error ***" << '\n';
+        LogFile << "   Saving         : " <<  "*** Error ***" << '\n';
+        LogFile << "------------------------------" << '\n';
+        LogFile << "   Total          : " <<  "*** Error ***" << '\n';
+        LogFile << "-------------------------------------------------" << '\n';
+    }
+    
     LogFile << '\n';
     LogFile << '\n';
     LogFile << '\n';
@@ -94,4 +106,11 @@ void InfoMessage::EndInfo() {
     LogFile << error_info <<'\n';
     LogFile << "-------------------------------------------------" << '\n';
     LogFile.close();
+
+    if (error_info == "Correct Execution!! No Errors!!") {
+        cerr << "Normal Termination... \n";
+    } else {
+        cerr << "Abnormal Termination !!\n";
+        cerr << "Please check log file for error information !!\n";
+    }
 }
