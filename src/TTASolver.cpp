@@ -446,8 +446,7 @@ void SolveTrans::SearchOneChainForDepletion(const int & n0_index, const long dou
     node_gamma_.push(chain_gamma_);
     node_lamda_list_.push(chain_lamda_list_);
 
-    // 根据根结点系数计算根节点核素浓度，并将哨兵数组该核素位置加一，表示访问过一次了
-    end_n_[n0_index] += initial_n_ * exp(-matrix_diagonal_val_[n0_index]*time);
+	//将哨兵数组该核素位置加一，表示访问过一次了
     node_visited_list_[n0_index] += 1;
     //check_repeat_nuclide[n0_index] = true;
 
@@ -456,7 +455,11 @@ void SolveTrans::SearchOneChainForDepletion(const int & n0_index, const long dou
         return;
     }
 
-    while (!nuclide_chain.empty()) {
+    // 如果没有计算过，：则根据根结点系数计算根节点核素浓度
+    end_n_[n0_index] += initial_n_ * exp(matrix_diagonal_val_[n0_index]*time);
+
+
+	for (;;){
         int mother_nuclide (nuclide_chain.top()[0]);
 
         // 将栈顶数组中的最后一个元素作为下一个循环的母核素，同时在栈顶数组中删除该核素
@@ -469,6 +472,10 @@ void SolveTrans::SearchOneChainForDepletion(const int & n0_index, const long dou
             node_b_.pop();
             node_gamma_.pop();
             node_lamda_list_.pop();
+
+			if (nuclide_chain.empty()) {
+				break;
+			}
 
             chain_a_ = node_a_.top();
             chain_b_ = node_b_.top();
