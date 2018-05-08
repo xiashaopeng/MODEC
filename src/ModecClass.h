@@ -49,6 +49,11 @@ class ModecClass {
     vector<double> residue_time_;						///< 流动燃耗模型下，每个燃耗区的滞留时间
 
     int solver_selection_ = 1;						///< 燃耗求解器。0: TTA方法   1：CRAM方法（缺省值）
+
+    int multizone_number = 1;         ///< the number of depletion zones, default value is 1
+
+    vector<vector <double> > residue_time_vector;         ///< the vector of the residue time
+
     /** @} */
 
     /**
