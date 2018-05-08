@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODEC>
+  <Settings> <!-- 设置每个燃耗区对应的id以及相应的输入文件 -->
+    <DividedZones number="9">
+      <Zone id="1" lib="1.xml"/>
+      <Zone id="2" lib="2.xml"/>
+      <Zone id="3" lib="3.xml"/>
+      <Zone id="4" lib="4.xml"/>
+      <Zone id="5" lib="5.xml"/>
+      <Zone id="6" lib="6.xml"/>
+      <Zone id="7" lib="7.xml"/>
+      <Zone id="8" lib="8.xml"/>
+      <Zone id="9" lib="9.xml"/>
+    </DividedZones>
+  </Settings>
+
+<FlowModel><!-- 设置流动模型，确定每个燃耗区的邻接燃耗区，以及相应的质量流入和流出系数 -->
+  <DepletionZone id="1">
+    <FlowIn>
+      <Zone id="9" coeff="0.3333333"/><!--其中系数单位为 s-1, 计算方式为入口处质量流量除以DepletionZone的质量 -->
+    </FlowIn>
+    <FlowOut>
+      <Zone id="2" coeff="0.0833333"/>
+      <Zone id="3" coeff="0.0833333"/>
+      <Zone id="4" coeff="0.0833333"/>
+      <Zone id="5" coeff="0.0833333"/>
+    </FlowOut>
+  </DepletionZone>
+
+  <DepletionZone id="2">
+    <FlowIn>
+      <Zone id="1" coeff="0.1111111"/>
+    </FlowIn>
+    <FlowOut>
+      <Zone id="6" coeff="0.1111111"/>
+    </FlowOut>
+  </DepletionZone>
+
+  <DepletionZone id="3">
+    <FlowIn>
+      <Zone id="1" coeff="0.1111111"/>
+    </FlowIn>
+    <FlowOut>
+      <Zone id="6" coeff="0.1111111"/>
+    </FlowOut>
+  </DepletionZone>
+
+  <DepletionZone id="4">
+    <FlowIn>
+      <Zone id="1" coeff="0.1111111"/>
+    </FlowIn>
+    <FlowOut>
+      <Zone id="6" coeff="0.1111111"/>
+    </FlowOut>
+  </DepletionZone>
+  
+  <DepletionZone id="5">
+    <FlowIn>
+      <Zone id="1" coeff="0.1111111"/>
+    </FlowIn>
+    <FlowOut>
+      <Zone id="6" coeff="0.1111111"/>
+    </FlowOut>
+  </DepletionZone>
+
+  <DepletionZone id="6">
+    <FlowIn>
+      <Zone id="2" coeff="0.0833333"/>
+      <Zone id="3" coeff="0.0833333"/>
+      <Zone id="4" coeff="0.0833333"/>
+      <Zone id="5" coeff="0.0833333"/>
+    </FlowIn>
+    <FlowOut>
+      <Zone id="7" coeff="0.3333333"/>
+    </FlowOut>
+  </DepletionZone>
+
+  <DepletionZone id="7">
+    <FlowIn>
+      <Zone id="6" coeff="0.2"/>
+    </FlowIn>
+    <FlowOut>
+      <Zone id="8" coeff="0.2"/>
+    </FlowOut>
+  </DepletionZone>
+
+  <DepletionZone id="8">
+    <FlowIn>
+      <Zone id="7" coeff="0.2"/>
+    </FlowIn>
+    <FlowOut>
+      <Zone id="9" coeff="0.2"/>
+    </FlowOut>
+  </DepletionZone>
+
+  <DepletionZone id="9">
+    <FlowIn>
+      <Zone id="8" coeff="0.2"/>
+    </FlowIn>
+    <FlowOut>
+      <Zone id="1" coeff="0.2"/>
+    </FlowOut>
+  </DepletionZone>
+</FlowModel>
+</MODEC>
