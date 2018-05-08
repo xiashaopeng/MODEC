@@ -3,7 +3,6 @@
 	<Settings>
 		<DataLib type="CoupleLib" file="1.lib"/>
 		<SolverSet solver_basic="CRAM" />
-		<FlowSet tag="1" residue_time=" 10 10 "/>
 		<PrintSet print_den="1" print_act="1" print_q="1" print_ampc="1" print_wmpc="1" print_tox="1" print_kinf="1" print_prod="1" print_abs="1"/>
 	</Settings>
 	<Depletions>
