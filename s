@@ -1,0 +1,17 @@
+[1mdiff --git a/src/SolveTrans.h b/src/SolveTrans.h[m
+[1mindex d22f2da..bc906f2 100644[m
+[1m--- a/src/SolveTrans.h[m
+[1m+++ b/src/SolveTrans.h[m
+[36m@@ -69,9 +69,9 @@[m [mclass SolveTrans {[m
+     vector< double >initial_n_vector_;			///< 各核素初始浓度[m
+     vector< long double > end_n_;				///< 各核素燃耗步末浓度[m
+ [m
+[31m-    stack<int> node_a_;					///< 递推公式中系数a的存储向量(只在分叉点处存储)[m
+[31m-    stack<vector<int> > node_b_;				///< 递推公式中系数b的存储向量(只在分叉点处存储)[m
+[31m-    stack<vector<vector<long double> > > node_gamma_;	///< 递推公式中系数gamma的存储向量(只在分叉点处存储)[m
+[32m+[m[32m    //stack<int> node_a_;					///< 递推公式中系数a的存储向量(只在分叉点处存储)[m[41m[m
+[32m+[m[32m    //stack<vector<int> > node_b_;				///< 递推公式中系数b的存储向量(只在分叉点处存储)[m[41m[m
+[32m+[m[32m    //stack<vector<vector<long double> > > node_gamma_;	///< 递推公式中系数gamma的存储向量(只在分叉点处存储)[m[41m[m
+ [m
+     int chain_a_;						///< 当前待求核素的系数a[m
+     vector<int> chain_b_;					///< 当前待求核素的系数b[m
