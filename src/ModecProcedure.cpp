@@ -494,15 +494,16 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
             if (solver_selection_ == 1) {
                 if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                     int size_matrix = TransMatrixDecay.spmat_dimen_;
-                    TransMatrixDecay.Resize(size_matrix + 1); // 矩阵增广
-                    int size_nucl = constant_feeding_nuclide_id_vector_.size();
-                    for (int i = 0; i < size_nucl; ++i) {
-                        int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-                        TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
-                    }
-                    TransMatrixDecay.SymbolLUElimination();
-
-
+					//SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
+					if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+						TransMatrixDecay.Resize(size_matrix + 1); // 矩阵增广
+						int size_nucl = constant_feeding_nuclide_id_vector_.size();
+						for (int i = 0; i < size_nucl; ++i) {
+							int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+							TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
+						}
+						TransMatrixDecay.SymbolLUElimination();
+					}
 
                     if (if_tracking_stockage == false) {
                         vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
@@ -674,17 +675,18 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 if(solver_selection_ == 1) {
                     if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                         int size_matrix = TransMatrixDecay.spmat_dimen_;
-                        SpMat TransMatrix(size_matrix + 1);
-                        TransMatrixDecay.Resize(size_matrix + 1);
-                        TransMatrixCrossSection.Resize(size_matrix + 1);
-                        TransMatrixFissionYields.Resize(size_matrix + 1);
+                        SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
+						if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+							TransMatrixDecay.Resize(size_matrix + 1);
+							TransMatrixCrossSection.Resize(size_matrix + 1);
+							TransMatrixFissionYields.Resize(size_matrix + 1);
 
-                        int size_nucl = constant_feeding_nuclide_id_vector_.size();
-                        for (int i = 0; i < size_nucl; ++i) {
-                            int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-                            TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
-                        }
-
+							int size_nucl = constant_feeding_nuclide_id_vector_.size();
+							for (int i = 0; i < size_nucl; ++i) {
+								int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+								TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
+							}
+						}
                         if (if_tracking_stockage == false) {
                             vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
                             F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 1.0);
@@ -903,10 +905,11 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 if (solver_selection_ == 1) {
                     if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                         int size_matrix = TransMatrixDecay.spmat_dimen_;
-                        SpMat TransMatrix(size_matrix + 1);
-                        TransMatrixDecay.Resize(size_matrix + 1);
-                        TransMatrixCrossSection.Resize(size_matrix + 1);
-
+                        SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
+						if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+							TransMatrixDecay.Resize(size_matrix + 1);
+							TransMatrixCrossSection.Resize(size_matrix + 1);
+						}
                         TransMatrix = TransMatrixDecay + TransMatrixCrossSection * (ModecNuclideLibrary.flux_ * 1.0e-24);
 
                         int size_nucl = constant_feeding_nuclide_id_vector_.size();
@@ -1115,17 +1118,18 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 if (solver_selection_ == 1) {
                     if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                         int size_matrix = TransMatrixDecay.spmat_dimen_;
-                        SpMat TransMatrix(size_matrix + 1);
-                        TransMatrixDecay.Resize(size_matrix + 1);
-                        TransMatrixCrossSection.Resize(size_matrix + 1);
-                        TransMatrixFissionYields.Resize(size_matrix + 1);
+                        SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
+						if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+							TransMatrixDecay.Resize(size_matrix + 1);
+							TransMatrixCrossSection.Resize(size_matrix + 1);
+							TransMatrixFissionYields.Resize(size_matrix + 1);
 
-                        int size_nucl = constant_feeding_nuclide_id_vector_.size();
-                        for (int i = 0; i < size_nucl; ++i) {
-                            int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-                            TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
-                        }
-
+							int size_nucl = constant_feeding_nuclide_id_vector_.size();
+							for (int i = 0; i < size_nucl; ++i) {
+								int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+								TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
+							}
+						}
                         if (if_tracking_stockage == false) {
                             vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
                             F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 1.0);
@@ -1335,21 +1339,22 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 if (solver_selection_ == 1) {
                     if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                         int size_matrix = TransMatrixDecay.spmat_dimen_;
-                        SpMat TransMatrix(size_matrix + 1);
+                        //SpMat TransMatrix(size_matrix + 1);
                         vector<int> _IRC;
                         vector<int> _ICFR;
                         vector<int> _LUP;
+						SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
+						if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+							TransMatrixDecay.Resize(size_matrix + 1);
+							TransMatrixCrossSection.Resize(size_matrix + 1);
 
-                        TransMatrixDecay.Resize(size_matrix + 1);
-                        TransMatrixCrossSection.Resize(size_matrix + 1);
 
-
-                        int size_nucl = constant_feeding_nuclide_id_vector_.size();
-                        for (int i = 0; i < size_nucl; ++i) {
-                            int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-                            TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
-                        }
-
+							int size_nucl = constant_feeding_nuclide_id_vector_.size();
+							for (int i = 0; i < size_nucl; ++i) {
+								int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+								TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
+							}
+						}
                         if (if_tracking_stockage == false) {
                             vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
                             F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 1.0);
