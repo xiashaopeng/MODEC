@@ -494,8 +494,12 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
             if (solver_selection_ == 1) {
                 if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                     int size_matrix = TransMatrixDecay.spmat_dimen_;
-					//SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
-					if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+					int size_n_vector = ModecNuclideLibrary.nuclide_library_vector_[0].size();
+					if (if_tracking_stockage == true) size_n_vector /= 2;
+					// 判断矩阵维数和向量的维数是否相等
+					// 如果相等，表明没有进行增广操作，则执行if语句
+					// 如果不等，表明之前已经进行过增广操作，则跳过if语句
+					if (size_matrix == size_n_vector) {
 						TransMatrixDecay.Resize(size_matrix + 1); // 矩阵增广
 						int size_nucl = constant_feeding_nuclide_id_vector_.size();
 						for (int i = 0; i < size_nucl; ++i) {
@@ -675,8 +679,11 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 if(solver_selection_ == 1) {
                     if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                         int size_matrix = TransMatrixDecay.spmat_dimen_;
-                        SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
-						if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+						int size_n_vector = ModecNuclideLibrary.nuclide_library_vector_[0].size();
+						if (if_tracking_stockage == true) size_n_vector /= 2;
+					
+                        SpMat TransMatrix(size_n_vector + 1);
+						if (size_matrix == size_n_vector) {
 							TransMatrixDecay.Resize(size_matrix + 1);
 							TransMatrixCrossSection.Resize(size_matrix + 1);
 							TransMatrixFissionYields.Resize(size_matrix + 1);
@@ -905,8 +912,12 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 if (solver_selection_ == 1) {
                     if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                         int size_matrix = TransMatrixDecay.spmat_dimen_;
-                        SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
-						if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+						int size_n_vector = ModecNuclideLibrary.nuclide_library_vector_[0].size();
+						if (if_tracking_stockage == true) size_n_vector /= 2;
+						
+                        SpMat TransMatrix(size_n_vector + 1);
+						
+						if (size_matrix == size_n_vector) {
 							TransMatrixDecay.Resize(size_matrix + 1);
 							TransMatrixCrossSection.Resize(size_matrix + 1);
 						}
@@ -1118,8 +1129,11 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 if (solver_selection_ == 1) {
                     if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                         int size_matrix = TransMatrixDecay.spmat_dimen_;
-                        SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
-						if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+						int size_n_vector = ModecNuclideLibrary.nuclide_library_vector_[0].size();
+						if (if_tracking_stockage == true) size_n_vector /= 2;
+						
+                        SpMat TransMatrix(size_n_vector + 1);
+						if (size_matrix == size_n_vector) {
 							TransMatrixDecay.Resize(size_matrix + 1);
 							TransMatrixCrossSection.Resize(size_matrix + 1);
 							TransMatrixFissionYields.Resize(size_matrix + 1);
@@ -1339,12 +1353,15 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 if (solver_selection_ == 1) {
                     if (if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 2) {
                         int size_matrix = TransMatrixDecay.spmat_dimen_;
+						int size_n_vector = ModecNuclideLibrary.nuclide_library_vector_[0].size();
+						if (if_tracking_stockage == true) size_n_vector /= 2;
+						
                         //SpMat TransMatrix(size_matrix + 1);
                         vector<int> _IRC;
                         vector<int> _ICFR;
                         vector<int> _LUP;
-						SpMat TransMatrix(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1);
-						if (size_matrix == ModecNuclideLibrary.nuclide_library_vector_[0].size()) {
+						SpMat TransMatrix(size_n_vector + 1);
+						if (size_matrix == size_n_vector) {
 							TransMatrixDecay.Resize(size_matrix + 1);
 							TransMatrixCrossSection.Resize(size_matrix + 1);
 
