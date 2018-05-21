@@ -4,15 +4,15 @@
 
 
 [ D:\MODEC\MODEC ]
-[ 2018-05-16 20:27:34 ]
+[ 2018-05-21 12:46:11 ]
 
 Time cost at each period: 
 -------------------------------------------------
-   Initialization : 0.144s
-   Calculation    : 0.119s
-   Saving         : 0.325s
+   Initialization : 0.149s
+   Calculation    : 0.125s
+   Saving         : 0.338s
 ------------------------------
-   Total          : 0.588s
+   Total          : 0.612s
 -------------------------------------------------
 
 
