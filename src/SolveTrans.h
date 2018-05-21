@@ -52,7 +52,12 @@ class SolveTrans {
     /**
     * @brief IPF格式的CRAM求解器
     */
-    void IpfCramSolver(const int &order, SpMat &matrix, vector <double> &N, const double &time);
+    void IpfCramSolver32(SpMat &matrix, vector <double> &N, const double &time);
+	
+	/**
+    * @brief IPF格式的CRAM求解器
+    */
+    void IpfCramSolver48(SpMat &matrix, vector <double> &N, const double &time);
 
     /**
     * @brief IPF格式的求解器重载，用于追踪堆外核素演化

@@ -1131,6 +1131,100 @@ class SpMat // 用于CRAM算法的燃耗矩阵存储格式
         return;
     }
 
+	vector<Complex> LUEliminationForIpfCram(const Complex &theta, const double &time, const vector< Complex > &Vector_B) {
+		vector<Complex> VectorB;
+		
+		VectorB = Vector_B;
+		
+		int nuclide_number_ = spmat_dimen_;
+		int LUPCount = 1;
+		int LUPpos;
+
+		//////////   使用cram方法的矩阵预处理 ////////////
+		ce_.resize(IRC.size());
+		for (int i = 0; i < nuclide_number_; ++i) {
+			ce_[i] = diagonal_val_[i] * time - theta;
+			int RowIB = ICFR[i];
+			//int RowIC = ICFR[i + 1];
+			int size = lower_index_[i].size();
+			for (int j = RowIB; j < RowIB + size; ++j) {
+				ce_[j] = lower_val_[i][j - RowIB] * time;
+			}
+
+			int ColIB = ICFR[nuclide_number_ + i];
+			//int ColIC = ICFR[nuclide_number_ + i + 1];
+			int size2 = upper_index_[i].size();
+			for (int j = ColIB; j < ColIB + size2; ++j) {
+				ce_[j] = upper_val_[i][j - ColIB] * time;
+			}
+		}
+		////////////////////////////////////////////////
+
+		vector<Complex > MatrixA(ce_);
+		Complex ElimiFactor;
+
+		for (int k = 0; k<nuclide_number_ - 1; ++k) {
+			////////////////////////// Forward step of Gauss Elimination////////////////////////////
+			//if(abs(MatrixA[k])==0)
+			//{
+			//	Depth.ErrorWarning("Wrong Gauss Elimination！！",1);
+			//}
+
+			int RowIB = ICFR[k];
+			int RowIC = ICFR[k + 1];
+			int ColIB = ICFR[nuclide_number_ + k];
+			int ColIC = ICFR[nuclide_number_ + k + 1];
+			for (int i = RowIB; i < RowIC; ++i) {
+				int row = IRC[i];     /// Find the row need to be eliminated
+				if (row <= k) {
+					InfoMessage::ErrorMessage("Position: void SpMat::LUEliminationForCram; \n Error: the index of lower matrix L has errors.", 1);
+				}
+
+				ElimiFactor = MatrixA[i] / MatrixA[k];
+
+				//cout<<MatrixA[i].real()<<'\n'<<MatrixA[i].imag()<<'\n';
+
+				/////// Elimination and filling-in of  Matrix A and its pointers////////
+				for (int j = ColIB; j < ColIC; ++j) {  /// Eliminate the columns of the given row
+					int col = IRC[j];
+					if (col <= k) {
+						InfoMessage::ErrorMessage("Position: void SpMat::LUEliminationForCram; \n Error: the index of upper matrix U has errors.", 1);
+					}
+
+					LUPpos = LUP[LUPCount];
+
+					MatrixA[LUPpos] -= MatrixA[j] * ElimiFactor;
+					++LUPCount;
+
+				} // end for(j=0;j<size2;++j)
+				/////// Elimination and filling-in of  vector b////////
+				if (VectorB[k] != 0.0) {
+					VectorB[row] -= VectorB[k] * ElimiFactor;
+				}
+			}// end for(i=0;i<size1;++i)
+		}// endffor(k=1;k<=nuclide_number_-1;++k)
+
+
+		////////////////////////// Backward step of Gauss Elimination////////////////////////////
+		for (int i = nuclide_number_ - 1; i >= 0; --i) {
+			int ColIB = ICFR[nuclide_number_ + i];
+			int ColIC = ICFR[nuclide_number_ + i + 1];
+			//cout<<k<<"   "<<size1<<"   "<<size2<<'\n';
+			for (int j = ColIB; j < ColIC; ++j) {
+				int col = IRC[j];
+				if (col <= i) {
+					InfoMessage::ErrorMessage("Position: void SpMat::LUEliminationForCram; \n Error: the index of lower matrix L has errors." ,1);
+				}
+
+				VectorB[i] -= MatrixA[j] * VectorB[col];
+			}
+			VectorB[i] = VectorB[i] / MatrixA[i];
+		}
+
+		return;
+	}
+
+	
     void LUEliminationForCram(const Complex &theta, const double &time, vector<Complex > &VectorB, const int &nuclide_number_) {
         //int nuclide_number_ = cNuclNum;
         int LUPCount = 1;
