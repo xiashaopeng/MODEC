@@ -1132,9 +1132,7 @@ class SpMat // 用于CRAM算法的燃耗矩阵存储格式
     }
 
 	vector<Complex> LUEliminationForIpfCram(const Complex &theta, const double &time, const vector< Complex > &Vector_B) {
-		vector<Complex> VectorB;
-		
-		VectorB = Vector_B;
+		vector<Complex> VectorB(Vector_B);
 		
 		int nuclide_number_ = spmat_dimen_;
 		int LUPCount = 1;
@@ -1221,7 +1219,7 @@ class SpMat // 用于CRAM算法的燃耗矩阵存储格式
 			VectorB[i] = VectorB[i] / MatrixA[i];
 		}
 
-		return;
+		return VectorB;
 	}
 
 	
