@@ -86,7 +86,7 @@ class Complex {
     }
 
     friend Complex operator*(const Complex &lhs, const Complex &rhs) {
-        return Complex(lhs.real_ * rhs.real_ - lhs.imag_ * lhs.imag_, lhs.real_ * rhs.imag_ + lhs.imag_ * rhs.real_);
+        return Complex(lhs.real_ * rhs.real_ - lhs.imag_ * rhs.imag_, lhs.real_ * rhs.imag_ + lhs.imag_ * rhs.real_);
     }
     //
 
