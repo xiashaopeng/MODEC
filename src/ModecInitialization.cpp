@@ -129,6 +129,7 @@ void ModecClass::ModecInitial(int argc, char **argv) {
 
     //	打印设置
     XMLElement *print_set = flow_set->NextSiblingElement();
+	output_precision_ = atoi(print_set->Attribute("print_precision"));
     print_mode_ = atoi(print_set->Attribute("print_den"));
     if_print_activity_ = atoi(print_set->Attribute("print_act"));
     if_print_decayenergy_ = atoi(print_set->Attribute("print_q"));
@@ -288,12 +289,21 @@ void ModecClass::ModecInitial(int argc, char **argv) {
         stringstream method(continously_feeding->Attribute("method"));
         string method_name;
         method >> method_name;
+		
+		// 高斯-勒让德积分求解非齐次燃耗方程
         if( method_name == "Gauss" && solver_selection_ == 1) {
             constant_feeding_calculation_methods_ = 1;
             method >> GaussLegendreQuadrature::GL_order;
             gauss_legendre_weight_ = GaussLegendreQuadrature::gauss_legendre_weight_[GaussLegendreQuadrature::GL_order];
             gauss_legendre_abscissa_ = GaussLegendreQuadrature::gauss_legendre_abscissa_[GaussLegendreQuadrature::GL_order];
         }
+		
+		// 拉普拉斯变换求解非齐次燃耗方程
+		if( method_name == "Laplace" && solver_selection_ == 1) {
+            constant_feeding_calculation_methods_ = 3;
+        }
+		/*-------------------------------------*/
+		
         XMLElement * feed_nuclide = continously_feeding->FirstChildElement();
         while (feed_nuclide) {
             constant_feeding_nuclide_id_vector_.push_back(atoi(feed_nuclide->Attribute("zai")));
@@ -306,22 +316,22 @@ void ModecClass::ModecInitial(int argc, char **argv) {
 
     /*---------------------------------------------------------------------------------------------------------------------------------------------*/
 
-    if (if_constant_online_feeding_ == true && if_tracking_stockage == false && constant_feeding_calculation_methods_ == 1) {
-        constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_);
-        int size = constant_feeding_nuclide_id_vector_.size();
-        for (int i = 0; i < size; ++i) {
-            int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-            constant_feeding_vector_[Index] = constant_feeding_rate_[i];
-        }
-    }
-    if (if_constant_online_feeding_ == true && if_tracking_stockage == true && constant_feeding_calculation_methods_ == 1) {
-        constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_*2);
-        int size = constant_feeding_nuclide_id_vector_.size();
-        for (int i = 0; i < size; ++i) {
-            int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-            constant_feeding_vector_[Index] = constant_feeding_rate_[i];
-        }
-    }
+     if (if_constant_online_feeding_ == true && if_tracking_stockage == false && (constant_feeding_calculation_methods_ == 1 || constant_feeding_calculation_methods_ == 3)) {
+         constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_);
+         int size = constant_feeding_nuclide_id_vector_.size();
+         for (int i = 0; i < size; ++i) {
+             int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+             constant_feeding_vector_[Index] = constant_feeding_rate_[i];
+         }
+     }
+     if (if_constant_online_feeding_ == true && if_tracking_stockage == true && (constant_feeding_calculation_methods_ == 1 || constant_feeding_calculation_methods_ == 3)) {
+         constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_*2);
+         int size = constant_feeding_nuclide_id_vector_.size();
+         for (int i = 0; i < size; ++i) {
+             int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+             constant_feeding_vector_[Index] = constant_feeding_rate_[i];
+         }
+     }
 
     n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 }

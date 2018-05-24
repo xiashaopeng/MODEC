@@ -101,6 +101,33 @@ class Complex {
         return Complex(real_ / number , imag_ / number);
     }
 
+	// In order to allow your class to appear as the right hand operand //
+    friend Complex operator/(const double lhs, const Complex &rhs) {
+        return Complex(lhs * rhs.real_  / (rhs.real_ * rhs.real_ + rhs.imag_ * rhs.imag_), - lhs * rhs.imag_ / (rhs.real_ * rhs.real_ + rhs.imag_ * rhs.imag_));
+    }
+    friend Complex operator/(const int lhs, const Complex &rhs) {
+        return Complex(lhs * rhs.real_  / (rhs.real_ * rhs.real_ + rhs.imag_ * rhs.imag_), - lhs * rhs.imag_ / (rhs.real_ * rhs.real_ + rhs.imag_ * rhs.imag_));
+    }
+
+    friend Complex operator/(const Complex &lhs, const Complex &rhs) {
+        return Complex((lhs.real_ * rhs.real_ + lhs.imag_ * rhs.imag_)/ (rhs.real_ * rhs.real_ + rhs.imag_ * rhs.imag_), ( - lhs.real_ * rhs.imag_ + lhs.imag_ * rhs.real_) / (rhs.real_ * rhs.real_ + rhs.imag_ * rhs.imag_));
+    }
+    //
+	
+	// In order to allow your class to appear as the right hand operand //
+    friend Complex operator+(const double lhs, const Complex &rhs) {
+        return Complex(lhs + rhs.real_ , rhs.imag_ );
+    }
+    friend Complex operator+(const int lhs, const Complex &rhs) {
+        return Complex(lhs + rhs.real_ , rhs.imag_);
+    }
+
+    friend Complex operator+(const Complex &lhs, const Complex &rhs) {
+        return Complex(lhs.real_ + rhs.real_ , lhs.imag_ + rhs.imag_);
+    }
+    //
+	
+	
     // ----------------- //
 
     // 自增减运算符重载 //

@@ -41,7 +41,7 @@ void ModecClass::ModecOutputXml() {
         time->SetAttribute("unit","s");
         if(print_mode_ == 0) {
             stringstream time_string;
-            time_string << scientific << setprecision(9);
+            time_string << scientific << setprecision(output_precision_);
             time_string << cum_time[0];
             time_string << " ";
             time_string << cum_time.back();
@@ -52,7 +52,7 @@ void ModecClass::ModecOutputXml() {
             root->InsertEndChild(time);
         } else {
             stringstream time_string;
-            time_string << scientific << setprecision(9);
+            time_string << scientific << setprecision(output_precision_);
             for (int j = 0; j < size_tot; ++j) {
                 time_string << cum_time[j] << " ";
             }
@@ -69,7 +69,7 @@ void ModecClass::ModecOutputXml() {
         power->SetAttribute("unit","MW");
         if(print_mode_ == 0) {
             stringstream power_string;
-            power_string << scientific << setprecision(9);
+            power_string << scientific << setprecision(output_precision_);
             power_string << power_vector_[0];
             power_string << " ";
             power_string << power_vector_.back();
@@ -80,7 +80,7 @@ void ModecClass::ModecOutputXml() {
             root->InsertEndChild(power);
         } else {
             stringstream power_string;
-            power_string << scientific << setprecision(9);
+            power_string << scientific << setprecision(output_precision_);
             for (int j = 0; j < size_tot; ++j) {
                 power_string << power_vector_[j] << " ";
             }
@@ -96,7 +96,7 @@ void ModecClass::ModecOutputXml() {
         flux->SetAttribute("unit","cm-2*s-1");
         if(print_mode_ == 0) {
             stringstream flux_string;
-            flux_string << scientific << setprecision(9);
+            flux_string << scientific << setprecision(output_precision_);
             flux_string << flux_vector_[0];
             flux_string << " ";
             flux_string << flux_vector_.back();
@@ -107,7 +107,7 @@ void ModecClass::ModecOutputXml() {
             root->InsertEndChild(flux);
         } else {
             stringstream flux_string;
-            flux_string << scientific << setprecision(9);
+            flux_string << scientific << setprecision(output_precision_);
             for (int j = 0; j < size_tot; ++j) {
                 flux_string << flux_vector_[j] << " ";
             }
@@ -145,7 +145,7 @@ void ModecClass::ModecOutputXml() {
                 XMLElement* kinf_node = doc.NewElement("K-infinite");
                 if (print_mode_ == 0) {
                     stringstream kinf_string;
-                    kinf_string << scientific << setprecision(9);
+                    kinf_string << scientific << setprecision(output_precision_);
                     kinf_string << kinf[0];
                     kinf_string << " ";
                     kinf_string << kinf.back();
@@ -157,7 +157,7 @@ void ModecClass::ModecOutputXml() {
                     root->InsertEndChild(kinf_node);
                 } else {
                     stringstream kinf_string;
-                    kinf_string << scientific << setprecision(9);
+                    kinf_string << scientific << setprecision(output_precision_);
                     for (int j = 0; j < size_tot; ++j) {
                         kinf_string << kinf[j] << " ";
                     }
@@ -210,7 +210,7 @@ void ModecClass::ModecOutputXml() {
             nuclide->SetAttribute("name",nucl_name.c_str());
             if (print_mode_ == 0) {
                 stringstream nuclide_string;
-                nuclide_string << scientific << setprecision(9);
+                nuclide_string << scientific << setprecision(output_precision_);
                 nuclide_string << n_vector_[0][i] * convert_coeff;
                 nuclide_string << " ";
                 if(n_vector_[size_tot][i] < cutoff) {
@@ -224,7 +224,7 @@ void ModecClass::ModecOutputXml() {
                 concentration->InsertEndChild(nuclide);
             } else {
                 stringstream nuclide_string;
-                nuclide_string << scientific << setprecision(9);
+                nuclide_string << scientific << setprecision(output_precision_);
                 for (int j = 0; j < size_tot; ++j) {
                     if (n_vector_[j][i] < cutoff) {
                         nuclide_string << 0.0 << " ";
@@ -269,7 +269,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] / (3.7e10);
                     nuclide_string << " ";
@@ -285,7 +285,7 @@ void ModecClass::ModecOutputXml() {
                     act_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][i] < cutoff) {
@@ -337,7 +337,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
                     nuclide_string << " ";
@@ -353,7 +353,7 @@ void ModecClass::ModecOutputXml() {
                     decay_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][i] < cutoff) {
@@ -405,7 +405,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
                     nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
                     nuclide_string << " ";
                     if (n_vector_[size][i] < cutoff) {
@@ -420,7 +420,7 @@ void ModecClass::ModecOutputXml() {
                     ampc_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][i] < cutoff) {
@@ -472,7 +472,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
                     nuclide_string << " ";
@@ -488,7 +488,7 @@ void ModecClass::ModecOutputXml() {
                     wmpc_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][i] < cutoff) {
@@ -540,7 +540,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] * TOXCI[i];
                     nuclide_string << " ";
@@ -556,7 +556,7 @@ void ModecClass::ModecOutputXml() {
                     toxicity_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][i] < cutoff) {
@@ -588,7 +588,7 @@ void ModecClass::ModecOutputXml() {
             XMLElement *prod_tot = doc.NewElement("total");
             if (print_mode_ == 0) {
                 stringstream prod_string;
-                prod_string << scientific << setprecision(9);
+                prod_string << scientific << setprecision(output_precision_);
                 prod_string << prod_neu[0];
                 prod_string << " ";
                 prod_string << prod_neu.back();
@@ -600,7 +600,7 @@ void ModecClass::ModecOutputXml() {
                 prod_node->InsertEndChild(prod_tot);
             } else {
                 stringstream prod_string;
-                prod_string << scientific << setprecision(9);
+                prod_string << scientific << setprecision(output_precision_);
                 for (int j = 0; j < size_tot; ++j) {
                     prod_string << prod_neu[j] << " ";
                 }
@@ -628,7 +628,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[0];
                     nuclide_string << " ";
@@ -644,7 +644,7 @@ void ModecClass::ModecOutputXml() {
                     prod_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][i] < cutoff) {
@@ -677,7 +677,7 @@ void ModecClass::ModecOutputXml() {
             XMLElement *abs_tot = doc.NewElement("total");
             if(print_mode_ == 0) {
                 stringstream abs_string;
-                abs_string << scientific << setprecision(9);
+                abs_string << scientific << setprecision(output_precision_);
                 abs_string << abs_neu[0];
                 abs_string << " ";
                 abs_string << abs_neu.back();
@@ -689,7 +689,7 @@ void ModecClass::ModecOutputXml() {
                 abs_node->InsertEndChild(abs_tot);
             } else {
                 stringstream abs_string;
-                abs_string << scientific << setprecision(9);
+                abs_string << scientific << setprecision(output_precision_);
                 for(int j = 0; j < size_tot; ++j) {
                     abs_string << abs_neu[j] << " ";
                 }
@@ -717,7 +717,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[0];
                     nuclide_string << " ";
@@ -733,7 +733,7 @@ void ModecClass::ModecOutputXml() {
                     abs_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][i] < cutoff) {
@@ -794,7 +794,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if (print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
                     nuclide_string << n_vector_[0][i + nucl_size] * convert_coeff;
                     nuclide_string << " ";
                     if(n_vector_[size_tot][i + nucl_size] < cutoff) {
@@ -808,7 +808,7 @@ void ModecClass::ModecOutputXml() {
                     concentration->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
                     for (int j = 0; j < size_tot; ++j) {
                         if (n_vector_[j][i + nucl_size] < cutoff) {
                             nuclide_string << 0.0 << " ";
@@ -853,7 +853,7 @@ void ModecClass::ModecOutputXml() {
                     nuclide->SetAttribute("name",nucl_name.c_str());
                     if(print_mode_ == 0) {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         nuclide_string << n_vector_[0][i + nucl_size] * Avogadro_Constant * lambda[i] / (3.7e10);
                         nuclide_string << " ";
@@ -869,7 +869,7 @@ void ModecClass::ModecOutputXml() {
                         act_node->InsertEndChild(nuclide);
                     } else {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         for ( int j = 0; j < size_tot; ++j) {
                             if(n_vector_[j][i + nucl_size] < cutoff) {
@@ -921,7 +921,7 @@ void ModecClass::ModecOutputXml() {
                     nuclide->SetAttribute("name",nucl_name.c_str());
                     if(print_mode_ == 0) {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         nuclide_string << n_vector_[0][i + nucl_size] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
                         nuclide_string << " ";
@@ -937,7 +937,7 @@ void ModecClass::ModecOutputXml() {
                         decay_node->InsertEndChild(nuclide);
                     } else {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         for ( int j = 0; j < size_tot; ++j) {
                             if(n_vector_[j][i + nucl_size] < cutoff) {
@@ -989,7 +989,7 @@ void ModecClass::ModecOutputXml() {
                     nuclide->SetAttribute("name",nucl_name.c_str());
                     if(print_mode_ == 0) {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
                         nuclide_string << n_vector_[0][i + nucl_size] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
                         nuclide_string << " ";
                         if (n_vector_[size][i + nucl_size] < cutoff) {
@@ -1004,7 +1004,7 @@ void ModecClass::ModecOutputXml() {
                         ampc_node->InsertEndChild(nuclide);
                     } else {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         for ( int j = 0; j < size_tot; ++j) {
                             if(n_vector_[j][i + nucl_size] < cutoff) {
@@ -1056,7 +1056,7 @@ void ModecClass::ModecOutputXml() {
                     nuclide->SetAttribute("name",nucl_name.c_str());
                     if(print_mode_ == 0) {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         nuclide_string << n_vector_[0][i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
                         nuclide_string << " ";
@@ -1072,7 +1072,7 @@ void ModecClass::ModecOutputXml() {
                         wmpc_node->InsertEndChild(nuclide);
                     } else {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         for ( int j = 0; j < size_tot; ++j) {
                             if(n_vector_[j][i + nucl_size] < cutoff) {
@@ -1124,7 +1124,7 @@ void ModecClass::ModecOutputXml() {
                     nuclide->SetAttribute("name",nucl_name.c_str());
                     if(print_mode_ == 0) {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         nuclide_string << n_vector_[0][i + nucl_size] * Avogadro_Constant * lambda[i] * TOXCI[i];
                         nuclide_string << " ";
@@ -1140,7 +1140,7 @@ void ModecClass::ModecOutputXml() {
                         toxicity_node->InsertEndChild(nuclide);
                     } else {
                         stringstream nuclide_string;
-                        nuclide_string << scientific << setprecision(9);
+                        nuclide_string << scientific << setprecision(output_precision_);
 
                         for ( int j = 0; j < size_tot; ++j) {
                             if(n_vector_[j][i + nucl_size] < cutoff) {
@@ -1170,7 +1170,7 @@ void ModecClass::ModecOutputXml() {
         time->SetAttribute("unit","s");
         if(print_mode_ == 0) {
             stringstream time_string;
-            time_string << scientific << setprecision(9);
+            time_string << scientific << setprecision(output_precision_);
             time_string << cum_time[0];
             time_string << " ";
             time_string << cum_time.back();
@@ -1181,7 +1181,7 @@ void ModecClass::ModecOutputXml() {
             root->InsertEndChild(time);
         } else {
             stringstream time_string;
-            time_string << scientific << setprecision(9);
+            time_string << scientific << setprecision(output_precision_);
             for (int j = 0; j < size_tot; ++j) {
                 time_string << cum_time[j] << " ";
             }
@@ -1198,7 +1198,7 @@ void ModecClass::ModecOutputXml() {
         power->SetAttribute("unit","MW");
         if(print_mode_ == 0) {
             stringstream power_string;
-            power_string << scientific << setprecision(9);
+            power_string << scientific << setprecision(output_precision_);
             power_string << power_vector_[0];
             power_string << " ";
             power_string << power_vector_.back();
@@ -1209,7 +1209,7 @@ void ModecClass::ModecOutputXml() {
             root->InsertEndChild(power);
         } else {
             stringstream power_string;
-            power_string << scientific << setprecision(9);
+            power_string << scientific << setprecision(output_precision_);
             for (int j = 0; j < size_tot; ++j) {
                 power_string << power_vector_[j] << " ";
             }
@@ -1225,7 +1225,7 @@ void ModecClass::ModecOutputXml() {
         flux->SetAttribute("unit","cm-2*s-1");
         if(print_mode_ == 0) {
             stringstream flux_string;
-            flux_string << scientific << setprecision(9);
+            flux_string << scientific << setprecision(output_precision_);
             flux_string << flux_vector_[0];
             flux_string << " ";
             flux_string << flux_vector_.back();
@@ -1236,7 +1236,7 @@ void ModecClass::ModecOutputXml() {
             root->InsertEndChild(flux);
         } else {
             stringstream flux_string;
-            flux_string << scientific << setprecision(9);
+            flux_string << scientific << setprecision(output_precision_);
             for (int j = 0; j < size_tot; ++j) {
                 flux_string << flux_vector_[j] << " ";
             }
@@ -1274,7 +1274,7 @@ void ModecClass::ModecOutputXml() {
                 XMLElement* kinf_node = doc.NewElement("K-infinite");
                 if (print_mode_ == 0) {
                     stringstream kinf_string;
-                    kinf_string << scientific << setprecision(9);
+                    kinf_string << scientific << setprecision(output_precision_);
                     kinf_string << kinf[0];
                     kinf_string << " ";
                     kinf_string << kinf.back();
@@ -1286,7 +1286,7 @@ void ModecClass::ModecOutputXml() {
                     root->InsertEndChild(kinf_node);
                 } else {
                     stringstream kinf_string;
-                    kinf_string << scientific << setprecision(9);
+                    kinf_string << scientific << setprecision(output_precision_);
                     for (int j = 0; j < size_tot; ++j) {
                         kinf_string << kinf[j] << " ";
                     }
@@ -1355,7 +1355,7 @@ void ModecClass::ModecOutputXml() {
                 stringstream nuclide_string;
                 stringstream nuclide_loop_string;
 
-                nuclide_string << scientific << setprecision(9);
+                nuclide_string << scientific << setprecision(output_precision_);
                 nuclide_string << n_vector_[0][2 * i] * convert_coeff;
                 nuclide_string << " ";
                 if(n_vector_[size_tot][2 * i] < cutoff) {
@@ -1368,7 +1368,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->InsertEndChild(nuclide_text);
                 concentration->InsertEndChild(nuclide);
 
-                nuclide_loop_string << scientific << setprecision(9);
+                nuclide_loop_string << scientific << setprecision(output_precision_);
                 nuclide_loop_string << n_vector_[0][2 * i + 1] * convert_coeff;
                 nuclide_loop_string << " ";
                 if(n_vector_[size_tot][2 * i + 1] < cutoff) {
@@ -1384,7 +1384,7 @@ void ModecClass::ModecOutputXml() {
                 stringstream nuclide_string;
                 stringstream nuclide_loop_string;
 
-                nuclide_string << scientific << setprecision(9);
+                nuclide_string << scientific << setprecision(output_precision_);
                 for (int j = 0; j < size_tot; ++j) {
                     if (n_vector_[j][2 * i] < cutoff) {
                         nuclide_string << 0.0 << " ";
@@ -1404,7 +1404,7 @@ void ModecClass::ModecOutputXml() {
                 concentration->InsertEndChild(nuclide);
 
                 /// 外回路核素浓度
-                nuclide_loop_string << scientific << setprecision(9);
+                nuclide_loop_string << scientific << setprecision(output_precision_);
                 for (int j = 0; j < size_tot; ++j) {
                     if (n_vector_[j][2 * i + 1] < cutoff) {
                         nuclide_loop_string << 0.0 << " ";
@@ -1461,7 +1461,7 @@ void ModecClass::ModecOutputXml() {
 
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] / (3.7e10);
                     nuclide_string << " ";
@@ -1478,7 +1478,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] / (3.7e10);
                     nuclide_loop_string << " ";
@@ -1494,7 +1494,7 @@ void ModecClass::ModecOutputXml() {
                     act_loop_node->InsertEndChild(nuclide_loop);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i] < cutoff) {
@@ -1516,7 +1516,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i + 1] < cutoff) {
@@ -1578,7 +1578,7 @@ void ModecClass::ModecOutputXml() {
 
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
                     nuclide_string << " ";
@@ -1595,7 +1595,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] * Q[i] * Electron_Coulomb * 1.0e6;
                     nuclide_loop_string << " ";
@@ -1611,7 +1611,7 @@ void ModecClass::ModecOutputXml() {
                     decay_loop_node->InsertEndChild(nuclide_loop);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i] < cutoff) {
@@ -1633,7 +1633,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i + 1] < cutoff) {
@@ -1695,7 +1695,7 @@ void ModecClass::ModecOutputXml() {
 
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
                     nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
                     nuclide_string << " ";
                     if (n_vector_[size][2 * i] < cutoff) {
@@ -1711,7 +1711,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
                     nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / AMPC[i];
                     nuclide_loop_string << " ";
                     if (n_vector_[size][2 * i + 1] < cutoff) {
@@ -1726,7 +1726,7 @@ void ModecClass::ModecOutputXml() {
                     ampc_loop_node->InsertEndChild(nuclide_loop);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i] < cutoff) {
@@ -1748,7 +1748,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i + 1] < cutoff) {
@@ -1811,7 +1811,7 @@ void ModecClass::ModecOutputXml() {
 
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
                     nuclide_string << " ";
@@ -1828,7 +1828,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] / 3.7e10 / WMPC[i];
                     nuclide_loop_string << " ";
@@ -1844,7 +1844,7 @@ void ModecClass::ModecOutputXml() {
                     wmpc_loop_node->InsertEndChild(nuclide_loop);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i] < cutoff) {
@@ -1866,7 +1866,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i + 1] < cutoff) {
@@ -1929,7 +1929,7 @@ void ModecClass::ModecOutputXml() {
 
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * lambda[i] * TOXCI[i];
                     nuclide_string << " ";
@@ -1946,7 +1946,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     nuclide_loop_string << n_vector_[0][2 * i + 1] * Avogadro_Constant * lambda[i] * TOXCI[i];
                     nuclide_loop_string << " ";
@@ -1962,7 +1962,7 @@ void ModecClass::ModecOutputXml() {
                     toxicity_loop_node->InsertEndChild(nuclide_loop);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i] < cutoff) {
@@ -1984,7 +1984,7 @@ void ModecClass::ModecOutputXml() {
 
                     /// 外回路
                     stringstream nuclide_loop_string;
-                    nuclide_loop_string << scientific << setprecision(9);
+                    nuclide_loop_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i + 1] < cutoff) {
@@ -2016,7 +2016,7 @@ void ModecClass::ModecOutputXml() {
             XMLElement *prod_tot = doc.NewElement("total");
             if (print_mode_ == 0) {
                 stringstream prod_string;
-                prod_string << scientific << setprecision(9);
+                prod_string << scientific << setprecision(output_precision_);
                 prod_string << prod_neu[0];
                 prod_string << " ";
                 prod_string << prod_neu.back();
@@ -2028,7 +2028,7 @@ void ModecClass::ModecOutputXml() {
                 prod_node->InsertEndChild(prod_tot);
             } else {
                 stringstream prod_string;
-                prod_string << scientific << setprecision(9);
+                prod_string << scientific << setprecision(output_precision_);
                 for (int j = 0; j < size_tot; ++j) {
                     prod_string << prod_neu[j] << " ";
                 }
@@ -2056,7 +2056,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24 * flux_vector_[0];
                     nuclide_string << " ";
@@ -2072,7 +2072,7 @@ void ModecClass::ModecOutputXml() {
                     prod_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i] < cutoff) {
@@ -2105,7 +2105,7 @@ void ModecClass::ModecOutputXml() {
             XMLElement *abs_tot = doc.NewElement("total");
             if(print_mode_ == 0) {
                 stringstream abs_string;
-                abs_string << scientific << setprecision(9);
+                abs_string << scientific << setprecision(output_precision_);
                 abs_string << abs_neu[0];
                 abs_string << " ";
                 abs_string << abs_neu.back();
@@ -2117,7 +2117,7 @@ void ModecClass::ModecOutputXml() {
                 abs_node->InsertEndChild(abs_tot);
             } else {
                 stringstream abs_string;
-                abs_string << scientific << setprecision(9);
+                abs_string << scientific << setprecision(output_precision_);
                 for(int j = 0; j < size_tot; ++j) {
                     abs_string << abs_neu[j] << " ";
                 }
@@ -2145,7 +2145,7 @@ void ModecClass::ModecOutputXml() {
                 nuclide->SetAttribute("name",nucl_name.c_str());
                 if(print_mode_ == 0) {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     nuclide_string << n_vector_[0][2 * i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24 * flux_vector_[0];
                     nuclide_string << " ";
@@ -2161,7 +2161,7 @@ void ModecClass::ModecOutputXml() {
                     abs_node->InsertEndChild(nuclide);
                 } else {
                     stringstream nuclide_string;
-                    nuclide_string << scientific << setprecision(9);
+                    nuclide_string << scientific << setprecision(output_precision_);
 
                     for ( int j = 0; j < size_tot; ++j) {
                         if(n_vector_[j][2 * i] < cutoff) {

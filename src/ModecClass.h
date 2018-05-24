@@ -49,6 +49,8 @@ class ModecClass {
     vector<double> residue_time_;						///< 流动燃耗模型下，每个燃耗区的滞留时间
 
     int solver_selection_ = 1;						///< 燃耗求解器。0: TTA方法   1：CRAM方法（缺省值）
+	
+	double output_precision_ = 1.0e-9;						///<  输出结果的有效位数，缺省值为1.0e-9
     /** @} */
 
     /**
@@ -133,7 +135,7 @@ class ModecClass {
     * @name 连续添料参数设置
     * @{
     */
-    int constant_feeding_calculation_methods_ = 2; 				///< 添料率常数的计算方法: =1表示采用数值积分方法；=2表示采用增广矩阵方法求解
+    int constant_feeding_calculation_methods_ = 2; 				///< 添料率常数的计算方法: =1表示采用数值积分方法；=2表示采用增广矩阵方法求解；=3表示采用拉普拉斯变换方法求解
     int constant_feeding_nuclide_num_;					///< 添料核素数量
     vector<int> constant_feeding_nuclide_id_vector_;			///< 添料核素ID向量
     vector<double> constant_feeding_rate_; 					///< 添料率向量，单位为mol/s

@@ -35,7 +35,7 @@ void ModecClass::ModecProcedure() {
 //		power_vector_.push_back(0.0);
 //		while(1)
 //		{
-//			Solver.IpfCramSolver32(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+//			Solver.PfdCramSolver(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 //			if (if_constant_online_feeding_ == true)
 //			{
 //				int size_F = constant_feeding_vector_.size();
@@ -54,7 +54,7 @@ void ModecClass::ModecProcedure() {
 //					}
 //					double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 //
-//					Solver.IpfCramSolver32(TransMatrixDecay, F_temp, time_gl);
+//					Solver.PfdCramSolver(TransMatrixDecay, F_temp, time_gl);
 //
 //					for (int F_i = 0; F_i < size_F; ++F_i)
 //					{
@@ -106,7 +106,7 @@ void ModecClass::ModecProcedure() {
 //				TransMatrix.SymbolLUElimination();
 //
 //
-//					Solver.IpfCramSolver32(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+//					Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 //					if (if_constant_online_feeding_ == true)
 //					{
 //						int size_F = constant_feeding_vector_.size();
@@ -126,7 +126,7 @@ void ModecClass::ModecProcedure() {
 //
 //							double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 //
-//							Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+//							Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 //
 //							for (int F_i = 0; F_i < size_F; ++F_i)
 //							{
@@ -181,7 +181,7 @@ void ModecClass::ModecProcedure() {
 //			{
 //
 //
-//					Solver.IpfCramSolver32(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+//					Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 //					if (if_constant_online_feeding_ == true)
 //					{
 //						int size_F = constant_feeding_vector_.size();
@@ -201,7 +201,7 @@ void ModecClass::ModecProcedure() {
 //
 //							double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 //
-//							Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+//							Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 //
 //							for (int F_i = 0; F_i < size_F; ++F_i)
 //							{
@@ -257,7 +257,7 @@ void ModecClass::ModecProcedure() {
 //				TransMatrix.SymbolLUElimination();
 //
 //
-//				Solver.IpfCramSolver32(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+//				Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 //				if (if_constant_online_feeding_ == true)
 //				{
 //					int size_F = constant_feeding_vector_.size();
@@ -277,7 +277,7 @@ void ModecClass::ModecProcedure() {
 //
 //						double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 //
-//						Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+//						Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 //
 //						for (int F_i = 0; F_i < size_F; ++F_i)
 //						{
@@ -334,7 +334,7 @@ void ModecClass::ModecProcedure() {
 //			{
 //
 //
-//				Solver.IpfCramSolver32(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+//				Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 //				if (if_constant_online_feeding_ == true)
 //				{
 //					int size_F = constant_feeding_vector_.size();
@@ -354,7 +354,7 @@ void ModecClass::ModecProcedure() {
 //
 //						double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 //
-//						Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+//						Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 //
 //						for (int F_i = 0; F_i < size_F; ++F_i)
 //						{
@@ -441,7 +441,7 @@ void ModecClass::CalEquilibrium(int mode) {
 
             double time_gl = time / 2.0 * gauss_legendre_abscissa_[GL_i] + (total_time + time/2.0);
 
-            Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+            Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 
             for (int F_i = 0; F_i < size_F; ++F_i) {
                 F_mol[F_i] += F_temp[F_i];
@@ -513,7 +513,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                         vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
                         F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 1.0);
                         for (int i = 1; i <= subtime; ++i) {
-                            Solver.IpfCramSolver32(TransMatrixDecay, F_mol, time);
+                            Solver.PfdCramSolver(TransMatrixDecay, F_mol, time);
                             for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                 ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
                             }
@@ -537,7 +537,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                         F_mol[ModecNuclideLibrary.nuclide_library_vector_[0].size() / 2] = 1.0;
 
                         for (int i = 1; i <= subtime; ++i) {
-                            Solver.IpfCramSolver32(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
+                            Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
                             for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                 if (j < ModecNuclideLibrary.nuclide_library_vector_[0].size() / 2) {
                                     ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
@@ -557,7 +557,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                     TransMatrixDecay.SymbolLUElimination();
                     for (int i = 1; i <= subtime; ++i) {
                         if (if_tracking_stockage == true) {
-                            Solver.IpfCramSolver32(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                            Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
                             if (if_constant_online_feeding_ == true) {
                                 int size_F = constant_feeding_vector_.size();
 
@@ -574,7 +574,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                     double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                    Solver.IpfCramSolver32(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+                                    Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
                                     for (int F_i = 0; F_i < size_F; ++F_i) {
                                         F_mol[F_i] += F_temp[F_i];
@@ -587,7 +587,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                             }
                         } else {
-                            Solver.IpfCramSolver32(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                            Solver.PfdCramSolver(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], time);
                             if (if_constant_online_feeding_ == true) {
 
                                 int size_F = constant_feeding_vector_.size();
@@ -605,7 +605,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                     double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                    Solver.IpfCramSolver32(TransMatrixDecay, F_temp, time_gl);
+                                    Solver.PfdCramSolver(TransMatrixDecay, F_temp, time_gl);
 
                                     for (int F_i = 0; F_i < size_F; ++F_i) {
                                         F_mol[F_i] += F_temp[F_i];
@@ -705,7 +705,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                                 TransMatrix = TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
                                 TransMatrix.SymbolLUElimination();
 
-                                Solver.IpfCramSolver32(TransMatrix, F_mol, time);
+                                Solver.PfdCramSolver(TransMatrix, F_mol, time);
                                 for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                     ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
                                 }
@@ -737,7 +737,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                                 TransMatrix = TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
                                 TransMatrix.SymbolLUElimination();
 
-                                Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
+                                Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
                                 for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                     if (j < ModecNuclideLibrary.nuclide_library_vector_[0].size() / 2) {
                                         ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
@@ -767,7 +767,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                             //SpMat TransMatrix(TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24));
                             TransMatrix.SymbolLUElimination();
                             if (if_tracking_stockage == true) {
-                                Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                                Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
                                 if (if_constant_online_feeding_ == true) {
                                     int size_F = constant_feeding_vector_.size();
 
@@ -784,7 +784,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                         double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+                                        Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
                                         for (int F_i = 0; F_i < size_F; ++F_i) {
                                             F_mol[F_i] += F_temp[F_i];
@@ -797,7 +797,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                 }
                             } else {
-                                Solver.IpfCramSolver32(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                                Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
                                 if (if_constant_online_feeding_ == true) {
                                     int size_F = constant_feeding_vector_.size();
 
@@ -814,7 +814,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                         double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+                                        Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 
                                         for (int F_i = 0; F_i < size_F; ++F_i) {
                                             F_mol[F_i] += F_temp[F_i];
@@ -938,7 +938,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                             for (int i = 1; i <= subtime; ++i) {
 
-                                Solver.IpfCramSolver32(TransMatrix, F_mol, time);
+                                Solver.PfdCramSolver(TransMatrix, F_mol, time);
                                 for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                     ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
                                 }
@@ -966,7 +966,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                             for (int i = 1; i <= subtime; ++i) {
 
-                                Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
+                                Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
                                 for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                     if (j < ModecNuclideLibrary.nuclide_library_vector_[0].size() / 2) {
                                         ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
@@ -994,68 +994,90 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                         ModecNuclideLibrary.CalculateFlux(mode);
 
                         for (int i = 1; i <= subtime; ++i) {
+							// 没有添料率的情况
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用高斯-勒让德积分方法							
+                            if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1) {
+                                Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 
-                            if (if_tracking_stockage == true) {
-                                Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                                if (if_constant_online_feeding_ == true) {
-                                    int size_F = constant_feeding_vector_.size();
+								int size_F = constant_feeding_vector_.size();
 
-                                    vector<double > F_mol;
-                                    F_mol.resize(size_F);
+								vector<double > F_mol;
+								F_mol.resize(size_F);
 
-                                    int size_GL = gauss_legendre_abscissa_.size();
-                                    for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                        vector<double > F_temp;
-                                        F_temp.resize(size_F);
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                        }
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
 
-                                        double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+									Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_mol[F_i] += F_temp[F_i];
-                                        }
-                                    }
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                    }
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+								
+                            } 
+							else if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+								int size_F = constant_feeding_vector_.size();
 
-                                }
-                            } else {
-                                Solver.IpfCramSolver32(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                                if (if_constant_online_feeding_ == true) {
-                                    int size_F = constant_feeding_vector_.size();
+								vector<double > F_mol;
+								F_mol.resize(size_F);
 
-                                    vector<double > F_mol;
-                                    F_mol.resize(size_F);
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
 
-                                    int size_GL = gauss_legendre_abscissa_.size();
-                                    for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                        vector<double > F_temp;
-                                        F_temp.resize(size_F);
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                        }
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+									Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 
-                                        Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
 
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_mol[F_i] += F_temp[F_i];
-                                        }
-                                    }
-
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                    }
-
-                                }
-                            }
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用拉普拉斯变换求解添料方程
+							else if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							else if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							/*-------------------------*/
+							
                             n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 
                             ModecNuclideLibrary.CalculateFlux(mode);
@@ -1154,7 +1176,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                                 TransMatrix = TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
                                 TransMatrix.SymbolLUElimination();
 
-                                Solver.IpfCramSolver32(TransMatrix, F_mol, time);
+                                Solver.PfdCramSolver(TransMatrix, F_mol, time);
                                 for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                     ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
 
@@ -1188,7 +1210,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                                 TransMatrix = TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
                                 TransMatrix.SymbolLUElimination();
 
-                                Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
+                                Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
                                 for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                     if (j < ModecNuclideLibrary.nuclide_library_vector_[0].size() / 2) {
                                         ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
@@ -1217,7 +1239,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                             TransMatrix = (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24) + TransMatrixDecay;
                             TransMatrix.SymbolLUElimination();
                             if (if_tracking_stockage == true) {
-                                Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                                Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
                                 if (if_constant_online_feeding_ == true) {
                                     int size_F = constant_feeding_vector_.size();
 
@@ -1234,7 +1256,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                         double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+                                        Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
                                         for (int F_i = 0; F_i < size_F; ++F_i) {
                                             F_mol[F_i] += F_temp[F_i];
@@ -1247,7 +1269,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                 }
                             } else {
-                                Solver.IpfCramSolver32(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                                Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
                                 if (if_constant_online_feeding_ == true) {
                                     int size_F = constant_feeding_vector_.size();
 
@@ -1264,7 +1286,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                         double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+                                        Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 
                                         for (int F_i = 0; F_i < size_F; ++F_i) {
                                             F_mol[F_i] += F_temp[F_i];
@@ -1391,7 +1413,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                                     TransMatrix.ICFR = _ICFR;
                                     TransMatrix.LUP = _LUP;
                                 }
-                                Solver.IpfCramSolver32(TransMatrix, F_mol, time);
+                                Solver.PfdCramSolver(TransMatrix, F_mol, time);
                                 for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                     ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
                                 }
@@ -1432,7 +1454,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                                     TransMatrix.ICFR = _ICFR;
                                     TransMatrix.LUP = _LUP;
                                 }
-                                Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
+                                Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_mol, time);
                                 for (unsigned int j = 0; j < ModecNuclideLibrary.nuclide_library_vector_[0].size(); ++j) {
                                     if (j < ModecNuclideLibrary.nuclide_library_vector_[0].size() / 2) {
                                         ModecNuclideLibrary.nuclide_library_vector_[0][j] = F_mol[j];
@@ -1474,7 +1496,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                             }
 
                             if (if_tracking_stockage == true) {
-                                Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                                Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
                                 if (if_constant_online_feeding_ == true) {
                                     int size_F = constant_feeding_vector_.size();
 
@@ -1491,7 +1513,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                         double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.IpfCramSolver32(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+                                        Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
                                         for (int F_i = 0; F_i < size_F; ++F_i) {
                                             F_mol[F_i] += F_temp[F_i];
@@ -1504,7 +1526,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                 }
                             } else {
-                                Solver.IpfCramSolver32(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                                Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
                                 if (if_constant_online_feeding_ == true) {
                                     int size_F = constant_feeding_vector_.size();
 
@@ -1521,7 +1543,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                                         double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.IpfCramSolver32(TransMatrix, F_temp, time_gl);
+                                        Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 
                                         for (int F_i = 0; F_i < size_F; ++F_i) {
                                             F_mol[F_i] += F_temp[F_i];
@@ -1633,7 +1655,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
         MatrixFlow.SymbolLUElimination();
 
         for ( int i = 1; i < subtime; ++ i) {
-            Solver.IpfCramSolver32(MatrixFlow, temp_mol, time);
+            Solver.PfdCramSolver(MatrixFlow, temp_mol, time);
             n_vector_.push_back(temp_mol);
             flux_vector_.push_back(0);
             power_vector_.push_back(0);
@@ -1701,7 +1723,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                 // CRAM子步方法，提高计算精度
                 for (int subsubstep = 1; subsubstep <= 10; ++subsubstep)
-                    Solver.IpfCramSolver32(MatrixFlow, temp_mol, time / 10.0);
+                    Solver.PfdCramSolver(MatrixFlow, temp_mol, time / 10.0);
 
                 n_vector_.push_back(temp_mol);
 
@@ -1758,7 +1780,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
             for (int i = 1; i <= subtime; ++i) {
                 // CRAM子步方法，提高计算精度
                 for (int subsubstep = 1; subsubstep <= 10; ++subsubstep)
-                    Solver.IpfCramSolver32(MatrixFlow, temp_mol, time / 10.0);
+                    Solver.PfdCramSolver(MatrixFlow, temp_mol, time / 10.0);
 
                 n_vector_.push_back(temp_mol);
 
@@ -1833,7 +1855,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                 // CRAM子步方法，提高计算精度
                 for (int subsubstep = 1; subsubstep <= 10; ++subsubstep)
-                    Solver.IpfCramSolver32(MatrixFlow, temp_mol, time / 10.0);
+                    Solver.PfdCramSolver(MatrixFlow, temp_mol, time / 10.0);
 
                 n_vector_.push_back(temp_mol);
 
@@ -1906,7 +1928,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                 // CRAM子步方法，提高计算精度
                 for (int subsubstep = 1; subsubstep <= 10; ++subsubstep)
-                    Solver.IpfCramSolver32(MatrixFlow, temp_mol, time / 10.0);
+                    Solver.PfdCramSolver(MatrixFlow, temp_mol, time / 10.0);
 
                 n_vector_.push_back(temp_mol);
 

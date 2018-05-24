@@ -35,6 +35,15 @@ class SolveTrans {
      * @return The nuclide concentration vector at the end of the sub-step
     */
     void PfdCramSolver(SpMat &matrix, vector <double> &N, const double &time);
+	
+	/**
+     * @brief PFD格式的CRAM求解器，采用拉普拉斯变换求解非齐次燃耗方程
+     * @param[in] matrix The matrix storing the whole coefficients of transmutation
+     * @param[in] N The nuclide concentration vector at beginning of the sub-step
+     * @param[in] time The sub-step time of burnup calculations
+     * @return The nuclide concentration vector at the end of the sub-step
+    */
+    void PfdCramSolver(SpMat &matrix, vector <double> &N, vector <double> &F, const double &time);
 
     /**
      * @brief PFD格式的CRAM求解器重载，用于追踪堆外核素演化
@@ -45,6 +54,17 @@ class SolveTrans {
            * @return The nuclide concentration vector at the end of the sub-step
           */
     void PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time);
+	
+	/**
+     * @brief PFD格式的CRAM求解器重载，用于追踪堆外核素演化，采用拉普拉斯变换求解非齐次燃耗方程
+     * @param[in] matrix The matrix storing the whole coefficients of transmutation
+     * @param[in] TransMatrixReprocess The matrix storing the coefficients of decay in reprocess unit
+     * @param[in] N The nuclide concentration vector at beginning of the sub-step
+     * @param[in] time The sub-step time of burnup calculations
+     * @return The nuclide concentration vector at the end of the sub-step
+    */
+    void PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, vector <double> &F, const double &time);
+	
 
     /* IPF —— incomplete partial fractions 是CRAM方法数值实现的一类算法*/
     int ipf_cram_order = 16;	///< IPF格式的CRAM方法的阶数，默认16阶
