@@ -207,6 +207,7 @@ void SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess,
 
 }
 
+// 采用拉普拉斯变换方法，求解追踪堆外核素演化的非齐次燃耗方程
 void SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, vector <double> &F, const double &time) {
     const double alpha0 = 2.1248537104952237488E-16;
     const Complex alpha[8] = {
@@ -274,7 +275,6 @@ void SolveTrans::PfdCramSolver(SpMat &matrix, const SpMat &TransMatrixReprocess,
 	}
 
 }
-
 
 void SolveTrans::IpfCramSolver32(SpMat &matrix, vector <double> &N, const double &time) {
 	const double alpha0 = 6.932444346272945E-32;
@@ -415,7 +415,6 @@ void SolveTrans::IpfCramSolver48(SpMat &matrix, vector <double> &N, const double
     }
 
 }
-
 
 void SolveTrans::IpfCramSolver32(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time) {
 	const double alpha0 = 6.932444346272945E-32;

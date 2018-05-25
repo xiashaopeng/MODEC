@@ -506,10 +506,11 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 							int index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
 							TransMatrixDecay.AddElement(index, size_matrix, constant_feeding_rate_[i]);
 						}
-						TransMatrixDecay.SymbolLUElimination();
 					}
 
-                    if (if_tracking_stockage == false) {
+					TransMatrixDecay.SymbolLUElimination();
+                    
+					if (if_tracking_stockage == false) {
                         vector<double > F_mol(ModecNuclideLibrary.nuclide_library_vector_[0]);
                         F_mol.resize(ModecNuclideLibrary.nuclide_library_vector_[0].size() + 1, 1.0);
                         for (int i = 1; i <= subtime; ++i) {
@@ -556,69 +557,153 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                 } else {
                     TransMatrixDecay.SymbolLUElimination();
                     for (int i = 1; i <= subtime; ++i) {
-                        if (if_tracking_stockage == true) {
-                            Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                            if (if_constant_online_feeding_ == true) {
-                                int size_F = constant_feeding_vector_.size();
+                        //if (if_tracking_stockage == true) {
+                        //    Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                        //    if (if_constant_online_feeding_ == true) {
+                        //        int size_F = constant_feeding_vector_.size();
 
-                                vector<double > F_mol;
-                                F_mol.resize(size_F);
+                        //        vector<double > F_mol;
+                        //        F_mol.resize(size_F);
 
-                                int size_GL = gauss_legendre_abscissa_.size();
-                                for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                    vector<double > F_temp;
-                                    F_temp.resize(size_F);
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                    }
+                        //        int size_GL = gauss_legendre_abscissa_.size();
+                        //        for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+                        //            vector<double > F_temp;
+                        //            F_temp.resize(size_F);
+                        //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                        //                F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+                        //            }
 
-                                    double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+                        //            double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                    Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+                        //            Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        F_mol[F_i] += F_temp[F_i];
-                                    }
-                                }
+                        //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                        //                F_mol[F_i] += F_temp[F_i];
+                        //            }
+                        //        }
 
-                                for (int F_i = 0; F_i < size_F; ++F_i) {
-                                    ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                }
+                        //        for (int F_i = 0; F_i < size_F; ++F_i) {
+                        //            ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+                        //        }
 
-                            }
-                        } else {
-                            Solver.PfdCramSolver(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                            if (if_constant_online_feeding_ == true) {
+                        //    }
+                        //} else {
+                        //    Solver.PfdCramSolver(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                        //    if (if_constant_online_feeding_ == true) {
 
-                                int size_F = constant_feeding_vector_.size();
+                        //        int size_F = constant_feeding_vector_.size();
 
-                                vector<double > F_mol;
-                                F_mol.resize(size_F);
+                        //        vector<double > F_mol;
+                        //        F_mol.resize(size_F);
 
-                                int size_GL = gauss_legendre_abscissa_.size();
-                                for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                    vector<double > F_temp;
-                                    F_temp.resize(size_F);
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                    }
+                        //        int size_GL = gauss_legendre_abscissa_.size();
+                        //        for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+                        //            vector<double > F_temp;
+                        //            F_temp.resize(size_F);
+                        //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                        //                F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+                        //            }
 
-                                    double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+                        //            double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                    Solver.PfdCramSolver(TransMatrixDecay, F_temp, time_gl);
+                        //            Solver.PfdCramSolver(TransMatrixDecay, F_temp, time_gl);
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        F_mol[F_i] += F_temp[F_i];
-                                    }
-                                }
+                        //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                        //                F_mol[F_i] += F_temp[F_i];
+                        //            }
+                        //        }
 
-                                for (int F_i = 0; F_i < size_F; ++F_i) {
-                                    ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                }
+                        //        for (int F_i = 0; F_i < size_F; ++F_i) {
+                        //            ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+                        //        }
 
-                            }
-                        }
+                        //    }
+                        //}
+							
+						// 没有添料率的情况
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用高斯-勒让德积分方法							
+                            if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1) {
+                                Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 
+								int size_F = constant_feeding_vector_.size();
+
+								vector<double > F_mol;
+								F_mol.resize(size_F);
+
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
+
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+
+									Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
+
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+								
+                            } 
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1)
+							{
+								Solver.PfdCramSolver(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+								int size_F = constant_feeding_vector_.size();
+
+								vector<double > F_mol;
+								F_mol.resize(size_F);
+
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
+
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+
+									Solver.PfdCramSolver(TransMatrixDecay, F_temp, time_gl);
+
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
+
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用拉普拉斯变换求解添料方程
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrixDecay, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrixDecay, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							/*-------------------------*/
+	
                         n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
                         flux_vector_.push_back(0.0);
                         power_vector_.push_back(0.0);
@@ -766,68 +851,151 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                             TransMatrix = TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24);
                             //SpMat TransMatrix(TransMatrixDecay + (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24));
                             TransMatrix.SymbolLUElimination();
-                            if (if_tracking_stockage == true) {
+                            //if (if_tracking_stockage == true) {
+                            //    Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                            //    if (if_constant_online_feeding_ == true) {
+                            //        int size_F = constant_feeding_vector_.size();
+
+                            //        vector<double > F_mol;
+                            //        F_mol.resize(size_F);
+
+                            //        int size_GL = gauss_legendre_abscissa_.size();
+                            //        for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+                            //            vector<double > F_temp;
+                            //            F_temp.resize(size_F);
+                            //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //                F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+                            //            }
+
+                            //            double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+
+                            //            Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+
+                            //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //                F_mol[F_i] += F_temp[F_i];
+                            //            }
+                            //        }
+
+                            //        for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //            ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+                            //        }
+
+                            //    }
+                            //} else {
+                            //    Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                            //    if (if_constant_online_feeding_ == true) {
+                            //        int size_F = constant_feeding_vector_.size();
+
+                            //        vector<double > F_mol;
+                            //        F_mol.resize(size_F);
+
+                            //        int size_GL = gauss_legendre_abscissa_.size();
+                            //        for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+                            //            vector<double > F_temp;
+                            //            F_temp.resize(size_F);
+                            //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //                F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+                            //            }
+
+                            //            double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+
+                            //            Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
+
+                            //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //                F_mol[F_i] += F_temp[F_i];
+                            //            }
+                            //        }
+
+                            //        for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //            ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+                            //        }
+
+                            //    }
+                            //}
+							// 没有添料率的情况
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用高斯-勒让德积分方法							
+                            if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1) {
                                 Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                                if (if_constant_online_feeding_ == true) {
-                                    int size_F = constant_feeding_vector_.size();
 
-                                    vector<double > F_mol;
-                                    F_mol.resize(size_F);
+								int size_F = constant_feeding_vector_.size();
 
-                                    int size_GL = gauss_legendre_abscissa_.size();
-                                    for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                        vector<double > F_temp;
-                                        F_temp.resize(size_F);
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                        }
+								vector<double > F_mol;
+								F_mol.resize(size_F);
 
-                                        double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
 
-                                        Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_mol[F_i] += F_temp[F_i];
-                                        }
-                                    }
+									Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                    }
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
 
-                                }
-                            } else {
-                                Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                                if (if_constant_online_feeding_ == true) {
-                                    int size_F = constant_feeding_vector_.size();
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+								
+                            } 
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+								int size_F = constant_feeding_vector_.size();
 
-                                    vector<double > F_mol;
-                                    F_mol.resize(size_F);
+								vector<double > F_mol;
+								F_mol.resize(size_F);
 
-                                    int size_GL = gauss_legendre_abscissa_.size();
-                                    for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                        vector<double > F_temp;
-                                        F_temp.resize(size_F);
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                        }
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
 
-                                        double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
+									Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_mol[F_i] += F_temp[F_i];
-                                        }
-                                    }
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                    }
-
-                                }
-                            }
-
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用拉普拉斯变换求解添料方程
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							/*-------------------------*/
+	
                             n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 
                             ModecNuclideLibrary.CalculateFlux(mode);
@@ -1036,7 +1204,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 								}
 								
                             } 
-							else if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1)
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1)
 							{
 								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
 								int size_F = constant_feeding_vector_.size();
@@ -1068,11 +1236,11 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 							/*-------------------------*/
 							
 							// 添料，并采用拉普拉斯变换求解添料方程
-							else if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
 							{
 								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
 							}
-							else if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
 							{
 								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
 							}
@@ -1238,67 +1406,152 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
 
                             TransMatrix = (TransMatrixCrossSection + TransMatrixFissionYields)*(ModecNuclideLibrary.flux_ * 1.0e-24) + TransMatrixDecay;
                             TransMatrix.SymbolLUElimination();
-                            if (if_tracking_stockage == true) {
+                            //if (if_tracking_stockage == true) {
+                            //    Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                            //    if (if_constant_online_feeding_ == true) {
+                            //        int size_F = constant_feeding_vector_.size();
+
+                            //        vector<double > F_mol;
+                            //        F_mol.resize(size_F);
+
+                            //        int size_GL = gauss_legendre_abscissa_.size();
+                            //        for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+                            //            vector<double > F_temp;
+                            //            F_temp.resize(size_F);
+                            //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //                F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+                            //            }
+
+                            //            double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+
+                            //            Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+
+                            //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //                F_mol[F_i] += F_temp[F_i];
+                            //            }
+                            //        }
+
+                            //        for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //            ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+                            //        }
+
+                            //    }
+                            //} else {
+                            //    Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+                            //    if (if_constant_online_feeding_ == true) {
+                            //        int size_F = constant_feeding_vector_.size();
+
+                            //        vector<double > F_mol;
+                            //        F_mol.resize(size_F);
+
+                            //        int size_GL = gauss_legendre_abscissa_.size();
+                            //        for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+                            //            vector<double > F_temp;
+                            //            F_temp.resize(size_F);
+                            //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //                F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+                            //            }
+
+                            //            double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+
+                            //            Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
+
+                            //            for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //                F_mol[F_i] += F_temp[F_i];
+                            //            }
+                            //        }
+
+                            //        for (int F_i = 0; F_i < size_F; ++F_i) {
+                            //            ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+                            //        }
+
+                            //    }
+                            //}
+
+							// 没有添料率的情况
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用高斯-勒让德积分方法							
+                            if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1) {
                                 Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                                if (if_constant_online_feeding_ == true) {
-                                    int size_F = constant_feeding_vector_.size();
 
-                                    vector<double > F_mol;
-                                    F_mol.resize(size_F);
+								int size_F = constant_feeding_vector_.size();
 
-                                    int size_GL = gauss_legendre_abscissa_.size();
-                                    for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                        vector<double > F_temp;
-                                        F_temp.resize(size_F);
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                        }
+								vector<double > F_mol;
+								F_mol.resize(size_F);
 
-                                        double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
 
-                                        Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_mol[F_i] += F_temp[F_i];
-                                        }
-                                    }
+									Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                    }
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
 
-                                }
-                            } else {
-                                Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                                if (if_constant_online_feeding_ == true) {
-                                    int size_F = constant_feeding_vector_.size();
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+								
+                            } 
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+								int size_F = constant_feeding_vector_.size();
 
-                                    vector<double > F_mol;
-                                    F_mol.resize(size_F);
+								vector<double > F_mol;
+								F_mol.resize(size_F);
 
-                                    int size_GL = gauss_legendre_abscissa_.size();
-                                    for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                        vector<double > F_temp;
-                                        F_temp.resize(size_F);
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                        }
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
 
-                                        double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
+									Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_mol[F_i] += F_temp[F_i];
-                                        }
-                                    }
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                    }
-
-                                }
-                            }
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用拉普拉斯变换求解添料方程
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							/*-------------------------*/
+	
                             n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 
                             ModecNuclideLibrary.CalculateFlux(mode);
@@ -1495,67 +1748,90 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
                                 TransMatrix.LUP = _LUP;
                             }
 
-                            if (if_tracking_stockage == true) {
+                            // 没有添料率的情况
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == false)
+							{
+								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用高斯-勒让德积分方法							
+                            if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1) {
                                 Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                                if (if_constant_online_feeding_ == true) {
-                                    int size_F = constant_feeding_vector_.size();
 
-                                    vector<double > F_mol;
-                                    F_mol.resize(size_F);
+								int size_F = constant_feeding_vector_.size();
 
-                                    int size_GL = gauss_legendre_abscissa_.size();
-                                    for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                        vector<double > F_temp;
-                                        F_temp.resize(size_F);
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                        }
+								vector<double > F_mol;
+								F_mol.resize(size_F);
 
-                                        double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
 
-                                        Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_mol[F_i] += F_temp[F_i];
-                                        }
-                                    }
+									Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, F_temp, time_gl);
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                    }
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
 
-                                }
-                            } else {
-                                Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
-                                if (if_constant_online_feeding_ == true) {
-                                    int size_F = constant_feeding_vector_.size();
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+								
+                            } 
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 1)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], time);
+								int size_F = constant_feeding_vector_.size();
 
-                                    vector<double > F_mol;
-                                    F_mol.resize(size_F);
+								vector<double > F_mol;
+								F_mol.resize(size_F);
 
-                                    int size_GL = gauss_legendre_abscissa_.size();
-                                    for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
-                                        vector<double > F_temp;
-                                        F_temp.resize(size_F);
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
-                                        }
+								int size_GL = gauss_legendre_abscissa_.size();
+								for (int GL_i = 0; GL_i < size_GL; ++GL_i) {
+									vector<double > F_temp;
+									F_temp.resize(size_F);
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_temp[F_i] = constant_feeding_vector_[F_i] * gauss_legendre_weight_[GL_i] * time / 2.0;
+									}
 
-                                        double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
+									double time_gl = time / 2.0*(1 - gauss_legendre_abscissa_[GL_i]);
 
-                                        Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
+									Solver.PfdCramSolver(TransMatrix, F_temp, time_gl);
 
-                                        for (int F_i = 0; F_i < size_F; ++F_i) {
-                                            F_mol[F_i] += F_temp[F_i];
-                                        }
-                                    }
+									for (int F_i = 0; F_i < size_F; ++F_i) {
+										F_mol[F_i] += F_temp[F_i];
+									}
+								}
 
-                                    for (int F_i = 0; F_i < size_F; ++F_i) {
-                                        ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
-                                    }
-
-                                }
-                            }
+								for (int F_i = 0; F_i < size_F; ++F_i) {
+									ModecNuclideLibrary.nuclide_library_vector_[0][F_i] += F_mol[F_i]; // 将添料率常数的贡献加入总的核素浓度中去
+								}
+							}
+							/*-------------------------*/
+							
+							// 添料，并采用拉普拉斯变换求解添料方程
+							if (if_tracking_stockage == true && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrix, TransMatrixReprocess, TransMatrixStockage, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							if (if_tracking_stockage == false && if_constant_online_feeding_ == true && constant_feeding_calculation_methods_ == 3)
+							{
+								Solver.PfdCramSolver(TransMatrix, ModecNuclideLibrary.nuclide_library_vector_[0], constant_feeding_vector_, time);
+							}
+							/*-------------------------*/
+							
                             n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
 
                             ModecNuclideLibrary.CalculateFlux(mode);
@@ -1623,6 +1899,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
         }
         break;
     }
+
     case 3: { // 纯衰变+流动
         int num_depletion_zone( residue_time_.size() ); // 燃耗区数量
         int spmat_dimen( TransMatrixDecay.spmat_dimen_ );
@@ -1662,6 +1939,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
         }
         break;
     }
+
     case 4: { // 定通量+流动
         if (lib_tag_ == 1) { // 读取DEPTH数据库
             int num_depletion_zone(residue_time_.size()); // 燃耗区数量
@@ -1794,6 +2072,7 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
         }
         break;
     }
+
     case 5: { // 定功率+流动
         if (lib_tag_ == 1) { // 读取DEPTH数据库
             int num_depletion_zone(residue_time_.size()); // 燃耗区数量
@@ -1943,4 +2222,5 @@ void ModecClass::Evolution(int mode, double time, int subtime) {
         break;
     }
     }
+
 }
