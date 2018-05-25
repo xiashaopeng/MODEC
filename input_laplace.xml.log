@@ -3,16 +3,16 @@
  ----------------------------------------------------------
 
 
-[ D:\MODEC\MODEC ]
-[ 2018-05-24 22:31:22 ]
+[ C:\Users\œƒ…Ÿ≈Ù\Documents\MODEC_src\MODEC_linux\modec ]
+[ 2018-05-25 14:46:00 ]
 
 Time cost at each period: 
 -------------------------------------------------
-   Initialization : 0.145s
-   Calculation    : 0.043s
-   Saving         : 0.164s
+   Initialization : 0.241s
+   Calculation    : 0.047s
+   Saving         : 0.213s
 ------------------------------
-   Total          : 0.352s
+   Total          : 0.501s
 -------------------------------------------------
 
 
