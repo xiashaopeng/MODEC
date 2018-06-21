@@ -105,10 +105,21 @@ void ModecClass::ModecInitial(int argc, char **argv) {
     string solver_basic = solver_set->Attribute("solver_basic");
     if (solver_basic == "CRAM") {
         solver_selection_ = 1;
-    } else if (solver_basic.substr(0,3) == "TTA") {
+    } 
+	else if (solver_basic.substr(0,3) == "TTA") {
         solver_selection_ = 0;
         Solver.cutoff_std_ = atof(solver_basic.substr(3).c_str());
-    }
+	}
+	else if (solver_basic.substr(0, 4) == "QRAM") {
+		solver_selection_ = 2;
+		qram_order_ = atoi(solver_basic.substr(4).c_str());
+	}
+	else if (solver_basic == "CRAM32") {
+		solver_selection_ = 3;
+	}
+	else if (solver_basic == "CRAM48") {
+		solver_selection_ = 4;
+	}
 
     //	流动燃耗设置
     XMLElement *flow_set = solver_set->NextSiblingElement();
@@ -129,6 +140,7 @@ void ModecClass::ModecInitial(int argc, char **argv) {
 
     //	打印设置
     XMLElement *print_set = flow_set->NextSiblingElement();
+	output_filename_ = print_set->Attribute("filename");
 	output_precision_ = atoi(print_set->Attribute("print_precision"));
     print_mode_ = atoi(print_set->Attribute("print_den"));
     if_print_activity_ = atoi(print_set->Attribute("print_act"));
@@ -290,8 +302,13 @@ void ModecClass::ModecInitial(int argc, char **argv) {
         string method_name;
         method >> method_name;
 		
+		// 多项式阶数 + 1，与添料率数量对应
+		int poly_order = atoi(continously_feeding->Attribute("polynomial")) + 1;
+		constant_feeding_rate_.resize(poly_order);
+		constant_feeding_vector_.resize(poly_order);
+
 		// 高斯-勒让德积分求解非齐次燃耗方程
-        if( method_name == "Gauss" && solver_selection_ == 1) {
+        if( method_name == "Gauss" && solver_selection_ != 0) {
             constant_feeding_calculation_methods_ = 1;
             method >> GaussLegendreQuadrature::GL_order;
             gauss_legendre_weight_ = GaussLegendreQuadrature::gauss_legendre_weight_[GaussLegendreQuadrature::GL_order];
@@ -299,7 +316,7 @@ void ModecClass::ModecInitial(int argc, char **argv) {
         }
 		
 		// 拉普拉斯变换求解非齐次燃耗方程
-		if( method_name == "Laplace" && solver_selection_ == 1) {
+		if( method_name == "Laplace" && solver_selection_ != 0) {
             constant_feeding_calculation_methods_ = 3;
         }
 		/*-------------------------------------*/
@@ -307,30 +324,44 @@ void ModecClass::ModecInitial(int argc, char **argv) {
         XMLElement * feed_nuclide = continously_feeding->FirstChildElement();
         while (feed_nuclide) {
             constant_feeding_nuclide_id_vector_.push_back(atoi(feed_nuclide->Attribute("zai")));
-            constant_feeding_rate_.push_back(atof(feed_nuclide->Attribute("feed_rate")));
+			stringstream feed_rate_ss(feed_nuclide->Attribute("feed_rate"));
+			double feed_rate = 0.0;
+			for (int i = 0; i < poly_order; ++i)
+			{
+				feed_rate_ss >> feed_rate;
+				constant_feeding_rate_[i].push_back(feed_rate);
+			}
+            
             feed_nuclide = feed_nuclide->NextSiblingElement();
         }
-        constant_feeding_nuclide_num_ = constant_feeding_rate_.size();
+        constant_feeding_nuclide_num_ = constant_feeding_rate_[0].size();
     }
 
 
     /*---------------------------------------------------------------------------------------------------------------------------------------------*/
 
-     if (if_constant_online_feeding_ == true && if_tracking_stockage == false && (constant_feeding_calculation_methods_ == 1 || constant_feeding_calculation_methods_ == 3)) {
-         constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_);
+     if (if_constant_online_feeding_ == true && if_tracking_stockage == false && (constant_feeding_calculation_methods_ == 1 || constant_feeding_calculation_methods_ == 3)) {         
          int size = constant_feeding_nuclide_id_vector_.size();
-         for (int i = 0; i < size; ++i) {
-             int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-             constant_feeding_vector_[Index] = constant_feeding_rate_[i];
-         }
+		 for (int j = 0; j < constant_feeding_vector_.size(); ++j)
+		 {
+			 constant_feeding_vector_[j].resize(ModecNuclideLibrary.nuclide_number_);
+			 for (int i = 0; i < size; ++i) {
+				 int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+				 constant_feeding_vector_[j][Index] = constant_feeding_rate_[j][i];
+			 }
+		 }
+
      }
-     if (if_constant_online_feeding_ == true && if_tracking_stockage == true && (constant_feeding_calculation_methods_ == 1 || constant_feeding_calculation_methods_ == 3)) {
-         constant_feeding_vector_.resize(ModecNuclideLibrary.nuclide_number_*2);
+     if (if_constant_online_feeding_ == true && if_tracking_stockage == true && (constant_feeding_calculation_methods_ == 1 || constant_feeding_calculation_methods_ == 3)) {         
          int size = constant_feeding_nuclide_id_vector_.size();
-         for (int i = 0; i < size; ++i) {
-             int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
-             constant_feeding_vector_[Index] = constant_feeding_rate_[i];
-         }
+		 for (int j = 0; j < constant_feeding_vector_.size(); ++j)
+		 {
+			 constant_feeding_vector_[j].resize(ModecNuclideLibrary.nuclide_number_ * 2);
+			 for (int i = 0; i < size; ++i) {
+				 int Index = ModecNuclideLibrary.GetNuclIndex(constant_feeding_nuclide_id_vector_[i]);
+				 constant_feeding_vector_[j][Index] = constant_feeding_rate_[j][i];
+			 }
+		 }
      }
 
     n_vector_.push_back(ModecNuclideLibrary.nuclide_library_vector_[0]);
@@ -1072,11 +1103,12 @@ void ModecClass::BuildSpMat() {
                 break;
             }
         }
-        if (solver_selection_ == 1) {
+        if (solver_selection_ != 0) {
             DecayToSpMat();
-        } else if(solver_selection_ == 0) {
+        } else {
             DecayToSpMatForTta();
         }
+
         if (i < size) { // 耦合TRITON
             XSfromTriton();
             CalculateEffectiveFissionYields();
@@ -1090,16 +1122,16 @@ void ModecClass::BuildSpMat() {
             }
         }
         if (i >= size) { // 纯衰变情形
-            if (solver_selection_ == 1) {
+            if (solver_selection_ != 0) {
                 ReadFromDepthLib();
-            } else if (solver_selection_ == 0) {
+            } else {
                 ReadFromDepthLibForTta();
             }
         } else {
-            if (solver_selection_ == 1) {
+            if (solver_selection_ != 0) {
                 ReadFromDepthLib();
                 ConstructFissionYieldsSpMat();
-            } else if (solver_selection_ == 0) {
+            } else {
                 ReadFromDepthLibForTta();
                 ConstructFissionYieldsSpMatForTta();
             }
@@ -1112,9 +1144,9 @@ void ModecClass::BuildSpMat() {
                 break;
             }
         }
-        if (solver_selection_ == 1) {
+        if (solver_selection_ != 0) {
             ReadFromCouple();
-        } else if( solver_selection_ == 0 ) {
+        } else {
             ReadFromCoupleForTta();
         }
     }

@@ -126,7 +126,19 @@ class Complex {
         return Complex(lhs.real_ + rhs.real_ , lhs.imag_ + rhs.imag_);
     }
     //
-	
+
+	// In order to allow your class to appear as the right hand operand //
+    friend Complex operator-(const double lhs, const Complex &rhs) {
+        return Complex(lhs - rhs.real_ , -rhs.imag_ );
+    }
+    friend Complex operator-(const int lhs, const Complex &rhs) {
+        return Complex(lhs - rhs.real_ , -rhs.imag_);
+    }
+
+    friend Complex operator-(const Complex &lhs, const Complex &rhs) {
+        return Complex(lhs.real_ - rhs.real_ , lhs.imag_ - rhs.imag_);
+    }
+    //
 	
     // ----------------- //
 
@@ -272,6 +284,7 @@ class Complex {
         os << "(" << number.real_ <<","<< number.imag_<<")";
         return os;
     }
+
 };
 
 #endif

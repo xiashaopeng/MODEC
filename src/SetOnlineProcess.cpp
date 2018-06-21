@@ -4,7 +4,7 @@ using namespace std;
 
 //////////////////////////////////   在线后处理的系数加入   /////////////////////////////////////////////////
 void ModecClass::AddOnlineReprocessingCoeffi() {
-    if (solver_selection_ == 1) {
+    if (solver_selection_ != 0) {
         int group_num = remove_rate_vector_.size();
         vector<int> eleList;
         for (int i = 0; i < group_num; ++i) {
@@ -46,7 +46,7 @@ void ModecClass::AddOnlineReprocessingCoeffi() {
             }
         }
 
-    } else if (solver_selection_ == 0) {
+    } else {
         int group_num = remove_rate_vector_.size();
         vector<int> eleList;
         for (int i = 0; i < group_num; ++i) {

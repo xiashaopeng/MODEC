@@ -128,7 +128,7 @@ void ModecClass::ModecOutputXml() {
             abs_neu.resize(size_tot + 1);
 
             for (int j = 0; j <= size_tot; ++j) {
-                for (int i = 0; i <= nucl_size; ++i) {
+                for (int i = 0; i < nucl_size; ++i) {
                     prod_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24;
                     abs_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24;
                 }
@@ -1257,7 +1257,7 @@ void ModecClass::ModecOutputXml() {
             abs_neu.resize(size_tot + 1);
 
             for (int j = 0; j <= size_tot; ++j) {
-                for (int i = 0; i <= nucl_size; ++i) {
+                for (int i = 0; i < nucl_size; ++i) {
                     prod_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[9][i] * 1.0e-24;
                     abs_neu[j] += n_vector_[j][i] * Avogadro_Constant * ModecNuclideLibrary.nuclide_library_vector_[6][i] * 1.0e-24;
                 }
@@ -2185,7 +2185,7 @@ void ModecClass::ModecOutputXml() {
         }
     }
 
-    if(input_filename_ != "modec.inp") {
+    if(input_filename_ == "") {
         output_filename_ =  input_filename_.substr(0, input_filename_.find_last_of(".")) + "_out" + ".xml";
     }
     doc.SaveFile(output_filename_.c_str());

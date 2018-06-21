@@ -12,8 +12,10 @@
 
 #include "SparseMatrix.h"
 #include "NuclList.h"
+#include "Math.h"
 #include <algorithm>
 #include <stack>
+#include <math.h>
 
 using namespace std;
 
@@ -43,7 +45,7 @@ class SolveTrans {
      * @param[in] time The sub-step time of burnup calculations
      * @return The nuclide concentration vector at the end of the sub-step
     */
-    void PfdCramSolver(SpMat &matrix, vector <double> &N, vector <double> &F, const double &time);
+    void PfdCramSolver(SpMat &matrix, vector <double> &N, vector<vector <double> > &F, const double &time);
 
     /**
      * @brief PFD格式的CRAM求解器重载，用于追踪堆外核素演化
@@ -73,17 +75,29 @@ class SolveTrans {
     * @brief IPF格式的CRAM求解器
     */
     void IpfCramSolver32(SpMat &matrix, vector <double> &N, const double &time);
+
+	void IpfCramSolver32(SpMat & matrix, vector<double>& N, vector<double>& F, const double & time);
 	
 	/**
     * @brief IPF格式的CRAM求解器
     */
     void IpfCramSolver48(SpMat &matrix, vector <double> &N, const double &time);
 
+	void IpfCramSolver48(SpMat & matrix, vector<double>& N, vector<double>& F, const double & time);
+
     /**
     * @brief IPF格式的求解器重载，用于追踪堆外核素演化
     */
     void IpfCramSolver32(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time);
 
+
+	void QramSolver(int &order, SpMat & matrix, vector<double>& N, const double & time);
+
+	void QramSolver(int &order, SpMat & matrix, vector<double>& N, vector<vector<double> > &F, const double & time);
+
+	void QramSolver(const int &order, SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time);
+
+	void QramSolver(const int &order, SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, vector <double> &F, const double &time);
     /**
     * @name TTA公式主要计算参数
     * @{

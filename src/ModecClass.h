@@ -48,7 +48,8 @@ class ModecClass {
     int if_flow_mode_ = 0;							///< 判断是否求解流动燃耗模型: 0: 不流动模型; 1: 流动模型
     vector<double> residue_time_;						///< 流动燃耗模型下，每个燃耗区的滞留时间
 
-    int solver_selection_ = 1;						///< 燃耗求解器。0: TTA方法   1：CRAM方法（缺省值）
+    int solver_selection_ = 1;						///< 燃耗求解器。0: TTA方法   1：CRAM方法（缺省值） 2: QRAM方法  3：CRAM32  4：CRAM48
+	int qram_order_ = 32;									///< QRAM方法的阶数，默认32阶
 	
 	double output_precision_ = 1.0e-9;						///<  输出结果的有效位数，缺省值为1.0e-9
     /** @} */
@@ -138,9 +139,10 @@ class ModecClass {
     int constant_feeding_calculation_methods_ = 2; 				///< 添料率常数的计算方法: =1表示采用数值积分方法；=2表示采用增广矩阵方法求解；=3表示采用拉普拉斯变换方法求解
     int constant_feeding_nuclide_num_;					///< 添料核素数量
     vector<int> constant_feeding_nuclide_id_vector_;			///< 添料核素ID向量
-    vector<double> constant_feeding_rate_; 					///< 添料率向量，单位为mol/s
+    vector<vector<double> > constant_feeding_rate_; 					///< 添料率向量，单位为mol/s
 
-    vector<double > constant_feeding_vector_;				///< 用于数值积分法的添料率向量
+	// 考虑多项式添料
+    vector<vector<double> > constant_feeding_vector_;				///< 用于数值积分法的添料率向量
     vector<double> gauss_legendre_weight_;					///< 高斯-勒让德求积权重
     vector<double> gauss_legendre_abscissa_;				///< 高斯-勒让德求积点
     /** @} */
@@ -260,10 +262,11 @@ class ModecClass {
     * 输出燃耗矩阵到文件中，用于研究之用
     */
     void TransitionMatrixOutput(SpMat matrix) { // 指定矩阵元素输出到文件中
-        int matrix_dimension = ModecNuclideLibrary.nuclide_number_;
+        int matrix_dimension = matrix.spmat_dimen_;
 
         ofstream matrix_output;
         matrix_output.open("transition_matrix.out");
+		matrix_output << scientific << setprecision(output_precision_);
         for (int _row = 0; _row < matrix_dimension; ++_row) {
             for (int _col = 0; _col < matrix_dimension; ++_col) {
                 matrix_output<< matrix.Element(_row,_col)<<" ";
