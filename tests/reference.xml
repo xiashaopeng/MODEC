@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODEC>
+	<Settings>
+		<DataLib type="DepthLib" file="../lib/DepthMainLib_2.lib"/>
+		<SolverSet solver_basic="CRAM48" />
+		<FlowSet tag="0" residue_time=" 10 10 "/>
+		<PrintSet filename="cram48_feed_10a.xml" print_precision="15" print_den="1" print_act="1" print_q="1" print_ampc="1" print_wmpc="1" print_tox="1" print_kinf="1" print_prod="1" print_abs="1"/>
+	</Settings>
+	<Depletions>
+		<!--Depletion mode="power" value="1.025" time="100d" step="5"/-->
+		<Depletion mode="flux" value="1.0E+14" time="100d" step="1"/>	
+	</Depletions>
+	<Nuclides units="mol">
+		<Nuclide zai="80160" density="2.0"/>
+		<Nuclide zai="922350" density="0.03037"/>
+		<Nuclide zai="922380" density="0.96963"/>
+	</Nuclides>
+	<OnlineReprocessing tag="0" track_storage="1">
+		<RemoveElement coeff="3.333e-2">1 2 7 8 10 18 40 41 48 49 42 36 54 86 87 79 78 77 31 46</RemoveElement>
+		<RemoveElement coeff="3.333e-2">76 47 80 84 45 44 29 83 75 51 43 70 71 81 82</RemoveElement>
+		<RemoveElement coeff="5.787e-8">5 13 14 30 70 32 33 50 52 72 73 74 22 23 24 25 26 27 28</RemoveElement>
+		<RemoveElement coeff="2.3148e-7">17 34 35 53 85 21 39 57 58 59 60 61 62 63 64 65 66 67 68 69</RemoveElement>
+		<RemoveElement coeff="1.15741e-8">11 12 19 20 38 56 88 55 37</RemoveElement>
+		<RemoveElement coeff="1.15741e-6">91</RemoveElement>
+	</OnlineReprocessing>
+	<ContinouslyFeeding tag="1" polynomial="10" method="Augmented">
+		<FeedNuclide zai="80160" feed_rate="2.0e-6 -2.3148148148e-13 2.6791838134430725e-20 -3.1009071914850376e-27 3.5890129531076824e-34 -4.153950177207966e-41 4.8078127051018124e-48 -5.564598038312283e-55 6.440506988787365e-62 -7.454290496281672e-69 8.627651037363046e-76 -9.985707219170192e-83 1.155753150366921e-89 -1.337677257369121e-96 1.548237566399445e-103 -1.791941627777136e-110"/>
+		<FeedNuclide zai="922350" feed_rate="3.037e-8 -3.515046296e-15 4.068340620713306e-22 -4.70872757027003e-29 5.4499161692940163e-36 -6.307773344090297e-43 7.300663592697103e-50 -8.449842121177202e-57 9.779909862473614e-64 -1.131934011860372e-70 1.310108810023579e-77 -1.516329641230994e-84 1.755011158832169e-91 -2.031262915315010e-98 2.350998744577558e-105 -2.721063361779581e-112"/>
+		<FeedNuclide zai="922380" feed_rate="9.6963e-7 -1.122256944e-13 1.2989085005144032e-20 -1.5033663200398186e-27 1.7400073148609012e-34 -2.01389735516308e-41 2.330899716623935e-48 -2.697800597944369e-55 3.122454395768946e-62 -3.613951846954799e-69 4.182814637679166e-76 -4.841220645461997e-83 5.603264635951385e-90 -6.485259995314104e-97 7.506087957539472e-104 -8.687601802707722e-111"/>
+	</ContinouslyFeeding>
+</MODEC>

@@ -648,6 +648,8 @@ void SolveTrans::IpfCramSolver48(SpMat &matrix, vector <double> &N, const double
 
 }
 
+// 拉普拉斯变换方法求非齐次燃耗方程
+// 方法有问题，切勿使用
 void SolveTrans::IpfCramSolver48(SpMat &matrix, vector <double> &N, vector <double> &F, const double &time) {
 	const double alpha0 = 2.258038182743983E-47;
 	const Complex alpha[24] = {
@@ -727,6 +729,163 @@ void SolveTrans::IpfCramSolver48(SpMat &matrix, vector <double> &N, vector <doub
 	for (unsigned int i = 0; i < dim; ++i) {
 		//N_eol[i] += N[i] * alpha0;
 		N[i] = N_eol[i].real_ * alpha0;
+	}
+
+}
+
+// 追踪堆外核素演化
+void SolveTrans::IpfCramSolver48(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time) {
+	const double alpha0 = 2.258038182743983E-47;
+	const Complex alpha[24] = {
+		Complex(+6.387380733878774E+02, -6.743912502859256E+02),
+		Complex(+1.909896179065730E+02, -3.973203432721332E+02),
+		Complex(+4.236195226571914E+02, -2.041233768918671E+03),
+		Complex(+4.645770595258726E+02, -1.652917287299683E+03),
+		Complex(+7.765163276752433E+02, -1.783617639907328E+04),
+		Complex(+1.907115136768522E+03, -5.887068595142284E+04),
+		Complex(+2.909892685603256E+03, -9.953255345514560E+03),
+		Complex(+1.944772206620450E+02, -1.427131226068449E+03),
+		Complex(+1.382799786972332E+05, -3.256885197214938E+06),
+		Complex(+5.628442079602433E+03, -2.924284515884309E+04),
+		Complex(+2.151681283794220E+02, -1.121774011188224E+03),
+		Complex(+1.324720240514420E+03, -6.370088443140973E+04),
+		Complex(+1.617548476343347E+04, -1.008798413156542E+06),
+		Complex(+1.112729040439685E+02, -8.837109731680418E+01),
+		Complex(+1.074624783191125E+02, -1.457246116408180E+02),
+		Complex(+8.835727765158191E+01, -6.388286188419360E+01),
+		Complex(+9.354078136054179E+01, -2.195424319460237E+02),
+		Complex(+9.418142823531573E+01, -6.719055740098035E+02),
+		Complex(+1.040012390717851E+02, -1.693747595553868E+02),
+		Complex(+6.861882624343235E+01, -1.177598523430493E+01),
+		Complex(+8.766654491283722E+01, -4.596464999363902E+03),
+		Complex(+1.056007619389650E+02, -1.738294585524067E+03),
+		Complex(+7.738987569039419E+01, -4.311715386228984E+01),
+		Complex(+1.041366366475571E+02, -2.777743732451969E+02)
+	};
+
+	const Complex theta[24] = {
+		Complex(-4.465731934165702E+01, +6.233225190695437E+01),
+		Complex(-5.284616241568964E+00, +4.057499381311059E+01),
+		Complex(-8.867715667624458E+00, +4.325515754166724E+01),
+		Complex(+3.493013124279215E+00, +3.281615453173585E+01),
+		Complex(+1.564102508858634E+01, +1.558061616372237E+01),
+		Complex(+1.742097597385893E+01, +1.076629305714420E+01),
+		Complex(-2.834466755180654E+01, +5.492841024648724E+01),
+		Complex(+1.661569367939544E+01, +1.316994930024688E+01),
+		Complex(+8.011836167974721E+00, +2.780232111309410E+01),
+		Complex(-2.056267541998229E+00, +3.794824788914354E+01),
+		Complex(+1.449208170441839E+01, +1.799988210051809E+01),
+		Complex(+1.853807176907916E+01, +5.974332563100539E+00),
+		Complex(+9.932562704505182E+00, +2.532823409972962E+01),
+		Complex(-2.244223871767187E+01, +5.179633600312162E+01),
+		Complex(+8.590014121680897E-01, +3.536456194294350E+01),
+		Complex(-1.286192925744479E+01, +4.600304902833652E+01),
+		Complex(+1.164596909542055E+01, +2.287153304140217E+01),
+		Complex(+1.806076684783089E+01, +8.368200580099821E+00),
+		Complex(+5.870672154659249E+00, +3.029700159040121E+01),
+		Complex(-3.542938819659747E+01, +5.834381701800013E+01),
+		Complex(+1.901323489060250E+01, +1.194282058271408E+00),
+		Complex(+1.885508331552577E+01, +3.583428564427879E+00),
+		Complex(-1.734689708174982E+01, +4.883941101108207E+01),
+		Complex(+1.316284237125190E+01, +2.042951874827759E+01)
+	};
+
+	int dim = N.size();
+
+	// 判断dim是否为奇数，若为奇数，意味着采用了利用增广矩阵方法求解常添料率的方法
+	// 若为偶数，则采用数值积分方法求解常添料率燃耗方程
+	if (dim % 2 == 0) {
+		vector <Complex> N_core(dim / 2);
+		vector <Complex> N_stockage(dim / 2);
+		vector <Complex> N_eol;
+		N_eol.resize(dim);
+
+		vector <Complex> N_temp_core(dim / 2);
+		vector <Complex> N_temp_stockage(dim / 2);
+
+		vector <Complex> N_stockage_c(dim / 2);
+
+		for (unsigned int i = 0; i < dim / 2; ++i) {
+			N_core[i] = N[i];
+			N_stockage[i] = N[i + dim / 2];
+		}
+		for (int j = 0; j < 24; ++j) {
+
+			N_temp_core = matrix.LUEliminationForIpfCram(theta[j], time, N_core);
+
+			for (unsigned int i = 0; i < dim / 2; ++i) {
+				N_core[i] += 2.0 * (alpha[j] * N_temp_core[i]).real_;
+			}
+
+			for (int ii = 0; ii < dim / 2; ++ii) {
+				N_stockage_c[ii] = N_stockage[ii] - TransMatrixReprocess.diagonal_val_[ii] * time * N_temp_core[ii];
+			}
+			N_temp_stockage = TransMatrixStockage.LUEliminationForIpfCram(theta[j], time, N_stockage_c);
+
+			for (unsigned int i = 0; i < dim / 2; ++i) {
+				N_stockage[i] += 2.0 * (alpha[j] * N_temp_stockage[i]).real_;
+			}
+
+		}
+
+		for (unsigned int i = 0; i < dim; ++i) {
+			if (i < dim / 2) {
+				N[i] = N_core[i].real_ * alpha0;
+			}
+			else {
+				N[i] = N_stockage[i - dim / 2].real_ * alpha0;
+			}
+		}
+
+		//return N_eol_real;
+	}
+	else {
+		vector< Complex > N_core((dim + 1) / 2); // 堆芯核素浓度向量多一个表示添料率的伪核素，其数值等于1
+												 //vector <Complex > N_temp(dim / 2);
+		vector < Complex > N_stockage((dim - 1) / 2);
+		vector < Complex > N_eol;
+		N_eol.resize(dim);
+		//N_eol_real.resize(dim / 2);
+
+		vector <Complex > N_temp_core((dim + 1) / 2);
+		vector <Complex > N_temp_stockage((dim - 1) / 2);
+
+		vector <Complex > N_stockage_c((dim - 1) / 2);
+
+		for (int i = 0; i < (dim - 1) / 2; ++i) {
+			N_core[i] = N[i];
+			N_stockage[i] = N[i + (dim + 1) / 2];
+		}
+		N_core[(dim - 1) / 2] = N[(dim - 1) / 2];
+
+		for (int j = 0; j < 24; ++j) {
+
+			N_temp_core = matrix.LUEliminationForIpfCram(theta[j], time, N_core);
+
+			for (int i = 0; i < (dim + 1) / 2; ++i) {
+				N_core[i] += 2.0 * (alpha[j] * N_temp_core[i]).real_;
+			}
+
+			for (int ii = 0; ii < (dim - 1) / 2; ++ii) {
+				N_stockage_c[ii] = N_stockage[ii] - TransMatrixReprocess.diagonal_val_[ii] * time * N_temp_core[ii];
+			}
+			N_temp_stockage = TransMatrixStockage.LUEliminationForIpfCram(theta[j], time, N_stockage_c);
+
+			for (unsigned int i = 0; i < (dim - 1) / 2; ++i) {
+				N_stockage[i] += 2.0 * (alpha[j] * N_temp_stockage[i]).real_;
+			}
+
+		}
+		for (unsigned int i = 0; i < dim; ++i) {
+			if (i < (dim + 1) / 2) {
+				N[i] = N_core[i].real_ * alpha0;
+			}
+			else {
+				N[i] = N_stockage[i - (dim + 1) / 2].real_ * alpha0;
+			}
+		}
+
+		//return N_eol_real;
 	}
 
 }

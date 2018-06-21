@@ -89,6 +89,8 @@ class SolveTrans {
     * @brief IPF格式的求解器重载，用于追踪堆外核素演化
     */
     void IpfCramSolver32(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time);
+	
+	void IpfCramSolver48(SpMat &matrix, const SpMat &TransMatrixReprocess, SpMat &TransMatrixStockage, vector < double > &N, const double &time);
 
 
 	void QramSolver(int &order, SpMat & matrix, vector<double>& N, const double & time);
